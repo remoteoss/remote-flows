@@ -122,12 +122,15 @@ describe('usesJsfV1ContractDetails', () => {
     'HRV',
     'LVA',
     'MDA',
+    'TWN',
+    'BOL',
+    'SVK',
   ])('should return true for %s', (countryCode) => {
     expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
   });
 
   it('should return false for the other countries', () => {
-    expect(usesJsfV1ContractDetails('BOL')).toBe(false);
+    expect(usesJsfV1ContractDetails('EGY')).toBe(false);
     expect(usesJsfV1ContractDetails(null)).toBe(false);
   });
 });
@@ -139,7 +142,7 @@ describe('getContractDetailsStrategy', () => {
   });
 
   it('returns rebuild for every other country', () => {
-    expect(getContractDetailsStrategy('BOL')).toBe('rebuild');
+    expect(getContractDetailsStrategy('EGY')).toBe('rebuild');
     expect(getContractDetailsStrategy(null)).toBe('rebuild');
   });
 });

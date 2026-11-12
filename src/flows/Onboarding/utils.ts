@@ -237,6 +237,9 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'HRV',
   'LVA',
   'MDA',
+  'TWN',
+  'BOL',
+  'SVK',
 ];
 
 /**
