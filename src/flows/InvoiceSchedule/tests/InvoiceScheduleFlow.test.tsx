@@ -8,6 +8,7 @@ import {
 } from '@testing-library/react';
 import { useEffect, useState } from 'react';
 import { http, HttpResponse } from 'msw';
+import { identityMock } from '@/src/common/api/fixtures/identity';
 import { server } from '@/src/tests/server';
 import {
   queryClient,
@@ -419,8 +420,37 @@ describe('InvoiceScheduleFlow', () => {
 
     expect(
       await screen.findByText(
-        "We'll automatically number all invoices after the first one based on this number.",
+        /We'll automatically number all invoices after the first one based on this number\./,
       ),
+    ).toBeInTheDocument();
+  });
+
+  it('shows no sequence copy until the identity is known', async () => {
+    let releaseIdentity: () => void = () => undefined;
+    const identityGate = new Promise<void>((resolve) => {
+      releaseIdentity = resolve;
+    });
+    server.use(
+      http.get('*/v1/identity/current', async () => {
+        await identityGate;
+        return HttpResponse.json(identityMock);
+      }),
+    );
+
+    renderFlow();
+
+    await screen.findByLabelText(/Invoice currency/i);
+
+    expect(
+      screen.queryByText(/automatically number all invoices/),
+    ).not.toBeInTheDocument();
+
+    releaseIdentity();
+
+    expect(
+      await screen.findByRole('button', {
+        name: 'create an invoice number sequence',
+      }),
     ).toBeInTheDocument();
   });
 
@@ -1391,7 +1421,9 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
-    expect(await screen.findAllByText(/Required field/i)).toHaveLength(2);
+    await waitFor(() => {
+      expect(screen.getAllByText(/Required field/i)).toHaveLength(2);
+    });
     expect(onSuccess).not.toHaveBeenCalled();
   });
 

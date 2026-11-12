@@ -5,8 +5,11 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { ReactNode } from 'react';
 
 export function useMagicLinkUserId() {
-  const { data: identity } = useIdentity();
-  return identity && 'user' in identity ? identity.user.id : undefined;
+  const { data: identity, isLoading } = useIdentity();
+  return {
+    userId: identity && 'user' in identity ? identity.user.id : undefined,
+    isLoading,
+  };
 }
 
 type MagicLinkButtonProps = {
@@ -26,7 +29,7 @@ export function MagicLinkButton({
   disabled,
 }: MagicLinkButtonProps) {
   const { components } = useFormFields();
-  const userId = useMagicLinkUserId();
+  const { userId } = useMagicLinkUserId();
   const magicLink = useMagicLink();
 
   const CustomButton = components?.button;

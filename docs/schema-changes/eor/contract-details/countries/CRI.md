@@ -4,11 +4,37 @@ Schema versions for employee onboarding in Costa Rica.
 
 ## Current Version
 
-**Contract Details:** v5
+**Contract Details:** v6
 
 ## Contract Details
 
-### v5 - Current
+### v6 - Current
+
+**Type of change:** compliance
+
+**What changed:**
+
+- For employments created on or after 2026-07-31, the hidden `has_probation_period` and `probation_length` fields are no longer deprecated and must match `contract_duration_type`: `"yes"` and `3` for an indefinite contract without a recognized seniority date, otherwise `"no"` and `0`.
+- Both fields are now required once `contract_duration_type` is chosen, and `probation_length` has a minimum of 0.
+- Employments created before 2026-07-31 keep the deprecated hidden probation fields.
+
+If you render a custom UI, send `has_probation_period` and `probation_length` with the values above for new employments. Pin to v5 to keep the previous shape.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      CRI: { contract_details: 6 },
+    },
+  }}
+/>
+```
+
+---
+
+### v5
 
 **Type of change:** compliance
 
