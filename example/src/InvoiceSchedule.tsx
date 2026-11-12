@@ -22,7 +22,6 @@ function CreateInvoiceSchedule({ employmentId }: { employmentId: string }) {
   return (
     <InvoiceScheduleFlow
       employmentId={employmentId}
-      onMagicLinkError={({ error }) => setError(error.message)}
       render={(invoiceScheduleBag) => {
         // True until the currencies and the employment have both arrived, so the form is
         // only shown once the Contractor-of-Record restriction is known.
