@@ -14,13 +14,13 @@ export const ButtonDefault = React.forwardRef<
     ...buttonProps
   } = props;
 
-  const content = dataExternal ? (
+  const content: React.ReactNode = dataExternal ? (
     <>
       {children}
       <ExternalLink className='size-3' aria-hidden />
     </>
   ) : (
-    children
+    (children as React.ReactNode)
   );
 
   if (dataType === 'inline') {
