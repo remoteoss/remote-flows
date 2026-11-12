@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { createElement, useMemo } from 'react';
 import { useMutation, useQuery, queryOptions } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import {
@@ -14,9 +14,11 @@ import {
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
+import { useDeepStable } from '@/src/common/hooks';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
-import { InvoiceNumberSequence } from '@/src/components/form/InvoiceNumberSequence';
+import { InvoiceNumberSequenceLink } from '@/src/common/invoice-schedules/components/InvoiceNumberSequence/InvoiceNumberSequenceLink';
+import { InvoiceNumberSequenceBanner } from '@/src/common/invoice-schedules/components/InvoiceNumberSequence/InvoiceNumberSequenceBanner';
 import {
   buildCreateInvoiceScheduleSchema,
   buildInvoicePreviewPayload,
@@ -119,32 +121,42 @@ export const useGetCreateInvoiceScheduleSchema = ({
     isLoadingSequence,
   ]);
 
-  const modifyWithSequenceBanner = useMemo(() => {
-    if (!invoiceNumberSequence) {
-      return jsfModify;
-    }
+  const stableJsfModify = useDeepStable(jsfModify);
 
-    const field = jsfModify?.fields?.[INVOICE_NUMBER_SEQUENCE_FIELD];
+  const modifyWithSequenceUi = useMemo(() => {
+    const bannerField =
+      stableJsfModify?.fields?.[INVOICE_NUMBER_SEQUENCE_FIELD];
 
     return {
-      ...jsfModify,
+      ...stableJsfModify,
       fields: {
-        ...jsfModify?.fields,
-        [INVOICE_NUMBER_SEQUENCE_FIELD]: {
-          ...field,
+        ...stableJsfModify?.fields,
+        number: {
+          ...stableJsfModify?.fields?.number,
           presentation: {
-            Component: InvoiceNumberSequence,
-            ...field?.presentation,
+            ...stableJsfModify?.fields?.number?.presentation,
+            description: () => createElement(InvoiceNumberSequenceLink),
           },
         },
+        ...(invoiceNumberSequence
+          ? {
+              [INVOICE_NUMBER_SEQUENCE_FIELD]: {
+                ...bannerField,
+                presentation: {
+                  Component: InvoiceNumberSequenceBanner,
+                  ...bannerField?.presentation,
+                },
+              },
+            }
+          : {}),
       },
     };
-  }, [jsfModify, invoiceNumberSequence]);
+  }, [stableJsfModify, invoiceNumberSequence]);
 
   const headlessForm = useHeadlessForm({
     schema,
     initialValues,
-    options: { jsfModify: modifyWithSequenceBanner },
+    options: { jsfModify: modifyWithSequenceUi },
     strategy: 'buildOnce',
   });
 

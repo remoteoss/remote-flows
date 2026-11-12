@@ -4453,6 +4453,16 @@ describe('ContractorOnboardingFlow', () => {
       ).toBeInTheDocument();
     });
 
+    it('links to the invoice number sequence page from the invoice number field', async () => {
+      await goToFilledCreateInvoiceSchedule(generateUniqueEmploymentId());
+
+      expect(
+        await screen.findByRole('button', {
+          name: 'create an invoice number sequence',
+        }),
+      ).toBeInTheDocument();
+    });
+
     it('replaces the invoice number input with the invoice number sequence', async () => {
       server.use(
         http.get('*/v1/contractor-invoice-sequence', () =>
