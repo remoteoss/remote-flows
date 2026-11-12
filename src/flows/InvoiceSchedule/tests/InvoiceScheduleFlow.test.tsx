@@ -1037,7 +1037,9 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
-    expect(await screen.findAllByText(/Required field/i)).toHaveLength(2);
+    await waitFor(() => {
+      expect(screen.getAllByText(/Required field/i)).toHaveLength(2);
+    });
     expect(onSuccess).not.toHaveBeenCalled();
   });
 

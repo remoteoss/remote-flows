@@ -1,3 +1,9 @@
+import type {
+  ModifyConfig,
+  FormResult as FormResultNext,
+  FormResultLegacy,
+} from '@remoteoss/remote-json-schema-form-kit';
+
 // oxlint-disable-next-line typescript/no-explicit-any
 export type $TSFixMe = any;
 
@@ -56,4 +62,28 @@ export type Field = {
   onChange?: (value: string) => void;
   // Allow additional properties from x-jsf-presentation (e.g. meta from oneOf/anyOf)
   [key: string]: unknown;
+};
+
+export type FieldValues = Record<string, $TSFixMe>;
+
+export type JSFModify = ModifyConfig & {
+  /**
+   * allows to specify additional required fields for the form.
+   * Can be either an array of field names to add, or a function that receives
+   * the existing required fields and returns a new array.
+   */
+  required?: string[] | ((existingRequired: string[]) => string[]);
+  /**
+   * allows to specify additional allOf rules for the form.
+   */
+  allOf?: unknown[];
+};
+
+type FormResult = FormResultNext | FormResultLegacy;
+
+export type JSONSchemaFormResultWithFieldsets = FormResult & {
+  meta: {
+    'x-jsf-fieldsets': JSFFieldset;
+    'x-jsf-presentation'?: Record<string, unknown>;
+  };
 };
