@@ -1,3 +1,4 @@
+import { RECURRING_PERIODICITY_OPTIONS } from '@/src/common/invoice-schedules';
 import { Step } from '@/src/flows/useStepState';
 import {
   ProductType,
@@ -184,3 +185,58 @@ export {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
 } from '@/src/common/invoice-schedules/utils';
+
+const RECURRING_PERIODICITIES: string[] = RECURRING_PERIODICITY_OPTIONS.map(
+  ({ const: value }) => value,
+);
+
+type InvoiceSchedulePrefill = Partial<
+  Record<'periodicity' | 'currency', string>
+>;
+
+export function buildInvoiceSchedulePrefill(
+  contractDetails: Record<string, unknown> | undefined,
+  currencies: string[] | undefined,
+): InvoiceSchedulePrefill {
+  const paymentTerms = contractDetails?.payment_terms as
+    | {
+        payment_terms_type?: unknown;
+        invoicing_frequency?: unknown;
+        compensation_currency_code?: unknown;
+      }
+    | undefined;
+  const paymentTermsType = paymentTerms?.payment_terms_type;
+  const frequency =
+    paymentTermsType === undefined || paymentTermsType === 'pay_period'
+      ? paymentTerms?.invoicing_frequency
+      : undefined;
+  const currency = paymentTerms?.compensation_currency_code;
+
+  return {
+    ...(typeof frequency === 'string' &&
+      RECURRING_PERIODICITIES.includes(frequency) && {
+        periodicity: frequency,
+      }),
+    ...(typeof currency === 'string' &&
+      currencies?.includes(currency) && { currency }),
+  };
+}
+
+const PREFILLED_FIELDS = ['periodicity', 'currency'] as const;
+
+export function syncInvoiceSchedulePrefill(
+  savedValues: Record<string, unknown>,
+  previousPrefill: InvoiceSchedulePrefill,
+  nextPrefill: InvoiceSchedulePrefill,
+) {
+  const synced = { ...savedValues };
+  for (const field of PREFILLED_FIELDS) {
+    if (previousPrefill[field] !== nextPrefill[field]) {
+      delete synced[field];
+      if (nextPrefill[field] !== undefined) {
+        synced[field] = nextPrefill[field];
+      }
+    }
+  }
+  return synced;
+}

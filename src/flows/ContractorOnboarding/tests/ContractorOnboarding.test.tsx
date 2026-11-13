@@ -4323,6 +4323,376 @@ describe('ContractorOnboardingFlow', () => {
       await fillCreateInvoiceSchedule(values);
     };
 
+    const signContract = async () => {
+      await waitFor(() => {
+        expect(
+          screen.queryByRole('button', { name: /^Review$/i }) ??
+            screen.queryByLabelText(/Enter full name/i),
+        ).toBeInTheDocument();
+      });
+      if (screen.queryByRole('button', { name: /^Review$/i })) {
+        await fillSignature();
+      }
+    };
+
+    const continueFromContractPreview = async () => {
+      await signContract();
+      (await screen.findByText(/Continue/i)).click();
+    };
+
+    const continueToCreateInvoiceSchedule = async () => {
+      await screen.findByText('Step: Invoice schedule');
+      fireEvent.click(
+        await screen.findByRole('radio', {
+          name: /create invoice schedule now/i,
+        }),
+      );
+      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
+
+      await screen.findByText('Step: Create Invoice Schedule');
+    };
+
+    const goBackToContractDetails = async () => {
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Invoice schedule');
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Contract Preview');
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Contract Details');
+    };
+
+    const goToEmptyCreateInvoiceSchedule = async (
+      paymentTerms: Record<string, unknown>,
+    ) => {
+      const employmentId = generateUniqueEmploymentId();
+
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () =>
+          HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                status: 'created',
+                contract_details: { payment_terms: paymentTerms },
+              },
+            },
+          }),
+        ),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          skipSteps={['select_country']}
+          options={{ features: ['create_invoice_schedule'] }}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText('Step: Basic Information');
+      await fillBasicInformation();
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Pricing Plan');
+      await fillContractorSubscription('Contractor Management');
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Origin');
+      await fillContractOrigin('Without an agreement');
+      screen.getByText(/Next Step/i).click();
+
+      await continueToCreateInvoiceSchedule();
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+      });
+    };
+
+    it('prefills the invoice currency and frequency from the contract details', async () => {
+      await goToEmptyCreateInvoiceSchedule({
+        invoicing_frequency: 'weekly',
+        compensation_currency_code: 'EUR',
+      });
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+    });
+
+    it('leaves the currency and frequency empty when the contract details values are not offered', async () => {
+      await goToEmptyCreateInvoiceSchedule({
+        invoicing_frequency: 'yearly',
+        compensation_currency_code: 'ZZZ',
+      });
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('');
+    });
+
+    const fillContractDetailsAndGoToCreateInvoiceSchedule = async (
+      employmentContractDetails:
+        | Record<string, unknown>
+        | null
+        | (() => Record<string, unknown> | null),
+      { completionOfServices = false, compensationCurrencyCode = 'EUR' } = {},
+    ) => {
+      const employmentId = generateUniqueEmploymentId();
+
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () =>
+          HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                status: 'created',
+                contract_details:
+                  typeof employmentContractDetails === 'function'
+                    ? employmentContractDetails()
+                    : employmentContractDetails,
+              },
+            },
+          }),
+        ),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          skipSteps={['select_country']}
+          options={{ features: ['create_invoice_schedule'] }}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText('Step: Basic Information');
+      await fillBasicInformation();
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Pricing Plan');
+      await fillContractorSubscription('Contractor Management');
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Origin');
+      await fillContractOrigin();
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Details');
+      await fillContractDetails({
+        invoicingFrequency: 'weekly',
+        compensationCurrencyCode,
+      });
+      if (completionOfServices) {
+        fireEvent.click(
+          screen.getByRole('radio', { name: /completion of services/i }),
+        );
+      }
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Preview');
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await continueFromContractPreview();
+
+      await continueToCreateInvoiceSchedule();
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Invoice currency/i)).not.toHaveValue('');
+      });
+    };
+
+    it('prefills the invoice currency and frequency chosen in this session when the employment does not carry them yet', async () => {
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(null);
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+    });
+
+    it('prefers the invoice currency and frequency chosen in this session over the ones saved on the employment', async () => {
+      await fillContractDetailsAndGoToCreateInvoiceSchedule({
+        payment_terms: {
+          invoicing_frequency: 'monthly',
+          compensation_currency_code: 'USD',
+        },
+      });
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+    });
+
+    it('does not prefill the invoice frequency when the contract is paid on completion of services', async () => {
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(null, {
+        completionOfServices: true,
+      });
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('');
+    });
+
+    it('prefills the invoice currency changed in the contract details after leaving the create invoice schedule step', async () => {
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(null);
+
+      await goBackToContractDetails();
+
+      await fillContractDetails({
+        invoicingFrequency: 'weekly',
+        compensationCurrencyCode: 'USD',
+      });
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Preview');
+      await continueFromContractPreview();
+
+      await continueToCreateInvoiceSchedule();
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
+      });
+    });
+
+    it('prefills the invoice currency changed in the contract details when the user navigated Back before submitting', async () => {
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(null);
+
+      await goBackToContractDetails();
+
+      await fillContractDetails({
+        invoicingFrequency: 'weekly',
+        compensationCurrencyCode: 'USD',
+      });
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Contract Origin');
+      screen.getByText(/Next Step/i).click();
+      await screen.findByText('Step: Contract Details');
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Preview');
+      await continueFromContractPreview();
+
+      await continueToCreateInvoiceSchedule();
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
+      });
+    });
+
+    const mockExistingInvoiceSchedule = () =>
+      server.use(
+        http.get('*/v1/contractor-invoice-schedules', () =>
+          HttpResponse.json({
+            data: {
+              total_count: 1,
+              current_page: 1,
+              total_pages: 1,
+              contractor_invoice_schedules: [
+                {
+                  id: '345b0f1b-5254-4f17-b235-528bc9529055',
+                  status: 'pending_contractor_action',
+                  number: '1234',
+                  items: [{ description: 'salary', amount: 250000 }],
+                  currency: 'EUR',
+                  start_date: '2100-01-01',
+                  note: 'note',
+                  total_amount: 250000,
+                  periodicity: 'weekly',
+                  nr_occurrences: null,
+                  next_invoice_at: null,
+                },
+              ],
+            },
+          }),
+        ),
+      );
+
+    const savedPaymentTerms = {
+      payment_terms: {
+        invoicing_frequency: 'weekly',
+        compensation_currency_code: 'EUR',
+      },
+    };
+
+    it('keeps the existing invoice schedule when the contract details are unchanged', async () => {
+      mockExistingInvoiceSchedule();
+
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(savedPaymentTerms);
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+      expect(screen.getAllByLabelText(/^Description/i)[0]).toHaveValue(
+        'salary',
+      );
+    });
+
+    it('keeps the existing invoice schedule when the contract details currency changed before the schedule step was opened', async () => {
+      mockExistingInvoiceSchedule();
+
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(savedPaymentTerms, {
+        compensationCurrencyCode: 'USD',
+      });
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+      expect(screen.getAllByLabelText(/^Description/i)[0]).toHaveValue(
+        'salary',
+      );
+    });
+
+    it('keeps the existing invoice schedule when the contract details change after the schedule step was opened', async () => {
+      mockExistingInvoiceSchedule();
+
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(savedPaymentTerms);
+
+      await goBackToContractDetails();
+
+      await fillContractDetails({
+        invoicingFrequency: 'monthly',
+        compensationCurrencyCode: 'USD',
+      });
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Preview');
+      await continueFromContractPreview();
+
+      await continueToCreateInvoiceSchedule();
+      await waitFor(() => {
+        expect(screen.getAllByLabelText(/^Description/i)[0]).toHaveValue(
+          'salary',
+        );
+      });
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+      expect(screen.getAllByLabelText(/^Description/i)[0]).toHaveValue(
+        'salary',
+      );
+    });
+
+    it('keeps the invoice currency the user picked when they go back and resubmit unchanged contract details', async () => {
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(null);
+
+      await fillSelect('currency', 'USD');
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
+
+      await goBackToContractDetails();
+
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Preview');
+      await continueFromContractPreview();
+
+      await continueToCreateInvoiceSchedule();
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
+      });
+    });
+
     // The Remote platform only offers invoice schedules during contractor onboarding for CM and CM+: Contractor of Record
     // invoice schedules can only be created once the contractor is active.
     it('offers the invoice schedule step for Contractor Management but not for Contractor of Record', async () => {

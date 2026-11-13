@@ -163,5 +163,6 @@ export const useContractorContractDetailsSchema = ({
     ...schemaQuery,
     data: dataWithCurrencies as $TSFixMe,
     isLoading: schemaQuery.isLoading || isLoadingCurrencies,
+    currencies,
   };
 };

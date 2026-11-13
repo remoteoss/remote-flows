@@ -2,6 +2,8 @@ import {
   shouldIncludeProduct,
   getBasicInformationSchemaVersion,
   buildInvoicePreviewPayload,
+  buildInvoiceSchedulePrefill,
+  syncInvoiceSchedulePrefill,
 } from '../utils';
 import { corProductIdentifier, eorProductIdentifier } from '../constants';
 
@@ -78,5 +80,109 @@ describe('getBasicInformationSchemaVersion', () => {
         jsonSchemaVersion: { employment_basic_information: 'latest' },
       }),
     ).toEqual('latest');
+  });
+});
+
+describe('buildInvoiceSchedulePrefill', () => {
+  const currencies = ['USD', 'EUR'];
+
+  it('maps the contract details frequency and currency', () => {
+    expect(
+      buildInvoiceSchedulePrefill(
+        {
+          payment_terms: {
+            invoicing_frequency: 'bi_weekly',
+            compensation_currency_code: 'EUR',
+          },
+        },
+        currencies,
+      ),
+    ).toEqual({ periodicity: 'bi_weekly', currency: 'EUR' });
+  });
+
+  it('skips a currency that is not in the contractor currencies', () => {
+    expect(
+      buildInvoiceSchedulePrefill(
+        {
+          payment_terms: {
+            invoicing_frequency: 'monthly',
+            compensation_currency_code: 'YER',
+          },
+        },
+        currencies,
+      ),
+    ).toEqual({ periodicity: 'monthly' });
+  });
+
+  it('skips the currency while the contractor currencies are loading', () => {
+    expect(
+      buildInvoiceSchedulePrefill(
+        { payment_terms: { compensation_currency_code: 'USD' } },
+        undefined,
+      ),
+    ).toEqual({});
+  });
+
+  it('skips a frequency that is not a recurring periodicity', () => {
+    expect(
+      buildInvoiceSchedulePrefill(
+        { payment_terms: { invoicing_frequency: 'yearly' } },
+        currencies,
+      ),
+    ).toEqual({});
+  });
+
+  it('skips the frequency when payments are due on completion of services', () => {
+    expect(
+      buildInvoiceSchedulePrefill(
+        {
+          payment_terms: {
+            payment_terms_type: 'completion_of_services',
+            invoicing_frequency: 'weekly',
+            compensation_currency_code: 'EUR',
+          },
+        },
+        currencies,
+      ),
+    ).toEqual({ currency: 'EUR' });
+  });
+
+  it('returns nothing when there are no payment terms', () => {
+    expect(buildInvoiceSchedulePrefill(undefined, currencies)).toEqual({});
+    expect(buildInvoiceSchedulePrefill({}, currencies)).toEqual({});
+  });
+});
+
+describe('syncInvoiceSchedulePrefill', () => {
+  const saved = { currency: 'USD', periodicity: 'weekly', note: 'keep me' };
+
+  it('keeps the saved values when the prefill did not change', () => {
+    expect(
+      syncInvoiceSchedulePrefill(
+        saved,
+        { currency: 'EUR', periodicity: 'weekly' },
+        { currency: 'EUR', periodicity: 'weekly' },
+      ),
+    ).toEqual(saved);
+  });
+
+  it('replaces only the field whose prefill changed', () => {
+    expect(
+      syncInvoiceSchedulePrefill(
+        saved,
+        { currency: 'EUR', periodicity: 'weekly' },
+        { currency: 'GBP', periodicity: 'weekly' },
+      ),
+    ).toEqual({ currency: 'GBP', periodicity: 'weekly', note: 'keep me' });
+  });
+
+  it('clears the field when the new prefill no longer offers it', () => {
+    expect(
+      syncInvoiceSchedulePrefill(
+        saved,
+        { currency: 'EUR', periodicity: 'weekly' },
+        { currency: 'EUR' },
+      ),
+    ).toEqual({ currency: 'USD', note: 'keep me' });
   });
 });
