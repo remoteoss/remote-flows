@@ -4,11 +4,40 @@ Schema versions for employee onboarding in New Zealand.
 
 ## Current Version
 
-**Contract Details:** v9
+**Contract Details:** v10
 
 ## Contract Details
 
-### v9 - Current
+### v10 - Current
+
+**Type of change:** compliance, product
+
+**What changed:**
+
+- New employees (`is_rehire: no`) can now choose a probation period instead of a trial period through the new required `assessment_period_type` field (`"trial"` or `"probation"`, default `"trial"`). `trial_period` is no longer shown directly for new employees.
+- Adds `trial_period_recommended` (required when `assessment_period_type` is `"trial"`) and `probation_length_recommended` (required when a probation period applies, for a new employee choosing `"probation"` or a rehire with `has_probation_period: yes`). Both take `"recommended"` or `"custom"`, default `"recommended"`.
+  - `"recommended"` fixes the length at the maximum: `trial_period` must be `90` or `probation_length` must be `6`.
+  - `"custom"` shows `trial_period` (0 to 90 days) or `probation_length` to enter the length.
+- `probation_length` now accepts `0` (minimum was `1`), with a waiver warning at `0`. The 6-month limit and the rehire risk text move from `probation_length` and `trial_period` to the `*_recommended` fields.
+- `has_probation_period` for a rehire and `assessment_period_type` for a new employee are now enforced: submissions without them are rejected.
+- Updated help text for `has_probation_period` and its waiver warning.
+- Existing contracts are unaffected; they get the new fields filled in from their stored lengths.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      NZL: { contract_details: 10 },
+    },
+  }}
+/>
+```
+
+---
+
+### v9
 
 **Type of change:** compliance
 
