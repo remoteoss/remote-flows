@@ -197,8 +197,8 @@ importers:
         specifier: 1.2.21
         version: 1.2.21
       '@remoteoss/remote-json-schema-form-kit':
-        specifier: 1.2.5
-        version: 1.2.5
+        specifier: 1.2.6
+        version: 1.2.6
       '@tailwindcss/cli':
         specifier: 4.2.4
         version: 4.2.4
@@ -396,8 +396,8 @@ importers:
   packages/core:
     dependencies:
       '@remoteoss/remote-json-schema-form-kit':
-        specifier: 1.2.5
-        version: 1.2.5
+        specifier: 1.2.6
+        version: 1.2.6
       date-fns:
         specifier: 3.6.0
         version: 3.6.0
@@ -1627,8 +1627,8 @@ packages:
     resolution: {integrity: sha512-TzgvKsKhLyJ3Zy7zH8YWNC/4Xoit3CH2jEIXmLEhdC8RZeozIm5lpDYesH/pZVycik0i7a/B+QfOz4YbA9J12A==}
     engines: {node: '>=18.14.0'}
 
-  '@remoteoss/remote-json-schema-form-kit@1.2.5':
-    resolution: {integrity: sha512-/Ccfo4l2IXTeaox1imauXgADe75CsnbwpFSgFFO6a/+Je72brVza2vU2wmh7fmLYmX6iwZCTFajHWK3YFuwJTA==}
+  '@remoteoss/remote-json-schema-form-kit@1.2.6':
+    resolution: {integrity: sha512-BCykKwYaSQRWmbApq2Wg5yJESNZVcDhMKXp3VDTfyt9xql0yixdogx1vRkYwsqo68GQqHzIlpQ5oGrLf9cSTgg==}
     engines: {node: '>=18.14.0'}
 
   '@rolldown/binding-android-arm-eabi@1.2.8':
@@ -4786,7 +4786,7 @@ snapshots:
     dependencies:
       json-logic-js: 2.0.5
 
-  '@remoteoss/remote-json-schema-form-kit@1.2.5':
+  '@remoteoss/remote-json-schema-form-kit@1.2.6':
     dependencies:
       '@remoteoss/json-schema-form': 1.2.21
       '@remoteoss/json-schema-form-v0-deprecated': '@remoteoss/json-schema-form@0.12.5-beta.0'
