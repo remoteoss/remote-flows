@@ -4,9 +4,11 @@ import {
   screen,
   waitFor,
   fireEvent,
+  within,
 } from '@testing-library/react';
 import { useEffect, useState } from 'react';
 import { http, HttpResponse } from 'msw';
+import { identityMock } from '@/src/common/api/fixtures/identity';
 import { server } from '@/src/tests/server';
 import {
   queryClient,
@@ -88,6 +90,388 @@ describe('InvoiceScheduleFlow', () => {
 
     expect(screen.queryByLabelText(/Contractor/i)).not.toBeInTheDocument();
     expect(screen.queryByTestId('employment_id')).not.toBeInTheDocument();
+  });
+
+  describe('when the company has an invoice number sequence', () => {
+    function useSequence(enabled: boolean) {
+      server.use(
+        http.get('*/v1/contractor-invoice-sequence', () =>
+          HttpResponse.json({
+            data: {
+              contractor_invoice_sequence: {
+                id: 'sequence-1',
+                enabled,
+                fields: [
+                  { type: 'text', text: 'INV' },
+                  { type: 'invoice_counter', initial_number: 1 },
+                ],
+              },
+            },
+          }),
+        ),
+      );
+    }
+
+    it('replaces the invoice number input with the sequence', async () => {
+      useSequence(true);
+      renderFlow();
+
+      expect(
+        await screen.findByText(/Text\/Invoice count/),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /Contractor invoice numbers will follow your set invoice number sequence/,
+        ),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(/Invoice number/i),
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows the edit sequence button inside the sequence statement', async () => {
+      useSequence(true);
+      renderFlow();
+
+      const statement = (
+        await screen.findByText(/Text\/Invoice count/)
+      ).closest('[role="alert"]') as HTMLElement;
+
+      expect(
+        await within(statement).findByRole('button', {
+          name: /Edit sequence/,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    it('opens the sequence page with a magic link from the edit sequence button', async () => {
+      useSequence(true);
+      const magicLinkBody = vi.fn();
+      server.use(
+        http.post('*/v1/magic-link', async ({ request }) => {
+          magicLinkBody(await request.json());
+          return HttpResponse.json({
+            data: { url: 'https://remote.test/magic/edit' },
+          });
+        }),
+      );
+      const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+      renderFlow();
+
+      fireEvent.click(
+        await screen.findByRole('button', { name: /Edit sequence/ }),
+      );
+
+      await waitFor(() => {
+        expect(open).toHaveBeenCalledWith(
+          'https://remote.test/magic/edit',
+          '_blank',
+          'noopener,noreferrer',
+        );
+      });
+      expect(magicLinkBody).toHaveBeenCalledWith({
+        user_id: 'ffabca18-20fc-489d-995b-bf76eebc6882',
+        path: '/dashboard/company-settings/invoice-number-sequence',
+      });
+
+      open.mockRestore();
+    });
+
+    it('logs the error when the edit sequence magic link request fails', async () => {
+      useSequence(true);
+      server.use(
+        http.post('*/v1/magic-link', () =>
+          HttpResponse.json({ message: 'Nope' }, { status: 422 }),
+        ),
+      );
+      const consoleError = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+      const tab = { location: { href: '' }, opener: {}, close: vi.fn() };
+      const open = vi
+        .spyOn(window, 'open')
+        .mockImplementation(() => tab as unknown as Window);
+
+      renderFlow();
+
+      fireEvent.click(
+        await screen.findByRole('button', { name: /Edit sequence/ }),
+      );
+
+      await waitFor(() => {
+        expect(consoleError).toHaveBeenCalledWith(
+          expect.objectContaining({
+            error: expect.objectContaining({ message: 'Nope' }),
+            rawError: { message: 'Nope' },
+          }),
+        );
+      });
+      expect(tab.close).toHaveBeenCalledTimes(1);
+
+      open.mockRestore();
+      consoleError.mockRestore();
+    });
+
+    it('offers no edit sequence button when the token has no user', async () => {
+      useSequence(true);
+      server.use(
+        http.get('*/v1/identity/current', () =>
+          HttpResponse.json({ data: { client_id: 'client-id' } }),
+        ),
+      );
+
+      renderFlow();
+
+      const statement = (
+        await screen.findByText(/Text\/Invoice count/)
+      ).closest('[role="alert"]') as HTMLElement;
+      expect(
+        screen.queryByRole('button', { name: /Edit sequence/ }),
+      ).not.toBeInTheDocument();
+      expect(statement.querySelector('.mt-1')).toBeNull();
+    });
+
+    it('renders the edit sequence button with the partner button component', async () => {
+      useSequence(true);
+      const CustomButton = ({ children, ...props }: $TSFixMe) => (
+        <button data-testid='partner-button' {...props}>
+          {children}
+        </button>
+      );
+
+      render(
+        <InvoiceScheduleFlow
+          employmentId='employment-grace'
+          render={(bag) => (bag.isLoading ? null : <InvoiceScheduleForm />)}
+        />,
+        {
+          wrapper: ({ children }) => (
+            <TestProviders components={{ button: CustomButton }}>
+              {children}
+            </TestProviders>
+          ),
+        },
+      );
+
+      const button = await screen.findByTestId('partner-button');
+
+      expect(button).toHaveTextContent('Edit sequence');
+      expect(button).toHaveAttribute('data-type', 'inline');
+      expect(button).toHaveAttribute('data-external', 'true');
+    });
+
+    it('keeps the invoice number input when the sequence is off', async () => {
+      useSequence(false);
+      renderFlow();
+
+      expect(
+        await screen.findByLabelText(/Invoice number/i),
+      ).toBeInTheDocument();
+      expect(screen.queryByText(/Text\/Invoice count/)).not.toBeInTheDocument();
+    });
+  });
+
+  it('opens the invoice number sequence page with a magic link for the signed-in admin', async () => {
+    const magicLinkBody = vi.fn();
+    server.use(
+      http.post('*/v1/magic-link', async ({ request }) => {
+        magicLinkBody(await request.json());
+        return HttpResponse.json({
+          data: { url: 'https://remote.test/magic/abc' },
+        });
+      }),
+    );
+    const tab = { location: { href: '' }, opener: {}, close: vi.fn() };
+    const open = vi
+      .spyOn(window, 'open')
+      .mockImplementation(() => tab as unknown as Window);
+
+    renderFlow();
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: 'create an invoice number sequence',
+      }),
+    );
+
+    expect(open).toHaveBeenCalledWith('', '_blank');
+    await waitFor(() => {
+      expect(tab.location.href).toBe('https://remote.test/magic/abc');
+    });
+    expect(tab.opener).toBeNull();
+    expect(tab.close).not.toHaveBeenCalled();
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(magicLinkBody).toHaveBeenCalledWith({
+      user_id: 'ffabca18-20fc-489d-995b-bf76eebc6882',
+      path: '/dashboard/company-settings/invoice-number-sequence',
+    });
+
+    open.mockRestore();
+  });
+
+  it('opens the magic link in a new tab when the blank tab was blocked', async () => {
+    server.use(
+      http.post('*/v1/magic-link', () =>
+        HttpResponse.json({ data: { url: 'https://remote.test/magic/abc' } }),
+      ),
+    );
+    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+    renderFlow();
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: 'create an invoice number sequence',
+      }),
+    );
+
+    await waitFor(() => {
+      expect(open).toHaveBeenCalledWith(
+        'https://remote.test/magic/abc',
+        '_blank',
+        'noopener,noreferrer',
+      );
+    });
+
+    open.mockRestore();
+  });
+
+  it('closes the blank tab and logs the error when the magic link request fails', async () => {
+    server.use(
+      http.post('*/v1/magic-link', () =>
+        HttpResponse.json({ message: 'Nope' }, { status: 422 }),
+      ),
+    );
+    const tab = { location: { href: '' }, opener: {}, close: vi.fn() };
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    const open = vi
+      .spyOn(window, 'open')
+      .mockImplementation(() => tab as unknown as Window);
+
+    renderFlow();
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: 'create an invoice number sequence',
+      }),
+    );
+
+    await waitFor(() => {
+      expect(tab.close).toHaveBeenCalledTimes(1);
+    });
+    expect(consoleError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: expect.objectContaining({ message: 'Nope' }),
+        rawError: { message: 'Nope' },
+      }),
+    );
+    expect(tab.location.href).toBe('');
+    expect(open).toHaveBeenCalledTimes(1);
+
+    open.mockRestore();
+    consoleError.mockRestore();
+  });
+
+  it('renders the sequence link with the partner button component, as an inline button', async () => {
+    const CustomButton = ({ children, ...props }: $TSFixMe) => (
+      <button data-testid='partner-button' {...props}>
+        {children}
+      </button>
+    );
+
+    render(
+      <InvoiceScheduleFlow
+        employmentId='employment-grace'
+        render={(bag) => (bag.isLoading ? null : <InvoiceScheduleForm />)}
+      />,
+      {
+        wrapper: ({ children }) => (
+          <TestProviders components={{ button: CustomButton }}>
+            {children}
+          </TestProviders>
+        ),
+      },
+    );
+
+    const button = await screen.findByTestId('partner-button');
+
+    expect(button).toHaveTextContent('create an invoice number sequence');
+    expect(button).toHaveAttribute('data-type', 'inline');
+    expect(button).toHaveAttribute('data-external', 'true');
+    expect(button.querySelector('svg')).not.toBeInTheDocument();
+  });
+
+  it('draws the external link icon on the sequence link with the default button', async () => {
+    renderFlow();
+
+    const button = await screen.findByRole('button', {
+      name: 'create an invoice number sequence',
+    });
+
+    expect(button.querySelector('svg')).toBeInTheDocument();
+    expect(button).not.toHaveAttribute('data-external');
+  });
+
+  it('explains that later invoices are numbered from the invoice number', async () => {
+    renderFlow();
+
+    expect(
+      await screen.findByText(
+        /We'll automatically number all invoices after the first one based on this number\./,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('shows no sequence copy until the identity is known', async () => {
+    let releaseIdentity: () => void = () => undefined;
+    const identityGate = new Promise<void>((resolve) => {
+      releaseIdentity = resolve;
+    });
+    server.use(
+      http.get('*/v1/identity/current', async () => {
+        await identityGate;
+        return HttpResponse.json(identityMock);
+      }),
+    );
+
+    renderFlow();
+
+    await screen.findByLabelText(/Invoice currency/i);
+
+    expect(
+      screen.queryByText(/automatically number all invoices/),
+    ).not.toBeInTheDocument();
+
+    releaseIdentity();
+
+    expect(
+      await screen.findByRole('button', {
+        name: 'create an invoice number sequence',
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it('does not offer the sequence link when the token has no user', async () => {
+    server.use(
+      http.get('*/v1/identity/current', () =>
+        HttpResponse.json({ data: { client_id: 'client-id' } }),
+      ),
+    );
+
+    renderFlow();
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByRole('button', {
+        name: 'create an invoice number sequence',
+      }),
+    ).not.toBeInTheDocument();
   });
 
   it('renders the fields flat, without the onboarding step headings', async () => {
@@ -1037,7 +1421,9 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
-    expect(await screen.findAllByText(/Required field/i)).toHaveLength(2);
+    await waitFor(() => {
+      expect(screen.getAllByText(/Required field/i)).toHaveLength(2);
+    });
     expect(onSuccess).not.toHaveBeenCalled();
   });
 

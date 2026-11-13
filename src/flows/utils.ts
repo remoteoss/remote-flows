@@ -1,6 +1,3 @@
-import { SupportedTypes } from '../components/form/fields/types';
-import { $TSFixMe } from '@/src/types/remoteFlows';
-
 type ParsedRadioValues = Record<string, unknown>;
 
 /**
@@ -31,22 +28,4 @@ export function parseFormRadioValues(
     },
     {},
   );
-}
-
-export function findFieldsByType(
-  fields: Record<string, $TSFixMe>,
-  type: SupportedTypes,
-) {
-  const fieldsNames = [];
-  for (const [key, value] of Object.entries(fields)) {
-    // old schemas use type, new schemas use inputType
-    // as probably we need to support both for now, that's why we check both
-    if (
-      value['x-jsf-presentation'].type === type ||
-      value['x-jsf-presentation'].inputType === type
-    ) {
-      fieldsNames.push(key);
-    }
-  }
-  return fieldsNames;
 }
