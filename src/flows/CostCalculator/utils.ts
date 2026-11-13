@@ -3,70 +3,146 @@ import type {
   CostCalculatorEstimateParams,
 } from '@/src/client';
 
-import { $TSFixMe } from '@/src/types/remoteFlows';
-import { AnyObjectSchema, number, object } from 'yup';
-import { CostCalculatorVersion, defaultEstimationOptions } from './hooks';
+import { number, object, string } from 'yup';
+import { toOneOf } from '@/src/common/headlessForm';
+import {
+  CostCalculatorCountry,
+  CostCalculatorVersion,
+  defaultEstimationOptions,
+} from './hooks';
 import type {
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
   CurrencyKey,
 } from './types';
 import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
+import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
+
+type SelectOption = { label: string; value: string };
+
+type CostCalculatorSchemaParams = {
+  countries?: CostCalculatorCountry[];
+  currencies?: SelectOption[];
+  regions: SelectOption[];
+  employerBillingCurrency: string;
+  includeEstimationTitle?: boolean;
+};
+
+function getManagementFeeLimit(employerBillingCurrency: string) {
+  const maximum = BASE_RATES[employerBillingCurrency as CurrencyKey];
+  if (!maximum) {
+    return undefined;
+  }
+  return {
+    maximum,
+    message: `Management fee cannot exceed ${maximum / 100} ${employerBillingCurrency}`,
+  };
+}
+
+const toCountryOneOf = (countries: CostCalculatorCountry[] = []) =>
+  countries.map(({ label, value, ...countryDetails }) => ({
+    const: value,
+    title: label,
+    'x-jsf-presentation': countryDetails,
+  }));
+
+const hiddenRegion = { if: {}, then: { properties: { region: false } } };
 
 /**
- * Build the validation schema for the form.
- * @returns
+ * Build the cost calculator schema with the options and rules that depend on API data.
  */
-export function buildValidationSchema(
-  fields: $TSFixMe[],
-  employerBillingCurrency: string,
-  includeEstimationTitle?: boolean,
-) {
-  const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
-    (fieldsSchemaAcc, field) => {
-      // Special handling for salary fields
-      if (field.name === 'salary' || field.name === 'salary_conversion') {
-        fieldsSchemaAcc[field.name] = (field.schema as AnyObjectSchema).when(
-          'salary_converted',
-          {
-            is: (val: string | null) => val === field.name,
-            then: (schema) => schema.required('Required field'),
-            otherwise: (schema) => schema.optional(),
-          },
-        );
-      } else if (field.name === 'management') {
-        fieldsSchemaAcc[field.name] = object({
-          management_fee: number()
-            .transform((value) => {
-              return isNaN(value) ? undefined : value;
-            })
-            .min(0, 'Management fee must be greater than or equal to 0')
-            .max(
-              employerBillingCurrency
-                ? BASE_RATES[employerBillingCurrency as CurrencyKey]
-                : BASE_RATES.USD,
-              () => {
-                const maxValue = employerBillingCurrency
-                  ? BASE_RATES[employerBillingCurrency as CurrencyKey]
-                  : BASE_RATES.USD;
-                const displayValue = maxValue / 100;
-                return `Management fee cannot exceed ${displayValue} ${employerBillingCurrency}`;
+export function buildCostCalculatorSchema({
+  countries,
+  currencies,
+  regions,
+  employerBillingCurrency,
+  includeEstimationTitle,
+}: CostCalculatorSchemaParams) {
+  const baseSchema = jsonSchema.data.schema;
+  const { country, region, currency, management, ...otherProperties } =
+    baseSchema.properties;
+  const hasRegions = regions.length > 0;
+  const managementFeeLimit = getManagementFeeLimit(employerBillingCurrency);
+
+  return {
+    ...baseSchema,
+    properties: {
+      country: { ...country, oneOf: toCountryOneOf(countries) },
+      region: { ...region, oneOf: toOneOf(regions) },
+      currency: { ...currency, oneOf: toOneOf(currencies) },
+      ...otherProperties,
+      management: {
+        ...management,
+        properties: {
+          ...management.properties,
+          management_fee: {
+            ...management.properties.management_fee,
+            ...(managementFeeLimit && {
+              maximum: managementFeeLimit.maximum,
+              'x-jsf-errorMessage': {
+                ...management.properties.management_fee['x-jsf-errorMessage'],
+                maximum: managementFeeLimit.message,
               },
-            ),
-        });
-      } else if (field.name === 'estimation_title' && includeEstimationTitle) {
-        // Make estimation_title required when includeEstimationTitle is true
-        fieldsSchemaAcc[field.name] = (
-          field.schema as AnyObjectSchema
-        ).required('Required field');
-      } else {
-        fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
-      }
-      return fieldsSchemaAcc;
+            }),
+          },
+        },
+      },
     },
-    {},
-  );
-  return object(fieldsSchema) as AnyObjectSchema;
+    required: [
+      ...baseSchema.required,
+      ...(hasRegions ? ['region'] : []),
+      ...(includeEstimationTitle ? ['estimation_title'] : []),
+    ],
+    allOf: [...baseSchema.allOf, ...(hasRegions ? [] : [hiddenRegion])],
+  };
+}
+
+const salaryValidationSchema = (fieldName: 'salary' | 'salary_conversion') =>
+  number()
+    .typeError('The value must be a number')
+    .when('salary_converted', {
+      is: fieldName,
+      then: (schema) => schema.required('Required field'),
+      otherwise: (schema) => schema.nullable().optional(),
+    });
+
+/**
+ * Build the Yup schema behind the deprecated `validationSchema` of the cost calculator bag.
+ */
+export function buildValidationSchema({
+  regions,
+  employerBillingCurrency,
+  includeEstimationTitle,
+}: Omit<CostCalculatorSchemaParams, 'countries' | 'currencies'>) {
+  const managementFeeLimit = getManagementFeeLimit(employerBillingCurrency);
+  const managementFee = number()
+    .transform((value) => (isNaN(value) ? undefined : value))
+    .min(0, 'Management fee must be greater than or equal to 0');
+
+  return object({
+    country: string().required('Required field'),
+    region:
+      regions.length > 0 ? string().required('Region is required') : string(),
+    currency: string().required('Required field'),
+    hiring_budget: string().oneOf(
+      jsonSchema.data.schema.properties.hiring_budget.enum,
+      ({ value }) => `The option "${value}" is not valid.`,
+    ),
+    salary: salaryValidationSchema('salary'),
+    salary_conversion: salaryValidationSchema('salary_conversion'),
+    salary_converted: string().required('Required field'),
+    estimation_title: includeEstimationTitle
+      ? string().required('Required field')
+      : string(),
+    management: object({
+      management_fee: managementFeeLimit
+        ? managementFee.max(
+            managementFeeLimit.maximum,
+            managementFeeLimit.message,
+          )
+        : managementFee,
+    }),
+  });
 }
 
 /**

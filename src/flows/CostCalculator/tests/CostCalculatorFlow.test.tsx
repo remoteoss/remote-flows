@@ -123,6 +123,23 @@ describe('CostCalculatorFlow', () => {
     expect(hiringBudgetRadio).toBeChecked();
   });
 
+  it('should rename the salary field when the hiring budget option is picked', async () => {
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        hiringBudget: 'employee_annual_salary',
+      },
+    });
+
+    await userEvent.click(
+      await screen.findByRole('radio', { name: /my hiring budget/i }),
+    );
+
+    expect(
+      await screen.findByRole('textbox', { name: /hiring budget/i }),
+    ).toBeInTheDocument();
+  });
+
   it('should render the 3 comboboxes when selecting a country with region', async () => {
     renderComponent({
       defaultValues: {
