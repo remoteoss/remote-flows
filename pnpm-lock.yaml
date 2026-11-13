@@ -345,8 +345,8 @@ importers:
         specifier: 18.0.8
         version: 18.0.8
       filesize:
-        specifier: 11.0.26
-        version: 11.0.26
+        specifier: 11.0.30
+        version: 11.0.30
       glob:
         specifier: 13.0.6
         version: 13.0.6
@@ -2632,8 +2632,8 @@ packages:
   fflate@0.8.3:
     resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
 
-  filesize@11.0.26:
-    resolution: {integrity: sha512-CgbdcjFLDJzMUnxQxHZ5uVxREmTVkjoXnppVB0AH8X0N8Uz4CZarWZLFALLv/Ymyf6EEu1AgaLPS6laXiqBEWA==}
+  filesize@11.0.30:
+    resolution: {integrity: sha512-qaIUqg5pU4bdTZQG8w+v5IhPAlOHm/ifT+1NlBuPTlmIAKeBwG1CEYkaLYNLJCfDOGWb7QqXUyQnsYlIC7pAwA==}
     engines: {node: '>= 10.8.0'}
 
   fs-extra@11.4.0:
@@ -5541,7 +5541,7 @@ snapshots:
 
   fflate@0.8.3: {}
 
-  filesize@11.0.26: {}
+  filesize@11.0.30: {}
 
   fs-extra@11.4.0:
     dependencies:
