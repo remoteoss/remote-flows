@@ -21,4 +21,18 @@ describe('useIdentity', () => {
       company: { id: '754a654a-a442-469a-a5ec-267c9db3b268' },
     });
   });
+
+  it('does not refetch when another observer mounts after it has loaded', async () => {
+    const first = renderHook(() => useIdentity(), { wrapper: TestProviders });
+
+    await waitFor(() => {
+      expect(first.result.current.data).toBeDefined();
+    });
+
+    const second = renderHook(() => useIdentity(), { wrapper: TestProviders });
+
+    expect(second.result.current.data).toBeDefined();
+    expect(second.result.current.fetchStatus).toBe('idle');
+    expect(queryClient.getQueryState(['identity'])?.dataUpdateCount).toBe(1);
+  });
 });
