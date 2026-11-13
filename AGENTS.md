@@ -35,6 +35,7 @@ pnpm run seed:onboarding --country=XXX  # create an onboarding via API up to (no
 pnpm run seed:onboarding --country=XXX --env=sandbox  # same, but talks to the gateway directly using .env.sandbox at repo root (see scripts/seed-onboarding.ts) - no dev server needed
 pnpm run seed:onboarding --country=XXX --env=review   # same, using .env.review - the deployed demo app's credentials; use this for employments you'll open on the deployed app
 pnpm run seed:onboarding --country=XXX --basic-info=field=value,field=value  # force basic_information answers instead of the filler's pick, e.g. has_seniority_date=yes,seniority_date=2024-01-15
+pnpm run archive:employments --env=review [--status=active,incomplete] [--apply]  # sandbox only: archive a company's employments by status (default active); dry run unless --apply
 cd example && PORT=<port> npm run dev:env -- --env=<name>   # run the example app on .env.<name> from repo root only, ignoring example/.env - used by the verify-local-app skill
 ```
 
