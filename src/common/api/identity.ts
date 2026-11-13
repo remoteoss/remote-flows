@@ -12,6 +12,7 @@ export const useIdentity = ({ enabled }: { enabled?: boolean } = {}) => {
   return useQuery({
     queryKey: ['identity'],
     enabled,
+    staleTime: Infinity,
     queryFn: () =>
       getV1IdentityCurrent({
         client: client as Client,
