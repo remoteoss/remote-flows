@@ -45,7 +45,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   BOL: {
     // Bolivia
-    contract_details: 1,
+    contract_details: 5,
   },
   BRA: {
     // Brazil
@@ -73,7 +73,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CRI: {
     // Costa Rica
-    contract_details: 5,
+    contract_details: 6,
   },
   CYP: {
     // Cyprus
@@ -313,7 +313,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   SVK: {
     // Slovakia
-    contract_details: 1,
+    contract_details: 6,
   },
   SVN: {
     // Slovenia
@@ -337,7 +337,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   TWN: {
     // Taiwan
-    contract_details: 1,
+    contract_details: 5,
   },
   UGA: {
     // Uganda

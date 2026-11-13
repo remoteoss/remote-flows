@@ -1,10 +1,11 @@
-import { useMemo } from 'react';
+import { createElement, useMemo } from 'react';
 import { useMutation, useQuery, queryOptions } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import {
   BulkContractorInvoiceScheduleCreateParams,
   ContractorInvoiceScheduleCreateParams,
   getV1ContractorInvoiceSchedules,
+  getV1ContractorInvoiceSequence,
   patchV1ContractorInvoiceSchedulesId2,
   postV1ContractorInvoiceSchedules,
   postV1EmploymentsEmploymentIdContractorInvoicesPreview,
@@ -13,15 +14,42 @@ import {
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
+import { useDeepStable } from '@/src/common/hooks';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
 import { INVOICE_SCHEDULE_STATUS } from '@/src/common/invoice-schedules/constants';
-import { buildCreateInvoiceScheduleSchema } from '@/src/common/invoice-schedules/json-schema';
+import {
+  buildCreateInvoiceScheduleSchema,
+  INVOICE_NUMBER_SEQUENCE_FIELD,
+} from '@/src/common/invoice-schedules/json-schema';
+import { InvoiceNumberSequenceLink } from '@/src/common/invoice-schedules/components/InvoiceNumberSequence/InvoiceNumberSequenceLink';
+import { InvoiceNumberSequenceBanner } from '@/src/common/invoice-schedules/components/InvoiceNumberSequence/InvoiceNumberSequenceBanner';
 import {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
+  describeInvoiceNumberSequence,
 } from '@/src/common/invoice-schedules/utils';
 import { JSFModify } from '@/src/flows/types';
+
+/**
+ * The company's invoice number sequence as text, or null when it has none or it is off.
+ * A failed request counts as no sequence, so the form still renders.
+ */
+const useInvoiceNumberSequenceText = ({ enabled }: { enabled?: boolean }) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['contractor-invoice-sequence'],
+    enabled,
+    retry: false,
+    queryFn: () => getV1ContractorInvoiceSequence({ client: client as Client }),
+    select: (response) => {
+      const sequence = response.data?.data?.contractor_invoice_sequence;
+      return sequence?.enabled && sequence.fields.length
+        ? describeInvoiceNumberSequence(sequence.fields)
+        : null;
+    },
+  });
+};
 
 type UseGetCreateInvoiceScheduleSchemaParams = {
   enabled?: boolean;
@@ -63,7 +91,15 @@ export const useGetCreateInvoiceScheduleSchema = ({
     },
   });
 
+  const { data: invoiceNumberSequence, isLoading: isLoadingSequence } =
+    useInvoiceNumberSequenceText({ enabled });
+
   const schema = useMemo(() => {
+    // The form is built once, so wait until the sequence is known.
+    if (isLoadingSequence) {
+      return undefined;
+    }
+
     // Callers know their employment up front, so there is always a currency list on the
     // way — render nothing until it arrives rather than a currency field with no options.
     if (!enabled || !currencies) {
@@ -76,13 +112,53 @@ export const useGetCreateInvoiceScheduleSchema = ({
       ),
       isContractorOfRecord,
       includeFieldsets,
+      invoiceNumberSequence: invoiceNumberSequence ?? undefined,
     });
-  }, [enabled, currencies, isContractorOfRecord, includeFieldsets]);
+  }, [
+    enabled,
+    currencies,
+    isContractorOfRecord,
+    includeFieldsets,
+    invoiceNumberSequence,
+    isLoadingSequence,
+  ]);
+
+  const stableJsfModify = useDeepStable(jsfModify);
+
+  const modifyWithSequenceUi = useMemo(() => {
+    const bannerField =
+      stableJsfModify?.fields?.[INVOICE_NUMBER_SEQUENCE_FIELD];
+
+    return {
+      ...stableJsfModify,
+      fields: {
+        ...stableJsfModify?.fields,
+        number: {
+          ...stableJsfModify?.fields?.number,
+          presentation: {
+            ...stableJsfModify?.fields?.number?.presentation,
+            description: () => createElement(InvoiceNumberSequenceLink),
+          },
+        },
+        ...(invoiceNumberSequence
+          ? {
+              [INVOICE_NUMBER_SEQUENCE_FIELD]: {
+                ...bannerField,
+                presentation: {
+                  Component: InvoiceNumberSequenceBanner,
+                  ...bannerField?.presentation,
+                },
+              },
+            }
+          : {}),
+      },
+    };
+  }, [stableJsfModify, invoiceNumberSequence]);
 
   const headlessForm = useHeadlessForm({
     schema,
     initialValues,
-    options: { jsfModify },
+    options: { jsfModify: modifyWithSequenceUi },
     strategy: 'buildOnce',
   });
 
@@ -91,7 +167,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
     handleValidation: headlessForm.handleValidation,
     onValuesChange: headlessForm.onValuesChange,
     parseFormValues: headlessForm.parseFormValues,
-    isLoading,
+    isLoading: isLoading || isLoadingSequence,
   };
 };
 

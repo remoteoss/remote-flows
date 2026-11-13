@@ -61,6 +61,21 @@ describe('NumberField Component', () => {
     });
   });
 
+  it('does not hand the field ref to the inner text field', () => {
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    renderWithFormContext(defaultProps);
+
+    expect(consoleError).not.toHaveBeenCalledWith(
+      expect.stringContaining('Function components cannot be given refs'),
+      expect.anything(),
+      expect.anything(),
+    );
+    consoleError.mockRestore();
+  });
+
   it('renders the default implementation correctly', () => {
     renderWithFormContext(defaultProps);
 

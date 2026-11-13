@@ -75,7 +75,7 @@ export type CreatePreOnboardingDocumentResponse = {
 export type CreateCurrencyCustomFieldDefinitionParams = {
   data_entry_access: CustomFieldDataEntryAccess;
   metadata: {
-    currency?: CurrencyCode;
+    currency?: NullableCurrencyCode;
   };
   name: string;
   required: boolean;
@@ -373,11 +373,11 @@ export type EmploymentCustomFieldValueResponse = {
  * PeriodProperties
  */
 export type PeriodProperties = {
-  nextPeriodEndDate?: Date;
-  paymentDate: Date;
-  periodEndDate: Date;
-  periodStartDate: Date;
-  priorPeriodEndDate?: Date;
+  nextPeriodEndDate?: GphDate;
+  paymentDate: GphDate;
+  periodEndDate: GphDate;
+  periodStartDate: GphDate;
+  priorPeriodEndDate?: GphDate;
 };
 
 /**
@@ -491,6 +491,15 @@ export type ConvertCurrency = {
   target_amount: number;
   target_currency: CurrencyDefinition;
 };
+
+/**
+ * AdpSubscriptionOrderEventResponse
+ *
+ * The answer to an ADP Marketplace event: either the success acknowledgement or the error one.
+ */
+export type AdpSubscriptionOrderEventResponse =
+  | AdpSubscriptionOrderSuccessAck
+  | AdpSubscriptionOrderErrorAck;
 
 /**
  * DeclinedWorkAuthozation
@@ -708,6 +717,17 @@ export type EmploymentCustomField = {
 };
 
 /**
+ * LeavePolicySummaryBooked
+ *
+ * Includes all upcoming requested time off.
+ */
+export type LeavePolicySummaryBooked = {
+  days: number;
+  hours: number;
+  type: 'limited';
+};
+
+/**
  * PayItemProviderDataParams
  */
 export type PayItemProviderDataParams = {
@@ -725,7 +745,7 @@ export type PayItemProviderDataParams = {
    * Hourly rate in cents
    */
   hourly_rate?: number;
-  hourly_rate_currency_code?: CurrencyCode;
+  hourly_rate_currency_code?: NullableCurrencyCode;
   /**
    * **Deprecated — accepted and ignored.** Express a deduction as a negative `amount`.
    *
@@ -1061,6 +1081,17 @@ export type BillingDocumentBreakdownItem = {
 };
 
 /**
+ * LeavePolicySummaryUsed
+ *
+ * Includes only approved time off in the past.
+ */
+export type LeavePolicySummaryUsed = {
+  days: number;
+  hours: number;
+  type: 'limited';
+};
+
+/**
  * BillingDocumentBreakdownResponse
  *
  * Information about a billing document breakdown
@@ -1136,6 +1167,7 @@ export type Employment = {
    * A reference code for the employment record in the calling integration's own system.
    * Private to that integration — no other integration can read or overwrite it.
    * Null when the integration has not set one.
+   * See [Your own IDs on Remote records](https://developer.remote.com/docs/your-own-ids-on-remote-records).
    *
    */
   partner_external_id?: string | null;
@@ -1403,7 +1435,7 @@ export type PreOnboardingDocumentRequirement = {
    */
   description: string;
   /**
-   * Timestamp when the customer acknowledged the constraints (if any).
+   * Timestamp when the customer acknowledged the constraints, if they have.
    */
   document_constraints_ack_at?: string | null;
   /**
@@ -1415,7 +1447,7 @@ export type PreOnboardingDocumentRequirement = {
    */
   name: string;
   /**
-   * Whether the customer must acknowledge the hiring constraints of the country before creating a document.
+   * Whether the customer must acknowledge the hiring constraints of the country before creating a document. Acknowledge them with `POST .../pre-onboarding-requirements/:requirement_slug/acknowledge`, taking the acknowledgement requirement's slug from `GET .../pre-onboarding-requirements`.
    */
   needs_constraints_ack: boolean;
   /**
@@ -1470,9 +1502,9 @@ export type BenefitOffersEmployment = {
 /**
  * CurrencyCode
  *
- * Currency code of the SWIFT fee. Only present when processing_fee is set.
+ * Currency code in [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) format.
  */
-export type CurrencyCode = string | null;
+export type CurrencyCode = string;
 
 /**
  * ListEmployeePayslipsResponse
@@ -1844,7 +1876,7 @@ export type PayItem = {
    */
   end_date: string | null;
   /**
-   * Pay item's unique identifier. Editing `amount` or `effective_date` creates a new version with a new `id`; every `id` this API returned for a pay item edited through `PATCH` keeps working on `PATCH` and `DELETE` and resolves to the current version. A monthly payment generated from a recurring pay item can be regenerated with a new `id` when the recurring item changes; its old `id` then returns 404.
+   * Pay item's unique identifier. Editing `amount` or `effective_date` creates a new version with a new `id`; every `id` this API returned for a pay item edited through `PATCH` keeps working on `PATCH` and `DELETE` and resolves to the current version, except for a payment generated from a recurring pay item, which returns 422.
    *
    */
   id: string;
@@ -1852,6 +1884,7 @@ export type PayItem = {
    * A reference code for the pay item record in the calling integration's own system.
    * Private to that integration — no other integration can read or overwrite it.
    * Null when the integration has not set one.
+   * See [Your own IDs on Remote records](https://developer.remote.com/docs/your-own-ids-on-remote-records).
    *
    */
   partner_external_id?: string | null;
@@ -1888,11 +1921,6 @@ export type MinimalTimesheet = {
    */
   submitted_at: string | null;
 };
-
-/**
- * ConflictErrorResponse
- */
-export type ConflictErrorResponse = ValidationError | MessageResponse;
 
 /**
  * IdentityCurrentResponse
@@ -2274,6 +2302,7 @@ export type EmploymentBasicResponse = {
    * A reference code for the employment record in the calling integration's own system.
    * Private to that integration — no other integration can read or overwrite it.
    * Null when the integration has not set one.
+   * See [Your own IDs on Remote records](https://developer.remote.com/docs/your-own-ids-on-remote-records).
    *
    */
   partner_external_id?: string | null;
@@ -2677,8 +2706,6 @@ export type ValidateResignationRequestParams =
 
 /**
  * LimitedDaysandHoursResponse
- *
- * Includes all upcoming requested time off.
  */
 export type LimitedDaysandHoursResponse = {
   days: number;
@@ -2798,6 +2825,17 @@ export type ListDirectOffboardingResponse = {
      */
     total_pages?: number;
   };
+};
+
+/**
+ * LeavePolicySummaryTaken
+ *
+ * Includes all time off (past and future, pending or approved).
+ */
+export type LeavePolicySummaryTaken = {
+  days: number;
+  hours: number;
+  type: 'limited';
 };
 
 /**
@@ -3164,8 +3202,10 @@ export type EmploymentV2UpdateParams = {
    * A reference code for the employment record in the calling integration's own system.
    * Private to that integration — no other integration can read or overwrite it.
    * Omit the field to leave the value unchanged; send `null` or an empty string to clear
-   * it. Surrounding whitespace is trimmed off. It can be set at any employment status, and the same
+   * it. At most 64 characters, counting any surrounding whitespace sent; that whitespace is
+   * then trimmed off. It can be set at any employment status, and the same
    * value may be used on several employments (for example a rehire).
+   * See [Your own IDs on Remote records](https://developer.remote.com/docs/your-own-ids-on-remote-records).
    *
    */
   partner_external_id?: string | null;
@@ -3207,9 +3247,18 @@ export type ImportJobRow = {
         };
   };
   /**
-   * Row metadata. For login-email-selection-enabled imports (e.g. EOR bulk invite), each reviewed row carries a `login_email_signals` object with the per-row login-email review signals.
+   * Row metadata. For login-email-selection-enabled imports (e.g. EOR bulk invite), each reviewed row carries a `login_email_signals` object with the per-row login-email review signals. For bulk Global Payroll invitations, a sent row carries `invite_outcome`.
    */
   metadata?: {
+    /**
+     * Bulk Global Payroll invitations only: what the row's employee was sent. `already_onboarded` means they were already on the platform, so nothing was due.
+     */
+    invite_outcome?:
+      | 'invited'
+      | 'conversion_completed'
+      | 'reminder_sent'
+      | 'notification_sent'
+      | 'already_onboarded';
     /**
      * LoginEmailSignals
      *
@@ -3252,6 +3301,10 @@ export type ImportJobRow = {
   row_errors?: {
     [key: string]: unknown;
   };
+  /**
+   * The row's validation errors outside the requested `column_fields`, then its submission errors with no field name or for a field outside them, unless the row is successful or imported (those rows keep the submission errors of an earlier failed submit). Only present when the rows were requested with `row_level_errors=true`.
+   */
+  row_level_errors?: Array<ImportJobRowError>;
   row_number: number;
   /**
    * The id of the schema variant this row's fields follow, a key of `row_schema_variants` on the job-scoped json-schema response. `null` when the row uses the job-level schema. Only present for job types with per-row schema variants.
@@ -3645,6 +3698,13 @@ export type CountrySummary = {
 };
 
 /**
+ * PayslipFileContent
+ *
+ * The payslip file's raw bytes.
+ */
+export type PayslipFileContent = Blob | File;
+
+/**
  * ResignationOffboarding
  *
  * An offboarding request initiated by the employee (a resignation). Includes the employee's proposed last working day, reason, and status tracking through Remote's process.
@@ -3791,6 +3851,17 @@ export type ContractorInvoiceSchedule = {
 };
 
 /**
+ * LeavePolicySummaryUpcomingRequested
+ *
+ * Includes all upcoming requested time off.
+ */
+export type LeavePolicySummaryUpcomingRequested = {
+  days: number;
+  hours: number;
+  type: 'limited';
+};
+
+/**
  * SSOConfigurationDetailsResponse
  *
  * SSO Configuration Details response
@@ -3869,8 +3940,8 @@ export type ClientCredentialsParams = {
  * Stage
  */
 export type Stage = {
-  completionDate?: Date;
-  dueDate?: Date;
+  completionDate?: GphDate;
+  dueDate?: GphDate;
   label: string;
   state: 'In Progress' | 'Not Yet Started' | 'Error' | 'Complete' | 'Warning';
 };
@@ -3887,7 +3958,7 @@ export type OffboardingResponse = {
 /**
  * EmploymentDocument
  *
- * Employment document file
+ * Employment document file. `null` when there is no document to share with you.
  */
 export type EmploymentDocument = {
   /**
@@ -4074,8 +4145,10 @@ export type EmploymentFullParams = {
    * A reference code for the employment record in the calling integration's own system.
    * Private to that integration — no other integration can read or overwrite it.
    * Omit the field to leave the value unchanged; send `null` or an empty string to clear
-   * it. Surrounding whitespace is trimmed off. It can be set at any employment status, and the same
+   * it. At most 64 characters, counting any surrounding whitespace sent; that whitespace is
+   * then trimmed off. It can be set at any employment status, and the same
    * value may be used on several employments (for example a rehire).
+   * See [Your own IDs on Remote records](https://developer.remote.com/docs/your-own-ids-on-remote-records).
    *
    */
   partner_external_id?: string | null;
@@ -4154,6 +4227,22 @@ export type CostCalculatorCountryLevelRegion = {
 };
 
 /**
+ * AdpSubscriptionOrderSuccessAck
+ *
+ * The answer to ADP when the event was received. ADP's own connectivity test (a call without `eventUrl`) is answered with `success` only.
+ */
+export type AdpSubscriptionOrderSuccessAck = {
+  /**
+   * The organization identifier from the event. A value does not mean the subscription was saved. Absent for ADP's connectivity test, and may be `null`.
+   */
+  accountIdentifier?: string | null;
+  /**
+   * `true` means the event was received. It is also sent when the event could not be saved.
+   */
+  success: true;
+};
+
+/**
  * AccountsAssignedRoles
  */
 export type AccountsAssignedRoles = Array<{
@@ -4166,11 +4255,11 @@ export type AccountsAssignedRoles = Array<{
     | 'secondary_reports'
     | 'direct_reports'
     | 'employment_countries'
-    | 'assigned_billing_legal_entities'
+    | 'direct_and_indirect_reports'
     | 'employment_departments'
     | 'employment_company_structure_nodes'
-    | 'direct_and_indirect_reports'
-    | 'onboarding_reports';
+    | 'onboarding_reports'
+    | 'assigned_billing_legal_entities';
   name: string;
   slug: string;
   type?: 'default' | 'custom' | 'template' | 'owner';
@@ -4445,6 +4534,10 @@ export type CountriesResponse = {
  *
  * The assertion must be signed with the client secret (HS256).
  *
+ * Remote must allow the integration to act on behalf of users, and the integration must manage the subject's company.
+ * Remote can also limit an integration to grants that carry a user's consent, such as the Authorization Code flow;
+ * this grant is then refused.
+ *
  * **Example — minting an employee token to submit a residential address:**
  *
  * ```
@@ -4586,7 +4679,7 @@ export type Currency = {
 export type Payment = {
   bankValueNumber?: Amount;
   fields?: Array<CustomField>;
-  payrollFundedDate: Date;
+  payrollFundedDate: GphDate;
 };
 
 /**
@@ -4813,6 +4906,14 @@ export type BulkEmploymentImportJob = {
    * The number of processed rows, regardless of success or failure
    */
   processed_count: number;
+  /**
+   * Row-data fields this uploader matches on when a re-uploaded CSV is merged into the draft. Empty when the uploader cannot merge.
+   */
+  reupload_merge_fields?: Array<string>;
+  /**
+   * How a re-uploaded CSV may be applied to this uploader's existing rows. The uploader lists them with `reupload_modes` in its config, and an empty list means none is offered. While the `bulk_uploader_reupload_modes` flag is off only `replace` is listed.
+   */
+  reupload_modes?: Array<'replace' | 'merge_or_add' | 'merge_only' | 'append'>;
   /**
    * Metadata only Remote sets for the import job, for example whether it is a self-serve job
    */
@@ -5086,9 +5187,10 @@ export type MinimalUser = {
    */
   profile_picture?: string | null;
   /**
-   * Slug
+   * Names of fields redacted because the caller lacks the required attribute permission
    */
-  slug: string;
+  redacted_fields?: Array<string>;
+  slug: Slug;
   status?:
     | 'active'
     | 'cancelled'
@@ -5188,6 +5290,8 @@ export type MinimalPayrollRun = {
    * - `one_off`: Ad-hoc off-cycle payment.
    * - `pro_forma`: Simulated run for cost estimation.
    * - `tax_documents`: Tax document generation only.
+   * - `year_end_reports`: Year-end run holding employees' year-end tax documents.
+   * - `employer_year_end_reports`: Year-end run holding company-level reports for the employer to review and approve. Global Payroll only.
    * - `expenses`: Dedicated expense reimbursement run.
    * - `parallel`: Supplementary run alongside the main payroll.
    *
@@ -5198,6 +5302,7 @@ export type MinimalPayrollRun = {
     | 'pro_forma'
     | 'tax_documents'
     | 'year_end_reports'
+    | 'employer_year_end_reports'
     | 'expenses'
     | 'parallel';
 };
@@ -5827,6 +5932,24 @@ export type V2TerminationRequest = {
 };
 
 /**
+ * ContractOriginResponse
+ *
+ * Either `data.status` (when no contract document is created) or `data.slug` (when one is), depending on the `contract_origin` that was set.
+ */
+export type ContractOriginResponse = {
+  data: {
+    /**
+     * ID of the contract document that was created. Returned when `contract_origin` is `remote_contract` or `custom_remote_contract`. Pass it as the contract document ID to the contract document endpoints (`/contractors/employments/{employment_id}/contract-documents/{id}` and its `sign` action). Calling this endpoint again creates a new contract document and archives the pending one, so keep the ID from the latest call.
+     */
+    slug?: string;
+    /**
+     * Always `"ok"`. Returned when no contract document is created (`contract_origin` is `provided_by_customer`).
+     */
+    status?: 'ok';
+  };
+};
+
+/**
  * TimeoffDaysAndHours
  */
 export type TimeoffDaysAndHours = {
@@ -5996,7 +6119,7 @@ export type CompanyWithTokensResponse = {
  * Payload shape used to create invoice schedules.
  */
 export type ContractorInvoiceScheduleCreateParams = {
-  currency: CurrencyCode;
+  currency: NullableCurrencyCode;
   custom_days?: ContractorInvoiceScheduleCustomDays;
   /**
    * Employment identifier
@@ -6291,6 +6414,8 @@ export type PayrollRun = {
    * - `one_off`: An ad-hoc payroll run outside the regular cycle, typically for off-cycle payments.
    * - `pro_forma`: A simulated payroll run used for cost estimation purposes. Not actually processed.
    * - `tax_documents`: A payroll run for generating tax-related documents only.
+   * - `year_end_reports`: A year-end run holding employees' year-end tax documents (e.g. T4, RL-1).
+   * - `employer_year_end_reports`: A year-end run holding company-level reports for the employer to review and approve. Global Payroll only.
    * - `expenses`: A payroll run dedicated to reimbursing approved expenses.
    * - `parallel`: A supplementary payroll run that runs alongside the main payroll for the same period.
    *
@@ -6301,6 +6426,7 @@ export type PayrollRun = {
     | 'pro_forma'
     | 'tax_documents'
     | 'year_end_reports'
+    | 'employer_year_end_reports'
     | 'expenses'
     | 'parallel';
 };
@@ -6376,7 +6502,7 @@ export type BillingDocumentsResponse = {
  * Payload shape used to update invoice schedules.
  */
 export type UpdateScheduleContractorInvoiceParams = {
-  currency?: CurrencyCode;
+  currency?: NullableCurrencyCode;
   custom_days?: ContractorInvoiceScheduleCustomDays;
   /**
    * List of invoice items that composes the overall invoice amount.
@@ -6859,6 +6985,7 @@ export type MinimalEmployment = {
    * A reference code for the employment record in the calling integration's own system.
    * Private to that integration — no other integration can read or overwrite it.
    * Null when the integration has not set one.
+   * See [Your own IDs on Remote records](https://developer.remote.com/docs/your-own-ids-on-remote-records).
    *
    */
   partner_external_id: string | null;
@@ -6965,6 +7092,8 @@ export type ResourceErrorResponse = {
       | 'parameter_value_invalid'
       | 'parameter_value_unknown'
       | 'request_body_empty'
+      | 'request_idempotency_in_progress'
+      | 'request_idempotency_key_reused'
       | 'request_internal_server_error'
       | 'resource_already_exists'
       | 'resource_invalid_state'
@@ -8233,8 +8362,10 @@ export type UpdatePayItemParams = {
    * A reference code for the pay item record in the calling integration's own system.
    * Private to that integration — no other integration can read or overwrite it.
    * Omit the field to leave the value unchanged; send `null` or an empty string to clear
-   * it. Surrounding whitespace is trimmed off. A value can be held by one live pay item at a time, per integration and company; editing a
-   * pay item keeps its value on the new version. At most 64 characters, after trimming.
+   * it. At most 64 characters, counting any surrounding whitespace sent; that whitespace is
+   * then trimmed off. A value can be held by one live pay item at a time, per integration and company; editing a
+   * pay item keeps its value on the new version.
+   * See [Your own IDs on Remote records](https://developer.remote.com/docs/your-own-ids-on-remote-records).
    *
    */
   partner_external_id?: string | null;
@@ -8263,9 +8394,9 @@ export type PayGroup = {
    */
   payGroupName: string;
   payGroupReferences?: Array<string>;
-  paymentDate: Date;
-  periodEndDate: Date;
-  periodStartDate: Date;
+  paymentDate: GphDate;
+  periodEndDate: GphDate;
+  periodStartDate: GphDate;
   runType?: ReferencedItem;
   status?: Status;
 };
@@ -8522,6 +8653,20 @@ export type UpdateIncentiveParams = CommonIncentiveParams & {
 };
 
 /**
+ * ContractorInvoiceSequence
+ *
+ * The company's contractor invoice sequence. When it is enabled, invoice numbers are generated from it and a number sent on an invoice schedule is not used.
+ */
+export type ContractorInvoiceSequence = {
+  enabled: boolean;
+  /**
+   * Ordered list of fields that make up the invoice number.
+   */
+  fields: Array<ContractorInvoiceSequenceField>;
+  id: UuidSlug;
+};
+
+/**
  * FileParams
  *
  * Parameters to upload a file
@@ -8570,7 +8715,7 @@ export type LeavePolicySummary = {
    */
   balance: UnlimitedDaysandHoursResponse | LimitedDaysandHoursResponse;
   /**
-   * LimitedDaysandHoursResponse
+   * LeavePolicySummaryBooked
    *
    * Includes all upcoming requested time off.
    */
@@ -8587,7 +8732,7 @@ export type LeavePolicySummary = {
     | LimitedDaysandHoursResponse;
   leave_policy: EmployeeLeavePolicy;
   /**
-   * LimitedDaysandHoursResponse
+   * LeavePolicySummaryPendingApproval
    *
    * Includes requested timeoffs (not approved) in the past or in the future.
    */
@@ -8597,7 +8742,7 @@ export type LeavePolicySummary = {
     type: 'limited';
   };
   /**
-   * LimitedDaysandHoursResponse
+   * LeavePolicySummaryTaken
    *
    * Includes all time off (past and future, pending or approved).
    */
@@ -8607,7 +8752,7 @@ export type LeavePolicySummary = {
     type: 'limited';
   };
   /**
-   * LimitedDaysandHoursResponse
+   * LeavePolicySummaryUpcomingApproved
    *
    * Includes all upcoming approved time off.
    */
@@ -8617,7 +8762,7 @@ export type LeavePolicySummary = {
     type: 'limited';
   };
   /**
-   * LimitedDaysandHoursResponse
+   * LeavePolicySummaryUpcomingRequested
    *
    * Includes all upcoming requested time off.
    */
@@ -8627,7 +8772,7 @@ export type LeavePolicySummary = {
     type: 'limited';
   };
   /**
-   * LimitedDaysandHoursResponse
+   * LeavePolicySummaryUsed
    *
    * Includes only approved time off in the past.
    */
@@ -9193,7 +9338,7 @@ export type PayItemParams = {
    * Pay item type code. Mutually exclusive with `external_import_code` — provide exactly one.
    */
   code?: string;
-  currency?: CurrencyCode;
+  currency?: NullableCurrencyCode;
   custom_configuration?: PayItemCustomConfiguration;
   /**
    * Date the pay item is applied on (YYYY-MM-DD). For an original submission this is the day worked; for a correction it is the day the correction is submitted, so the pay item lands in the right payroll run. The day being corrected goes in `provider_data.correction_effective_date`. On a leave-of-absence pay item this is the first day of the leave period, whose last day goes in `end_date`.
@@ -9217,8 +9362,10 @@ export type PayItemParams = {
    * When the integration already holds this value on a live pay item, the item updates that
    * pay item; otherwise it creates a new pay item holding the value. `null` or an empty string
    * fails the item. An item without the field always creates a new pay item, so sending it
-   * again creates a duplicate. Surrounding whitespace is trimmed off. A value can be held by one live pay item at a time, per integration and company; editing a
-   * pay item keeps its value on the new version. At most 64 characters, after trimming.
+   * again creates a duplicate. At most 64 characters, counting any surrounding whitespace
+   * sent; that whitespace is then trimmed off. A value can be held by one live pay item at a time, per integration and company; editing a
+   * pay item keeps its value on the new version.
+   * See [Your own IDs on Remote records](https://developer.remote.com/docs/your-own-ids-on-remote-records).
    *
    */
   partner_external_id?: string | null;
@@ -9245,7 +9392,7 @@ export type Job = {
     value?: string | number | boolean;
   }>;
   /**
-   * A description of the job's responsibilities and scope. Null if not set.
+   * A description of the job's responsibilities and scope. It may be plain text or HTML. HTML keeps only these tags: p, h1 to h6, strong, b, em, i, u, s, br, ul, ol, li, a, code, pre, blockquote, span and div, a text-align style on paragraphs and headings, and http, https and mailto links. Other tags are removed. Text over 10,000 bytes, and most text that looks like tags but has none of these, is returned HTML-escaped. Null if not set.
    */
   description?: string | null;
   /**
@@ -9601,9 +9748,9 @@ export type PayrollCalendar = {
 /**
  * PayslipDownloadResponse
  *
- * The binary content of the payslip file.
+ * The payslip file as a data URI: `data:<media type>;base64,` followed by the base64-encoded file.
  */
-export type PayslipDownloadResponse = Blob | File;
+export type PayslipDownloadResponse = string;
 
 /**
  * UpdateTravelLetterRequestParams
@@ -9800,6 +9947,30 @@ export type OnboardingReservesStatusResponse = {
 };
 
 /**
+ * FeatureFlag
+ *
+ * A feature flag that changes how the Remote API behaves, and whether it is on.
+ */
+export type FeatureFlag = {
+  /**
+   * `company`: the state is for the company in the path, and can differ between companies. The two `job_title_eligibility_check_*` flags are set per company instead. Any other flag that depends on the caller is evaluated for the token's user with a Company-scoped access token (either kind) or a Customer API token. A Client credentials access token has no user, so it gets the company owner's state, for reference only: the endpoints these flags change don't accept that token, so use one of the other tokens to see the state for its user. `environment`: the state is the same for every company in this environment.
+   */
+  applies_to: 'company' | 'environment';
+  /**
+   * What the flag changes in the Remote API when it is on.
+   */
+  description: string;
+  /**
+   * Whether the API acts as if the flag is on, in Sandbox. It doesn't tell you the flag's state in production. For the two job title check flags, at most one is on: the check mode the company gets, which is off when its integration may skip the check.
+   */
+  enabled: boolean;
+  /**
+   * The flag's name. It doesn't change while the flag exists.
+   */
+  name: string;
+};
+
+/**
  * MagicLinkParams
  *
  * Magic link params
@@ -9980,7 +10151,7 @@ export type ImportJobRowsResponse = {
       [key: string]: unknown;
     };
     /**
-     * Per-column error and valid row counts across all rows, keyed by the column's field path
+     * Per-column error and valid row counts, keyed by the column's field path. `error` counts each row once that has a field-level validation error or a current submission error with that field name; submission errors of successful and imported rows are not counted. Counts every row that is not deleted or skipped, or only the rows in `filter[status]` when it is given. `counts_by_status` always counts the whole job
      */
     counts_by_column?: {
       [key: string]: {
@@ -9999,6 +10170,10 @@ export type ImportJobRowsResponse = {
       unprocessable: number;
     };
     current_page: number;
+    /**
+     * Find-and-replace occurrences across all filtered rows, independent of pagination. Returned when include_match_count is true and replace_path and replace_value are provided. Exact matches and empty values count once per cell
+     */
+    match_count?: number;
     ordered_rows?: Array<number>;
     /**
      * ImportJobRows
@@ -10150,6 +10325,13 @@ export type CompanyManager = {
 };
 
 /**
+ * GPHDate
+ *
+ * Formatted as YYYY-MM-DD (always set TZ to UTC)
+ */
+export type GphDate = string;
+
+/**
  * EmploymentContractStatus
  *
  * The status of the employment contract.
@@ -10278,6 +10460,17 @@ export type CreateSingleSelectCustomFieldDefinitionParams = {
   required: boolean;
   type: 'single_select';
   visibility_scope: CustomFieldVisibilityScope;
+};
+
+/**
+ * LeavePolicySummaryPendingApproval
+ *
+ * Includes requested timeoffs (not approved) in the past or in the future.
+ */
+export type LeavePolicySummaryPendingApproval = {
+  days: number;
+  hours: number;
+  type: 'limited';
 };
 
 /**
@@ -10437,10 +10630,7 @@ export type TimesheetStatus =
 export type AccountsMinimalCompanyAdmin = {
   job_title?: string | null;
   name?: string;
-  /**
-   * Slug
-   */
-  slug?: string;
+  slug?: Slug;
 };
 
 /**
@@ -10455,7 +10645,7 @@ export type CorTerminationRequestId = string;
  */
 export type PayItemBulkCreateFailures = {
   /**
-   * Failure reason. Includes `employment_not_global_payroll` when the provided employment is not Global Payroll, `pay_item_code_not_allowed` / `pay_item_external_import_code_not_allowed` when the given identifier does not resolve to an allowed pay element, and `effective_date_after_termination_date` (as a `code`/`message` pair) when a `time_attendance` pay item's `effective_date` falls after the employment's termination date. It also includes `custom_configuration_required`, `custom_configuration_not_used` and `invalid_custom_configuration` (as `code`/`message`/`param`) when the pay item's `custom_configuration` doesn't match the pay code's. An item with a `partner_external_id` can also fail with `partner_external_id_not_available`, `partner_external_id_blank`, `partner_external_id_repeated_in_request`, `partner_external_id_ambiguous` or `partner_external_id_held_by_other_pay_item` (as `code`/`message`), with the errors `PATCH` returns when the matched pay item cannot be updated, or with `errors.partner_external_id` when the value is refused.
+   * Failure reason. Includes `employment_not_global_payroll` when the provided employment is not Global Payroll, `pay_item_code_not_allowed` / `pay_item_external_import_code_not_allowed` when the given identifier does not resolve to an allowed pay element, and `effective_date_after_termination_date` (as a `code`/`message` pair) when a `time_attendance` pay item's `effective_date` falls after the employment's termination date. It also includes `custom_configuration_required`, `custom_configuration_not_used` and `invalid_custom_configuration` (as `code`/`message`/`param`) when the pay item's `custom_configuration` doesn't match the pay code's. An item with a `partner_external_id` can also fail with `partner_external_id_not_available`, `partner_external_id_blank`, `partner_external_id_repeated_in_request`, `partner_external_id_ambiguous`, `partner_external_id_held_by_other_pay_item` or `partner_external_id_held_by_generated_pay_item` (as `code`/`message`), with the errors `PATCH` returns when the matched pay item cannot be updated, or with `errors.partner_external_id` when the value is refused.
    */
   error?:
     | string
@@ -11784,7 +11974,7 @@ export type EmploymentJobResponse = {
  * Set of invoice schedule attributes with failed validation.
  */
 export type ContractorInvoiceScheduleCreateResponseFailure = {
-  currency: CurrencyCode;
+  currency: NullableCurrencyCode;
   custom_days?: ContractorInvoiceScheduleCustomDays;
   /**
    * Employment identifier
@@ -11982,7 +12172,7 @@ export type WorkAuthorizationUser = {
  * Payload shape used to preview a contractor invoice before it's created.
  */
 export type PreviewContractorInvoiceParams = {
-  currency: CurrencyCode;
+  currency: NullableCurrencyCode;
   /**
    * List of invoice items that composes the overall invoice amount.
    */
@@ -12294,6 +12484,13 @@ export type WorkAuthorizationRequest = {
 };
 
 /**
+ * ProcessingFeeCurrencyCode
+ *
+ * Currency code of the SWIFT fee. Only present when processing_fee is set.
+ */
+export type ProcessingFeeCurrencyCode = string | null;
+
+/**
  * ContractorInvoicePaymentReference
  *
  * The reference to quote when paying: the transaction receipt number, or the Remote invoice number for Contractor of Record. Put it in the transfer memo, with the company name; Remote matches an incoming transfer on it.
@@ -12382,6 +12579,17 @@ export type ResignationFile = {
    * The file name
    */
   name: string;
+};
+
+/**
+ * LeavePolicySummaryUpcomingApproved
+ *
+ * Includes all upcoming approved time off.
+ */
+export type LeavePolicySummaryUpcomingApproved = {
+  days: number;
+  hours: number;
+  type: 'limited';
 };
 
 /**
@@ -12631,6 +12839,13 @@ export type EmploymentAdministrativeDetailsParams = {
 };
 
 /**
+ * NullableCurrencyCode
+ *
+ * Currency code in [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) format.
+ */
+export type NullableCurrencyCode = string | null;
+
+/**
  * EmploymentBasicInformationParams
  *
  * Employment basic information params.
@@ -12816,6 +13031,17 @@ export type IntegrationsScimUser = {
 };
 
 /**
+ * ContractorInvoiceSequenceResponse
+ *
+ * Response schema to show the company's contractor invoice sequence
+ */
+export type ContractorInvoiceSequenceResponse = {
+  data: {
+    contractor_invoice_sequence: ContractorInvoiceSequence;
+  };
+};
+
+/**
  * CreateSSOConfigurationResult
  */
 export type CreateSsoConfigurationResult = {
@@ -12971,6 +13197,15 @@ export type CreateContractEligibilityParams = {
 };
 
 /**
+ * PayslipFileForbiddenResponse
+ *
+ * Returned when the user the token acts for has no role that holds all the permissions this download needs, or can't open the payslip's file. A payslip outside the data scope of those roles answers 404.
+ */
+export type PayslipFileForbiddenResponse = {
+  message: string;
+};
+
+/**
  * UpdateWebhookCallbackParams
  *
  * Webhook callback update params. Provide either `subscribed_events` or `subscribe_to_all_events` (they are mutually exclusive). Omitting `subscribe_to_all_events` leaves the current subscription mode unchanged, so resending an event list does not disable all-events delivery. Setting `subscribe_to_all_events: false` requires a non-empty `subscribed_events`.
@@ -13120,6 +13355,27 @@ export type EmploymentBankAccountDetailsParams = {
   bank_account_details: {
     [key: string]: unknown;
   };
+};
+
+/**
+ * ContractorInvoiceSequenceField
+ *
+ * One part of the invoice number. Which other properties are set depends on `type`: `date_format` sets `format`, `text` sets `text`, `invoice_counter` sets `scope`, `padding`, `reset_frequency` and `initial_number`, and `custom_field` sets `custom_field_definition_slug`.
+ */
+export type ContractorInvoiceSequenceField = {
+  custom_field_definition_slug?: string;
+  format?: string;
+  initial_number?: number;
+  padding?: number;
+  reset_frequency?: string;
+  scope?: 'company' | 'contractor';
+  text?: string;
+  type:
+    | 'date_format'
+    | 'text'
+    | 'invoice_counter'
+    | 'custom_field'
+    | 'employment_short_slug';
 };
 
 /**
@@ -13466,6 +13722,26 @@ export type EmploymentStateTaxesParams = {
  *
  */
 export type ContractorInvoiceScheduleCustomDays = [number, number] | null;
+
+/**
+ * AdpSubscriptionOrderErrorAck
+ *
+ * The answer to ADP when the event could not be fetched or processed. ADP requires HTTP 200 with this body, never a 4xx or 5xx.
+ */
+export type AdpSubscriptionOrderErrorAck = {
+  /**
+   * One of ADP's predefined subscription response error codes. `TRANSPORT_ERROR`: the event URL was refused, or the fetch from ADP failed or returned an error status. `INVALID_RESPONSE`: anything else went wrong, including getting Tiger's ADP token.
+   */
+  errorCode: 'TRANSPORT_ERROR' | 'INVALID_RESPONSE';
+  /**
+   * A short description of the failure.
+   */
+  message: string;
+  /**
+   * Always the string `"false"`.
+   */
+  success: 'false';
+};
 
 /**
  * CompanyManagerBillingContactStatus
@@ -13913,8 +14189,10 @@ export type EmploymentCreateParams = {
    * A reference code for the employment record in the calling integration's own system.
    * Private to that integration — no other integration can read or overwrite it.
    * Omit the field to leave the value unchanged; send `null` or an empty string to clear
-   * it. Surrounding whitespace is trimmed off. It can be set at any employment status, and the same
+   * it. At most 64 characters, counting any surrounding whitespace sent; that whitespace is
+   * then trimmed off. It can be set at any employment status, and the same
    * value may be used on several employments (for example a rehire).
+   * See [Your own IDs on Remote records](https://developer.remote.com/docs/your-own-ids-on-remote-records).
    *
    */
   partner_external_id?: string | null;
@@ -14024,7 +14302,7 @@ export type MaybeEmail = Email | null;
  */
 export type CustomDate = {
   label: string;
-  value: Date;
+  value: GphDate;
 };
 
 /**
@@ -14124,6 +14402,15 @@ export type ContractorInvoiceScheduleItem = {
    * Describes invoice item intent.
    */
   description: string;
+};
+
+/**
+ * DeclineCancelTimeoffParams
+ *
+ * Decline an employee's request to cancel a time off
+ */
+export type DeclineCancelTimeoffParams = {
+  decline_reason: string | null;
 };
 
 /**
@@ -14241,6 +14528,17 @@ export type CompanyManagerUpdateParams = {
  * Total amount of the payment in cents, shared by every invoice in it. This is the amount the payment was raised for, not a running balance: when `status` is `partially_paid` Remote has already received part of it and the outstanding balance is lower. Remote contacts the company directly with that balance; it is not published here.
  */
 export type ContractorInvoicePaymentAmountDue = number;
+
+/**
+ * FeatureFlagsResponse
+ *
+ * The feature flags that change the Remote API for a company, sorted by name.
+ */
+export type FeatureFlagsResponse = {
+  data: {
+    feature_flags: Array<FeatureFlag>;
+  };
+};
 
 /**
  * CompanyCreationConflictErrorResponse
@@ -14638,7 +14936,7 @@ export type ContractorInvoice = {
    */
   processing_fee?: number | null;
   /**
-   * CurrencyCode
+   * ProcessingFeeCurrencyCode
    *
    * Currency code of the SWIFT fee. Only present when processing_fee is set.
    */
@@ -14657,12 +14955,7 @@ export type ContractorInvoice = {
    * The amount the contractor receives (pay out amount). Can be null if pay out is not guaranteed.
    */
   target_amount?: number | null;
-  /**
-   * CurrencyCode
-   *
-   * Currency code in [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) format.
-   */
-  target_currency?: string | null;
+  target_currency?: NullableCurrencyCode;
 };
 
 /**
@@ -14768,7 +15061,9 @@ export type EmploymentId = string;
  */
 export type FindOrCreatePreOnboardingDocumentParams = {
   /**
-   * Timestamp when the customer acknowledged the hiring constraints. Required when the requirement has `needs_constraints_ack: true`.
+   * **Deprecated — accepted and ignored.** Acknowledge the hiring constraints with `POST .../pre-onboarding-requirements/:requirement_slug/acknowledge` before creating the document, taking the slug from `GET .../pre-onboarding-requirements`.
+   *
+   * @deprecated
    */
   constraints_ack_at?: string | null;
   /**
@@ -14814,7 +15109,7 @@ export type ListEligibleLeadsResponse = {
  * Set of invoice schedule attributes that were successfully created.
  */
 export type ContractorInvoiceScheduleCreateResponseSuccess = {
-  currency: CurrencyCode;
+  currency: NullableCurrencyCode;
   custom_days?: ContractorInvoiceScheduleCustomDays;
   /**
    * Employment identifier
@@ -15192,9 +15487,9 @@ export type GetV1ContractAmendmentsSchemaData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -15708,9 +16003,9 @@ export type GetV1EmploymentsData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -15760,6 +16055,7 @@ export type GetV1EmploymentsData = {
      * for the employment; another integration's identifiers are never matched. Matching is
      * exact, including case. The same value may be set on several employments (for example
      * a rehire), so several results may be returned.
+     * See [Your own IDs on Remote records](https://developer.remote.com/docs/your-own-ids-on-remote-records).
      *
      */
     partner_external_id?: string;
@@ -15818,9 +16114,9 @@ export type PostV1EmploymentsData = {
   body?: EmploymentCreateParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -16342,6 +16638,10 @@ export type GetV1ContractorInvoicesData = {
      */
     contractor_invoice_schedule_id?: UuidSlug;
     /**
+     * Filters contractor invoices by the employment ID matching the value. Returns 404 when the employment does not exist or belongs to another company.
+     */
+    employment_id?: UuidSlug;
+    /**
      * Filters contractor invoices by date greater than or equal to the value.
      */
     date_from?: Date;
@@ -16584,9 +16884,9 @@ export type PostV1SandboxContractorsEmploymentsEmploymentIdRatesData = {
   body: SandboxCreateContractorRateParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -17041,9 +17341,9 @@ export type PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -17171,9 +17471,9 @@ export type GetV1CountriesCountryCodeHolidaysYearData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -17509,9 +17809,9 @@ export type GetV1IncentivesRecurringData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -17585,9 +17885,9 @@ export type PostV1IncentivesRecurringData = {
   body?: CreateRecurringIncentiveParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -17640,9 +17940,9 @@ export type PostV1SandboxBenefitRenewalRequestsData = {
   body: BenefitRenewalRequestsCreateBenefitRenewalRequest;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -17763,6 +18063,10 @@ export type GetV1EmploymentsEmploymentIdContractDocumentsErrors = {
    * Unauthorized
    */
   401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
   /**
    * Not Found
    */
@@ -17892,9 +18196,9 @@ export type GetV1ExpensesData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -17966,9 +18270,9 @@ export type PostV1ExpensesData = {
   body?: ParamsToCreateExpense;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -18210,7 +18514,7 @@ export type GetV1AdpUserAssignmentsData = {
   path?: never;
   query?: {
     /**
-     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch.
+     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch. An address Remote already received for an order, change, cancel or notice event is acknowledged with the same success answer, without being fetched or applied again.
      */
     eventUrl?: string;
   };
@@ -18223,9 +18527,9 @@ export type GetV1AdpUserAssignmentsErrors = {
    */
   401: UnauthorizedResponse;
   /**
-   * Unprocessable Entity
+   * Forbidden
    */
-  422: UnprocessableEntityResponse;
+  403: ForbiddenResponse;
 };
 
 export type GetV1AdpUserAssignmentsError =
@@ -18233,9 +18537,9 @@ export type GetV1AdpUserAssignmentsError =
 
 export type GetV1AdpUserAssignmentsResponses = {
   /**
-   * Success
+   * ADP acknowledgement, success or error (always HTTP 200)
    */
-  200: SuccessResponse;
+  200: AdpSubscriptionOrderEventResponse;
 };
 
 export type GetV1AdpUserAssignmentsResponse =
@@ -18593,9 +18897,9 @@ export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -18651,9 +18955,9 @@ export type PostV1MagicLinkData = {
   body: MagicLinkParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -18687,9 +18991,9 @@ export type DeleteV1IncentivesRecurringIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -18740,13 +19044,48 @@ export type DeleteV1IncentivesRecurringIdResponses = {
 export type DeleteV1IncentivesRecurringIdResponse =
   DeleteV1IncentivesRecurringIdResponses[keyof DeleteV1IncentivesRecurringIdResponses];
 
+export type GetV1ContractorInvoiceSequenceData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/v1/contractor-invoice-sequence';
+};
+
+export type GetV1ContractorInvoiceSequenceErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetV1ContractorInvoiceSequenceError =
+  GetV1ContractorInvoiceSequenceErrors[keyof GetV1ContractorInvoiceSequenceErrors];
+
+export type GetV1ContractorInvoiceSequenceResponses = {
+  /**
+   * Success
+   */
+  200: ContractorInvoiceSequenceResponse;
+};
+
+export type GetV1ContractorInvoiceSequenceResponse =
+  GetV1ContractorInvoiceSequenceResponses[keyof GetV1ContractorInvoiceSequenceResponses];
+
 export type GetV1IncentivesData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -18828,9 +19167,9 @@ export type PostV1IncentivesData = {
   body?: CreateOneTimeIncentiveParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -19199,9 +19538,9 @@ export type GetV1BillingDocumentsBillingDocumentIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -19294,6 +19633,67 @@ export type PostV1CostCalculatorEstimationPdfResponses = {
 
 export type PostV1CostCalculatorEstimationPdfResponse =
   PostV1CostCalculatorEstimationPdfResponses[keyof PostV1CostCalculatorEstimationPdfResponses];
+
+export type GetV1SandboxCompaniesCompanyIdFeatureFlagsData = {
+  body?: never;
+  headers: {
+    /**
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
+     *
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/companies/{company_id}/feature-flags';
+};
+
+export type GetV1SandboxCompaniesCompanyIdFeatureFlagsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1SandboxCompaniesCompanyIdFeatureFlagsError =
+  GetV1SandboxCompaniesCompanyIdFeatureFlagsErrors[keyof GetV1SandboxCompaniesCompanyIdFeatureFlagsErrors];
+
+export type GetV1SandboxCompaniesCompanyIdFeatureFlagsResponses = {
+  /**
+   * Success
+   */
+  200: FeatureFlagsResponse;
+};
+
+export type GetV1SandboxCompaniesCompanyIdFeatureFlagsResponse =
+  GetV1SandboxCompaniesCompanyIdFeatureFlagsResponses[keyof GetV1SandboxCompaniesCompanyIdFeatureFlagsResponses];
 
 export type GetV1EmploymentsBulkData = {
   body?: never;
@@ -19815,9 +20215,9 @@ export type GetV1CompaniesCompanyIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -19875,9 +20275,9 @@ export type PatchV1CompaniesCompanyId2Data = {
   body?: UpdateCompanyParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -19945,9 +20345,9 @@ export type PatchV1CompaniesCompanyIdData = {
   body?: UpdateCompanyParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -20340,7 +20740,7 @@ export type GetV1AdpSubscriptionChangesData = {
   path?: never;
   query?: {
     /**
-     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch.
+     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch. An address Remote already received for an order, change, cancel or notice event is acknowledged with the same success answer, without being fetched or applied again.
      */
     eventUrl?: string;
   };
@@ -20353,9 +20753,9 @@ export type GetV1AdpSubscriptionChangesErrors = {
    */
   401: UnauthorizedResponse;
   /**
-   * Unprocessable Entity
+   * Forbidden
    */
-  422: UnprocessableEntityResponse;
+  403: ForbiddenResponse;
 };
 
 export type GetV1AdpSubscriptionChangesError =
@@ -20363,9 +20763,9 @@ export type GetV1AdpSubscriptionChangesError =
 
 export type GetV1AdpSubscriptionChangesResponses = {
   /**
-   * Success
+   * ADP acknowledgement, success or error (always HTTP 200)
    */
-  200: SuccessResponse;
+  200: AdpSubscriptionOrderEventResponse;
 };
 
 export type GetV1AdpSubscriptionChangesResponse =
@@ -20375,9 +20775,9 @@ export type GetV1ContractAmendmentsData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -20439,9 +20839,9 @@ export type PostV1ContractAmendmentsData = {
   body?: CreateContractAmendmentParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -20563,6 +20963,67 @@ export type GetV1PayrollRunsPayrollRunIdResponses = {
 
 export type GetV1PayrollRunsPayrollRunIdResponse =
   GetV1PayrollRunsPayrollRunIdResponses[keyof GetV1PayrollRunsPayrollRunIdResponses];
+
+export type GetV1PayslipsPayslipIdDownloadData = {
+  body?: never;
+  headers: {
+    /**
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
+     *
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Payslip ID
+     */
+    payslip_id: string;
+  };
+  query?: never;
+  url: '/v1/payslips/{payslip_id}/download';
+};
+
+export type GetV1PayslipsPayslipIdDownloadErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: PayslipFileForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1PayslipsPayslipIdDownloadError =
+  GetV1PayslipsPayslipIdDownloadErrors[keyof GetV1PayslipsPayslipIdDownloadErrors];
+
+export type GetV1PayslipsPayslipIdDownloadResponses = {
+  /**
+   * Success
+   */
+  200: PayslipFileContent;
+};
+
+export type GetV1PayslipsPayslipIdDownloadResponse =
+  GetV1PayslipsPayslipIdDownloadResponses[keyof GetV1PayslipsPayslipIdDownloadResponses];
 
 export type GetV1ExpensesExpenseIdReceiptData = {
   body?: never;
@@ -20746,9 +21207,9 @@ export type GetV1TimeoffBalancesEmploymentIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -20980,9 +21441,9 @@ export type GetV1CountriesCountryCodeFormData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -21101,9 +21562,9 @@ export type GetV1ContractAmendmentsIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -21200,9 +21661,9 @@ export type GetV1CompanyManagersData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -21210,7 +21671,7 @@ export type GetV1CompanyManagersData = {
   path?: never;
   query?: {
     /**
-     * A Company ID to filter the results (only applicable for Integration Partners).
+     * The company the access token belongs to. Optional: the list always holds that company's managers, and any other company fails with "Company not found".
      */
     company_id?: string;
     /**
@@ -21268,9 +21729,9 @@ export type PostV1CompanyManagersData = {
   body?: CompanyManagerParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -21481,9 +21942,9 @@ export type GetV1BillingDocumentsData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -21557,9 +22018,9 @@ export type DeleteV1WebhookCallbacksIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -21970,9 +22431,9 @@ export type GetV1BenefitRenewalRequestsData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -22034,8 +22495,9 @@ export type PostV1WebhookCallbacksData = {
   body?: CreateWebhookCallbackParams;
   headers: {
     /**
-     * This endpoint works with any of the access tokens provided. You can use an access
-     * token obtained through the Client Credentials flow, the Authorization Code flow, or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
+     *
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -22340,7 +22802,7 @@ export type PostV1TimeoffTimeoffIdCancelRequestDeclineData = {
   /**
    * Timeoff
    */
-  body: DeclineTimeoffParams;
+  body: DeclineCancelTimeoffParams;
   path: {
     /**
      * Time Off ID
@@ -22641,7 +23103,7 @@ export type PostV1ContractorsEligibilityQuestionnaireErrors = {
   /**
    * Conflict
    */
-  409: ConflictErrorResponse;
+  409: ConflictResponse;
   /**
    * Unprocessable Entity
    */
@@ -22764,9 +23226,9 @@ export type PostV1SandboxCompaniesCompanyIdLegalEntitiesData = {
   };
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -22836,9 +23298,9 @@ export type GetV1EmploymentsEmploymentIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -22905,9 +23367,9 @@ export type PatchV1EmploymentsEmploymentId2Data = {
   body?: EmploymentFullParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -23014,9 +23476,9 @@ export type PatchV1EmploymentsEmploymentIdData = {
   body?: EmploymentFullParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -23688,9 +24150,9 @@ export type PostV1SandboxEmploymentsData = {
   body?: EmploymentCreateParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -23788,8 +24250,9 @@ export type GetV1CountriesData = {
   body?: never;
   headers: {
     /**
-     * This endpoint works with any of the access tokens provided. You can use an access
-     * token obtained through the Client Credentials flow, the Authorization Code flow, or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
+     *
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -24048,9 +24511,9 @@ export type PostV1ReadyData = {
   body?: CompleteOnboarding;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -24190,7 +24653,7 @@ export type PostV1EmploymentsEmploymentIdContractOriginResponses = {
   /**
    * Success
    */
-  200: SuccessResponse;
+  200: ContractOriginResponse;
 };
 
 export type PostV1EmploymentsEmploymentIdContractOriginResponse =
@@ -24201,7 +24664,7 @@ export type GetV1AdpSubscriptionOrdersData = {
   path?: never;
   query?: {
     /**
-     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch.
+     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch. An address Remote already received for an order, change, cancel or notice event is acknowledged with the same success answer, without being fetched or applied again.
      */
     eventUrl?: string;
   };
@@ -24214,9 +24677,9 @@ export type GetV1AdpSubscriptionOrdersErrors = {
    */
   401: UnauthorizedResponse;
   /**
-   * Unprocessable Entity
+   * Forbidden
    */
-  422: UnprocessableEntityResponse;
+  403: ForbiddenResponse;
 };
 
 export type GetV1AdpSubscriptionOrdersError =
@@ -24224,9 +24687,9 @@ export type GetV1AdpSubscriptionOrdersError =
 
 export type GetV1AdpSubscriptionOrdersResponses = {
   /**
-   * Success
+   * ADP acknowledgement, success or error (always HTTP 200)
    */
-  200: SuccessResponse;
+  200: AdpSubscriptionOrderEventResponse;
 };
 
 export type GetV1AdpSubscriptionOrdersResponse =
@@ -24236,9 +24699,9 @@ export type GetV1TimeoffTypesData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -24619,9 +25082,9 @@ export type GetV1PayslipsPayslipIdPdfData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -24865,9 +25328,9 @@ export type GetV1TimeoffIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -24925,9 +25388,9 @@ export type PatchV1TimeoffId2Data = {
   body: UpdateApprovedTimeoffParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -24985,9 +25448,9 @@ export type PatchV1TimeoffIdData = {
   body: UpdateApprovedTimeoffParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -25096,9 +25559,9 @@ export type PostV1ContractAmendmentsAutomatableData = {
   body?: CreateContractAmendmentParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -25366,9 +25829,9 @@ export type DeleteV1SandboxEmploymentsEmploymentIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -25426,9 +25889,9 @@ export type PatchV1SandboxEmploymentsEmploymentId2Data = {
   body?: EmploymentUpdateParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -25495,9 +25958,9 @@ export type PatchV1SandboxEmploymentsEmploymentIdData = {
   body?: EmploymentUpdateParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -25561,9 +26024,9 @@ export type GetV1EmploymentContractsEmploymentIdPendingChangesData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -25665,8 +26128,9 @@ export type PostV1DocumentsData = {
   body: FileParams;
   headers: {
     /**
-     * This endpoint works with any of the access tokens provided. You can use an access
-     * token obtained through the Client Credentials flow, the Authorization Code flow, or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
+     *
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -25708,9 +26172,9 @@ export type PostV1EmploymentsEmploymentIdInviteData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -25730,6 +26194,10 @@ export type PostV1EmploymentsEmploymentIdInviteErrors = {
    * Bad Request
    */
   400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
   /**
    * Conflict
    */
@@ -25761,9 +26229,9 @@ export type GetV1ExpensesIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -25992,9 +26460,9 @@ export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -26044,9 +26512,9 @@ export type PostV1BenefitRenewalRequestsBenefitRenewalRequestIdData = {
   body?: BenefitRenewalRequestsUpdateBenefitRenewalRequest;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -26139,7 +26607,7 @@ export type GetV1AdpSubscriptionStatusData = {
   path?: never;
   query?: {
     /**
-     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch.
+     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch. An address Remote already received for an order, change, cancel or notice event is acknowledged with the same success answer, without being fetched or applied again.
      */
     eventUrl?: string;
   };
@@ -26152,9 +26620,9 @@ export type GetV1AdpSubscriptionStatusErrors = {
    */
   401: UnauthorizedResponse;
   /**
-   * Unprocessable Entity
+   * Forbidden
    */
-  422: UnprocessableEntityResponse;
+  403: ForbiddenResponse;
 };
 
 export type GetV1AdpSubscriptionStatusError =
@@ -26162,9 +26630,9 @@ export type GetV1AdpSubscriptionStatusError =
 
 export type GetV1AdpSubscriptionStatusResponses = {
   /**
-   * Success
+   * ADP acknowledgement, success or error (always HTTP 200)
    */
-  200: SuccessResponse;
+  200: AdpSubscriptionOrderEventResponse;
 };
 
 export type GetV1AdpSubscriptionStatusResponse =
@@ -26254,9 +26722,9 @@ export type PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRi
     };
     headers: {
       /**
-       * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+       * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
        *
-       * The refresh token needs to have been obtained through the Authorization Code flow.
+       * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
        *
        */
       Authorization: string;
@@ -26418,9 +26886,9 @@ export type PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdData =
     body?: never;
     headers: {
       /**
-       * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+       * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
        *
-       * The refresh token needs to have been obtained through the Authorization Code flow.
+       * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
        *
        */
       Authorization: string;
@@ -26846,8 +27314,9 @@ export type GetV1IdentityCurrentData = {
   body?: never;
   headers: {
     /**
-     * This endpoint works with any of the access tokens provided. You can use an access
-     * token obtained through the Client Credentials flow, the Authorization Code flow, or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
+     *
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -26897,9 +27366,9 @@ export type DeleteV1IncentivesIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -26958,9 +27427,9 @@ export type GetV1IncentivesIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -27018,9 +27487,9 @@ export type PatchV1IncentivesId2Data = {
   body?: UpdateIncentiveParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -27082,9 +27551,9 @@ export type PatchV1IncentivesIdData = {
   body?: UpdateIncentiveParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -27254,7 +27723,7 @@ export type GetV1AdpUserUnassignmentsData = {
   path?: never;
   query?: {
     /**
-     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch.
+     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch. An address Remote already received for an order, change, cancel or notice event is acknowledged with the same success answer, without being fetched or applied again.
      */
     eventUrl?: string;
   };
@@ -27267,9 +27736,9 @@ export type GetV1AdpUserUnassignmentsErrors = {
    */
   401: UnauthorizedResponse;
   /**
-   * Unprocessable Entity
+   * Forbidden
    */
-  422: UnprocessableEntityResponse;
+  403: ForbiddenResponse;
 };
 
 export type GetV1AdpUserUnassignmentsError =
@@ -27277,9 +27746,9 @@ export type GetV1AdpUserUnassignmentsError =
 
 export type GetV1AdpUserUnassignmentsResponses = {
   /**
-   * Success
+   * ADP acknowledgement, success or error (always HTTP 200)
    */
-  200: SuccessResponse;
+  200: AdpSubscriptionOrderEventResponse;
 };
 
 export type GetV1AdpUserUnassignmentsResponse =
@@ -27353,7 +27822,8 @@ export type GetV1PayItemsData = {
      * Filters the results by the `partner_external_id` value the calling integration holds
      * for the pay item; another integration's identifiers are never matched. Matching is
      * exact, including case. A value can be held by one live pay item at a time, per integration and company; editing a
-     * pay item keeps its value on the new version. At most 64 characters, after trimming.
+     * pay item keeps its value on the new version.
+     * See [Your own IDs on Remote records](https://developer.remote.com/docs/your-own-ids-on-remote-records).
      *
      */
     partner_external_id?: string;
@@ -27464,9 +27934,9 @@ export type GetV1BenefitOffersCountrySummariesData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -27504,9 +27974,9 @@ export type GetV1BenefitOffersData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -28286,9 +28756,9 @@ export type GetV1TimeoffData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -28379,9 +28849,9 @@ export type PostV1TimeoffData = {
   body: CreateApprovedTimeoffParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -28616,9 +29086,9 @@ export type GetV1EmploymentContractsData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -28669,7 +29139,7 @@ export type GetV1EmploymentContractsResponses = {
 export type GetV1EmploymentContractsResponse =
   GetV1EmploymentContractsResponses[keyof GetV1EmploymentContractsResponses];
 
-export type PostV1CurrencyConverterEffective2Data = {
+export type PostV1CurrencyConverterData = {
   /**
    * Convert currency parameters
    */
@@ -28679,11 +29149,15 @@ export type PostV1CurrencyConverterEffective2Data = {
   url: '/v1/currency-converter';
 };
 
-export type PostV1CurrencyConverterEffective2Errors = {
+export type PostV1CurrencyConverterErrors = {
   /**
    * Unauthorized
    */
   401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
   /**
    * Not Found
    */
@@ -28694,26 +29168,26 @@ export type PostV1CurrencyConverterEffective2Errors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostV1CurrencyConverterEffective2Error =
-  PostV1CurrencyConverterEffective2Errors[keyof PostV1CurrencyConverterEffective2Errors];
+export type PostV1CurrencyConverterError =
+  PostV1CurrencyConverterErrors[keyof PostV1CurrencyConverterErrors];
 
-export type PostV1CurrencyConverterEffective2Responses = {
+export type PostV1CurrencyConverterResponses = {
   /**
    * Success
    */
   200: ConvertCurrencyResponse;
 };
 
-export type PostV1CurrencyConverterEffective2Response =
-  PostV1CurrencyConverterEffective2Responses[keyof PostV1CurrencyConverterEffective2Responses];
+export type PostV1CurrencyConverterResponse =
+  PostV1CurrencyConverterResponses[keyof PostV1CurrencyConverterResponses];
 
 export type GetV1CompaniesData = {
   body?: never;
   headers: {
     /**
-     * Requires a client credentials access token obtained through the Client Credentials flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Client Credentials flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -28763,9 +29237,9 @@ export type PostV1CompaniesData = {
   body?: CreateCompanyParams;
   headers: {
     /**
-     * Requires a client credentials access token obtained through the Client Credentials flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Client Credentials flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -29095,9 +29569,9 @@ export type DeleteV1CompanyManagersUserIdData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
@@ -29436,7 +29910,7 @@ export type GetV1AdpSubscriptionCancellationsData = {
   path?: never;
   query?: {
     /**
-     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch.
+     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch. An address Remote already received for an order, change, cancel or notice event is acknowledged with the same success answer, without being fetched or applied again.
      */
     eventUrl?: string;
   };
@@ -29449,9 +29923,9 @@ export type GetV1AdpSubscriptionCancellationsErrors = {
    */
   401: UnauthorizedResponse;
   /**
-   * Unprocessable Entity
+   * Forbidden
    */
-  422: UnprocessableEntityResponse;
+  403: ForbiddenResponse;
 };
 
 export type GetV1AdpSubscriptionCancellationsError =
@@ -29459,9 +29933,9 @@ export type GetV1AdpSubscriptionCancellationsError =
 
 export type GetV1AdpSubscriptionCancellationsResponses = {
   /**
-   * Success
+   * ADP acknowledgement, success or error (always HTTP 200)
    */
-  200: SuccessResponse;
+  200: AdpSubscriptionOrderEventResponse;
 };
 
 export type GetV1AdpSubscriptionCancellationsResponse =
@@ -29508,8 +29982,11 @@ export type DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionR
     /**
      * No Content
      */
-    204: unknown;
+    204: void;
   };
+
+export type DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponse =
+  DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses[keyof DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses];
 
 export type PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionData =
   {
@@ -29725,16 +30202,9 @@ export type PostV1ContractorInvoiceSchedulesErrors = {
    */
   404: NotFoundResponse;
   /**
-   * BulkContractorInvoiceScheduleCreateResponse
-   *
-   * Response containing the lists of succeeded and failed schedules.
+   * All entries had failed
    */
-  422: {
-    data: {
-      failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
-      successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
-    };
-  };
+  422: BulkContractorInvoiceScheduleCreateResponse;
 };
 
 export type PostV1ContractorInvoiceSchedulesError =
@@ -29742,27 +30212,13 @@ export type PostV1ContractorInvoiceSchedulesError =
 
 export type PostV1ContractorInvoiceSchedulesResponses = {
   /**
-   * BulkContractorInvoiceScheduleCreateResponse
-   *
-   * Response containing the lists of succeeded and failed schedules.
+   * All entries have been created
    */
-  201: {
-    data: {
-      failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
-      successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
-    };
-  };
+  201: BulkContractorInvoiceScheduleCreateResponse;
   /**
-   * BulkContractorInvoiceScheduleCreateResponse
-   *
-   * Response containing the lists of succeeded and failed schedules.
+   * Multiple successes and failures
    */
-  207: {
-    data: {
-      failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
-      successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
-    };
-  };
+  207: BulkContractorInvoiceScheduleCreateResponse;
 };
 
 export type PostV1ContractorInvoiceSchedulesResponse =
@@ -30421,9 +30877,9 @@ export type GetV1BillingDocumentsBillingDocumentIdPdfData = {
   body?: never;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     * An access token of one of the types listed in this endpoint's Authentication section, as `Bearer <ACCESS TOKEN>`.
      *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * A token from the Refresh Token flow is of the same type as the token issued with that refresh token.
      *
      */
     Authorization: string;
