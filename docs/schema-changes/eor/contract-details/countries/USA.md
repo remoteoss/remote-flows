@@ -4,11 +4,56 @@ Schema versions for employee onboarding in United States.
 
 ## Current Version
 
-**Contract Details:** v9
+**Contract Details:** v11
 
 ## Contract Details
 
-### v9 - Current
+### v11 - Current
+
+**Type of change:** product
+
+**What changed:**
+
+- Adds the optional fields `hours_commitment_type`, `hours_commitment_min` and `hours_commitment_max` for hourly workers. They depend on a backend setting that is not enabled yet, so the schema doesn't show them for now. Existing submissions stay valid. No action required.
+- `work_arrangement` drops `variant: "card"` from its `x-jsf-presentation`, so it renders as plain radio buttons. Custom UIs that read `variant` to draw cards will show plain radios. The options and values are unchanged.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      USA: { contract_details: 11 },
+    },
+  }}
+/>
+```
+
+---
+
+### v10
+
+**Type of change:** product
+
+**What changed:**
+
+- Allows an optional `has_notice_period` (`"yes"`, `"no"` or `null`) on indefinite contracts. When it's `"yes"`, `notice_period_weeks` is required. This depends on a backend setting that is not enabled yet: until it is, the schema is the same as v9 and indefinite contracts don't accept a notice period. Existing saved values are unchanged. No action required.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      USA: { contract_details: 10 },
+    },
+  }}
+/>
+```
+
+---
+
+### v9
 
 **What changed:**
 

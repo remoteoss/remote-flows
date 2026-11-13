@@ -123,7 +123,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Ukraine](./UKR.md)                | UKR  | v7  | v7              | Yes        | November 2026 |
 | [United Arab Emirates](./ARE.md)   | ARE  | v6  | v7              | No         | October 2026  |
 | [United Kingdom](./GBR.md)         | GBR  | v7  | v7              | Yes        | October 2026  |
-| [United States](./USA.md)          | USA  | v9  | v9              | Yes        | October 2026  |
+| [United States](./USA.md)          | USA  | v11 | v11             | Yes        | November 2026 |
 | [Uruguay](./URY.md)                | URY  | v6  | v6              | Yes        | October 2026  |
 | [Vietnam](./VNM.md)                | VNM  | v7  | v7              | Yes        | October 2026  |
 | [Zimbabwe](./ZWE.md)               | ZWE  | v6  | v6              | Yes        | November 2026 |
