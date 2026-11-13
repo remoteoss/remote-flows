@@ -9,7 +9,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ARE: {
     // United Arab Emirates
-    contract_details: 6,
+    contract_details: 7,
   },
   ARG: {
     // Argentina
