@@ -22,12 +22,12 @@ describe('useTermination', () => {
     expect(result.current.fieldValues).toEqual(result.current.initialValues);
 
     // Update a field
-    act(() => {
+    await act(() =>
       result.current.checkFieldUpdates({
         ...result.current.fieldValues,
         personal_email: 'test@example.com',
-      });
-    });
+      }),
+    );
 
     // fieldValues should now include the changed field merged with initialValues
     await waitFor(() => {
@@ -53,12 +53,12 @@ describe('useTermination', () => {
     expect(result.current.isDirty).toBe(false);
 
     // Modify a field
-    act(() => {
+    await act(() =>
       result.current.checkFieldUpdates({
         ...result.current.fieldValues,
         personal_email: 'test@example.com',
-      });
-    });
+      }),
+    );
 
     // isDirty should now be true
     await waitFor(() => {

@@ -1,6 +1,7 @@
 import { server } from '@/src/tests/server';
 import { TerminationFlow } from '@/src/flows/Termination/TerminationFlow';
 import {
+  act,
   fireEvent,
   render,
   screen,
@@ -26,6 +27,7 @@ import { TerminationRenderProps } from '@/src/flows/Termination/types';
 import { employment } from '@/src/tests/fixtures';
 import { getYearMonthDate } from '@/src/common/dates';
 import { format } from 'date-fns';
+import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectFieldDefault';
 
 const mockOnSubmitStep = vi.fn();
 const mockOnSubmitForm = vi.fn();
@@ -884,6 +886,263 @@ describe('TerminationFlow', () => {
           ),
         ),
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('step forms', () => {
+    const today = format(new Date(), 'yyyy-MM-dd');
+    const prefilledValues = {
+      confidential: 'no',
+      customer_informed_employee: 'no',
+      personal_email: 'ze@remote.com',
+      termination_reason: 'performance',
+      reason_description: 'whatever text',
+      risk_assessment_reasons: ['sick_leave'],
+      will_challenge_termination: 'no',
+      proposed_termination_date: today,
+      agrees_to_pto_amount: 'yes',
+    };
+
+    const lastTerminationBag = () =>
+      mockRender.mock.lastCall?.[0]
+        .terminationBag as TerminationRenderProps['terminationBag'];
+
+    async function goToNextStep(stepTitle: RegExp, fieldLabel: RegExp) {
+      screen.getByText(/Next Step/i).click();
+      await screen.findByText(stepTitle);
+      await screen.findByLabelText(fieldLabel);
+    }
+
+    it('should reject blank required fields in the employee communication step', async () => {
+      render(<TerminationFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
+      await screen.findByLabelText(/Employee's personal email/i);
+
+      expect(screen.getAllByRole('radiogroup')[0]).toHaveAccessibleName(
+        /Is this request confidential/i,
+      );
+
+      await fillEmployeeCommunication({
+        employeePersonalEmail: '   ',
+        isEmployeeInformed: 'Yes',
+        whenWasEmployeeInformed: '',
+        howDidYouShareTheInformation: '   ',
+      });
+      screen.getByText(/Next Step/i).click();
+
+      await waitFor(() => {
+        expect(screen.getAllByText('Required field')).toHaveLength(3);
+      });
+      expect(mockOnSubmitStep).not.toHaveBeenCalled();
+    });
+
+    it('should render the termination reason description component and the notice period link after validation', async () => {
+      const TerminationReasonDescription = () => <>Pick the reason carefully</>;
+      render(
+        <TerminationFlow
+          {...defaultProps}
+          initialValues={prefilledValues}
+          options={{
+            jsfModify: {
+              fields: {
+                termination_reason: {
+                  'x-jsf-presentation': {
+                    description: TerminationReasonDescription,
+                  },
+                },
+              },
+            },
+          }}
+        />,
+        {
+          wrapper: ({ children }) => (
+            <TestProviders components={{ select: SelectFieldDefault }}>
+              {children}
+            </TestProviders>
+          ),
+        },
+      );
+      await screen.findByLabelText(/Employee's personal email/i);
+      await goToNextStep(
+        /Step: Termination Details/i,
+        /Termination reason details/i,
+      );
+
+      fireEvent.change(screen.getByLabelText(/Termination reason details/i), {
+        target: { value: '   ' },
+      });
+      screen.getByText(/Next Step/i).click();
+
+      expect(await screen.findByText('Required field')).toBeInTheDocument();
+      expect(screen.getByText('Pick the reason carefully')).toBeInTheDocument();
+      expect(
+        screen.getByText('Learn about notice periods'),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText(
+          /Make sure you choose an accurate termination reason/,
+        ),
+      ).not.toBeInTheDocument();
+    });
+
+    it('should require the challenge details when the employee will challenge the termination', async () => {
+      render(
+        <TerminationFlow {...defaultProps} initialValues={prefilledValues} />,
+        { wrapper: TestProviders },
+      );
+      await screen.findByLabelText(/Employee's personal email/i);
+      await goToNextStep(
+        /Step: Termination Details/i,
+        /Termination reason details/i,
+      );
+
+      const terminationReasonOptions = lastTerminationBag().fields.find(
+        (field) => field.name === 'termination_reason',
+      )?.options as { value: string }[];
+      expect(terminationReasonOptions.map(({ value }) => value)).not.toContain(
+        'cancellation_before_start_date',
+      );
+
+      await fillRadio(
+        'Do you consider it is likely that the employee will challenge their termination?',
+        'Yes',
+      );
+      fireEvent.change(
+        await screen.findByLabelText(
+          /Please explain how the employee will challenge their termination/i,
+        ),
+        { target: { value: '   ' } },
+      );
+      screen.getByText(/Next Step/i).click();
+
+      expect(await screen.findByText('Required field')).toBeInTheDocument();
+      expect(mockOnSubmitStep).toHaveBeenCalledTimes(1);
+    });
+
+    it('should validate the proposed termination date against the first available date and the start date', async () => {
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() + 30);
+      const startDateString = format(startDate, 'yyyy-MM-dd');
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      server.use(
+        http.get('*/v1/employments/*', () => {
+          return HttpResponse.json({
+            data: {
+              employment: {
+                ...employment.data.employment,
+                provisional_start_date: startDateString,
+              },
+            },
+          });
+        }),
+      );
+      render(<TerminationFlow {...defaultProps} />, {
+        wrapper: TestProviders,
+      });
+      await screen.findByLabelText(/Employee's personal email/i);
+      await fillEmployeeCommunication();
+      await goToNextStep(
+        /Step: Termination Details/i,
+        /Termination reason details/i,
+      );
+
+      const terminationBag = lastTerminationBag();
+      const lateDateResult = await act(() =>
+        terminationBag.handleValidation({
+          ...terminationBag.fieldValues,
+          proposed_termination_date: startDateString,
+        }),
+      );
+      const earlyDateResult = await act(() =>
+        terminationBag.handleValidation({
+          ...terminationBag.fieldValues,
+          proposed_termination_date: format(yesterday, 'yyyy-MM-dd'),
+        }),
+      );
+
+      expect(lateDateResult?.formErrors?.proposed_termination_date).toBe(
+        "The proposed termination date must be before the employee's start date.",
+      );
+      expect(earlyDateResult?.formErrors?.proposed_termination_date).toBe(
+        `The date must be ${today} or after.`,
+      );
+    });
+
+    it('should show the time off records and require details when they are not correct', async () => {
+      render(
+        <TerminationFlow {...defaultProps} initialValues={prefilledValues} />,
+        { wrapper: TestProviders },
+      );
+      await screen.findByLabelText(/Employee's personal email/i);
+      await goToNextStep(
+        /Step: Termination Details/i,
+        /Termination reason details/i,
+      );
+      screen.getByText(/Next Step/i).click();
+      await screen.findByText(/Step: Paid Time Off/i);
+
+      expect(
+        await screen.findByText('Check remaining paid time off'),
+      ).toBeInTheDocument();
+      expect(
+        await screen.findByText(/The proposed termination date for .+ is/i),
+      ).toBeInTheDocument();
+
+      await fillPTO({ agreePTO: 'No' });
+      fireEvent.change(
+        await screen.findByLabelText(/Provide time off details/i),
+        { target: { value: '   ' } },
+      );
+      screen.getByText(/Next Step/i).click();
+
+      expect(await screen.findByText('Required field')).toBeInTheDocument();
+      expect(screen.getByLabelText('Timesheet document')).toBeInTheDocument();
+    });
+
+    it('should ask to acknowledge the procedures and keep custom components', async () => {
+      render(
+        <TerminationFlow
+          {...defaultProps}
+          initialValues={prefilledValues}
+          options={{
+            jsfModify: {
+              fields: {
+                acknowledge_termination_procedure_fees_info: {
+                  'x-jsf-presentation': {
+                    Component: () => <p>Custom fees notice</p>,
+                  },
+                },
+              },
+            },
+          }}
+        />,
+        { wrapper: TestProviders },
+      );
+      await screen.findByLabelText(/Employee's personal email/i);
+      await goToNextStep(
+        /Step: Termination Details/i,
+        /Termination reason details/i,
+      );
+      screen.getByText(/Next Step/i).click();
+      await screen.findByText(/Step: Paid Time Off/i);
+      await screen.findByText('Check remaining paid time off');
+      screen.getByText(/Next Step/i).click();
+      await screen.findByText(/Step: Additional Information/i);
+      await screen.findByRole('checkbox', {
+        name: /I agree to the procedures in this form/i,
+      });
+
+      screen.getByText(/Send termination/i).click();
+
+      expect(
+        await screen.findByText('Please acknowledge this field'),
+      ).toBeInTheDocument();
+      expect(screen.getByText('What Remote does next:')).toBeInTheDocument();
+      expect(screen.getByText('Custom fees notice')).toBeInTheDocument();
+      expect(mockOnSubmitForm).not.toHaveBeenCalled();
     });
   });
 });

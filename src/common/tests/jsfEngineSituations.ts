@@ -267,6 +267,22 @@ const bankDetailsSchema: Schema = {
   'x-jsf-order': ['annual_gross_salary', 'account_holder'],
 };
 
+const acknowledgementSchema: Schema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    annual_gross_salary: money('Annual gross salary'),
+    accepts_procedure: {
+      title: 'I agree to the procedure',
+      type: 'boolean',
+      const: true,
+      'x-jsf-presentation': { inputType: 'checkbox' },
+    },
+  },
+  required: ['accepts_procedure'],
+  'x-jsf-order': ['annual_gross_salary', 'accepts_procedure'],
+};
+
 export const chooseInGroup = async (
   user: UserEvent,
   group: RegExp,
@@ -388,6 +404,24 @@ export const SITUATIONS: Situation[] = [
     assert: async (submitted) => {
       expect(await screen.findByText('Required field')).toBeInTheDocument();
       expect(submitted).toEqual({});
+    },
+  },
+  {
+    situation: 'acknowledgement checkbox ticked and unticked again fails',
+    schema: acknowledgementSchema,
+    fill: async (user) => {
+      const checkbox = await screen.findByRole('checkbox', {
+        name: 'I agree to the procedure',
+      });
+      await user.click(checkbox);
+      await user.click(checkbox);
+      await user.click(screen.getByRole('button', { name: 'Validate' }));
+    },
+    assert: async (submitted) => {
+      expect(
+        await screen.findByText('Please acknowledge this field'),
+      ).toBeInTheDocument();
+      expect(submitted).toEqual({ accepts_procedure: false });
     },
   },
   {

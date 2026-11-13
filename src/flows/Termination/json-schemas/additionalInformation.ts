@@ -19,6 +19,7 @@ export const additionalInformationSchema = {
           description: '',
           title: 'I agree to the procedures in this form',
           type: 'boolean',
+          const: true,
           'x-jsf-presentation': {
             direction: 'column',
             inputType: 'checkbox',
@@ -40,7 +41,7 @@ export const additionalInformationSchema = {
         'acknowledge_termination_procedure_fees_info',
       ],
       'x-rmt-meta': {
-        jsfOldVersion: true,
+        jsfVersion: '1',
       },
     },
   },

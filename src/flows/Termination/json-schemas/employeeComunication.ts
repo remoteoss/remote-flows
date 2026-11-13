@@ -149,14 +149,14 @@ export const employeeComunicationSchema = {
       ],
       type: 'object',
       'x-jsf-order': [
-        'is_confidential',
+        'confidential',
         'customer_informed_employee',
         'customer_informed_employee_date',
         'customer_informed_employee_description',
         'personal_email',
       ],
       'x-rmt-meta': {
-        jsfOldVersion: true,
+        jsfVersion: '1',
       },
     },
   },

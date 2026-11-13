@@ -234,6 +234,44 @@ describe.each(ENGINES)('buildOnce lifecycle on $engine', ({ meta }) => {
   });
 });
 
+describe.each(ENGINES)('description component on $engine', ({ meta }) => {
+  const SigningBonusHelp = () => <>Paid with the first salary</>;
+  const signingBonusProperties = signingBonusSchema.properties as Schema;
+  const hasSigningBonus = signingBonusProperties.has_signing_bonus as Schema;
+  const schema = {
+    ...signingBonusSchema,
+    properties: {
+      ...signingBonusProperties,
+      has_signing_bonus: {
+        ...hasSigningBonus,
+        'x-jsf-presentation': {
+          ...(hasSigningBonus['x-jsf-presentation'] as Schema),
+          description: SigningBonusHelp,
+        },
+      },
+    },
+    ...(meta ? { 'x-rmt-meta': meta } : {}),
+  };
+
+  it.each(STRATEGIES)(
+    'keeps a component in x-jsf-presentation.description after validation on $strategy',
+    async ({ strategy }) => {
+      const user = userEvent.setup();
+      render(
+        <Harness schema={schema} strategy={strategy} options={undefined} />,
+        { wrapper: TestProviders },
+      );
+
+      await chooseInGroup(user, /Offer a signing bonus/i, 'Yes');
+      await user.click(screen.getByRole('button', { name: 'Validate' }));
+
+      expect(
+        await screen.findByText('Paid with the first salary'),
+      ).toBeInTheDocument();
+    },
+  );
+});
+
 describe.each(ENGINES)('schema ownership on $engine', ({ meta }) => {
   it.each(STRATEGIES)(
     'leaves the given schema untouched on $strategy',

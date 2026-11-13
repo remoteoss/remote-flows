@@ -216,7 +216,9 @@ export const TerminationWithProps = ({
             // fields for the termination flow are defined here https://github.com/remoteoss/remote-flows/blob/main/src/flows/Termination/json-schemas/jsonSchema.ts#L108
             fields: {
               termination_reason: {
-                description: <TerminationReasonDetailsDescription />,
+                'x-jsf-presentation': {
+                  description: TerminationReasonDetailsDescription,
+                },
               },
             },
           },
@@ -307,3 +309,46 @@ It renders the back button for the form and supports all standard `<button>` ele
 #### options.jsfModify properties
 
 The options.jsfModify props accepts the same props that the [modify](https://json-schema-form.vercel.app/?path=/docs/api-reference-modify--docs#config-methods) function from the json-schema-form library
+
+The step forms run on json-schema-form v1, which copies the schema when it builds and validates the form. A field's `description` must be a string: a React element there makes the form throw "Deep clone failed" while it is built, so the step doesn't render, and a function is dropped. To render your own content, pass a component in `x-jsf-presentation.description` instead. The default field components render it in place of the description:
+
+```tsx
+const TerminationReasonDetailsDescription = () => (
+  <>
+    Make sure you choose an accurate termination reason to avoid unfair or
+    unlawful dismissal claims. <TerminationReasonsDialog />
+  </>
+);
+
+<TerminationFlow
+  employmentId={employmentId}
+  render={TerminationRender}
+  options={{
+    jsfModify: {
+      fields: {
+        termination_reason: {
+          'x-jsf-presentation': {
+            description: TerminationReasonDetailsDescription,
+          },
+        },
+      },
+    },
+  }}
+/>;
+```
+
+Custom field components receive it as `fieldData.description` and call it to render it.
+
+Define the component outside your render function, or memoize it, so the form isn't rebuilt on every render.
+
+These fields render SDK content through `x-jsf-presentation.Component`. Pass your own `Component` to replace it:
+
+| Field                                         | Props passed to your `Component`                                                 |
+| --------------------------------------------- | -------------------------------------------------------------------------------- |
+| `paid_time_off_info`                          | The `PaidTimeOffContainer` render props                                          |
+| `acknowledge_termination_procedure_info`      | The `AcknowledgeInformationContainer` render props                               |
+| `acknowledge_termination_procedure_fees_info` | `involuntaryOffboardingServiceChargeZendeskId`, `reconciliationInvoiceZendeskId` |
+
+`risk_assesment_info` and `proposed_termination_date_info` take a `className` in `x-jsf-presentation`, and `proposed_termination_date_info` also a `zendeskTriggerButtonClassName` for its help link.
+
+Validation of `proposed_termination_date` follows the dates the date picker allows: a date before the first available termination date, or on or after the employee's start date when cancelling before the start, fails validation.

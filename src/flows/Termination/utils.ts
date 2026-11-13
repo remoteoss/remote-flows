@@ -1,7 +1,9 @@
 import {
   endOfMonth,
+  format,
   isAfter,
   isBefore,
+  isValid,
   parseISO,
   startOfDay,
   setDate,
@@ -135,10 +137,17 @@ export const calculateProposedTerminationDateStatement = ({
   });
 };
 
+function toDateOnly(date: string) {
+  const parsedDate = parseISO(date);
+  return isValid(parsedDate) ? format(parsedDate, 'yyyy-MM-dd') : date;
+}
+
 export function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
   hasFutureStartDate: boolean,
 ): TerminationFormValues {
+  const { proposed_termination_date: proposedTerminationDate } =
+    stepsInitialValues;
   const initialValues: TerminationFormValues = {
     confidential: '',
     customer_informed_employee: '',
@@ -158,6 +167,9 @@ export function buildInitialValues(
     risk_assessment_reasons: [],
     timesheet_file: undefined,
     ...stepsInitialValues,
+    ...(proposedTerminationDate
+      ? { proposed_termination_date: toDateOnly(proposedTerminationDate) }
+      : {}),
     ...(hasFutureStartDate
       ? { termination_reason: 'cancellation_before_start_date' }
       : {}),
