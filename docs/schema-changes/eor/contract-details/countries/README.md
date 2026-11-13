@@ -38,7 +38,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Albania](./ALB.md)                | ALB  | v4  | v5              | No         | October 2026  |
 | [Argentina](./ARG.md)              | ARG  | v6  | v6              | Yes        | November 2026 |
 | [Armenia](./ARM.md)                | ARM  | v4  | v4              | Yes        | November 2026 |
-| [Australia](./AUS.md)              | AUS  | v6  | v7              | No         | October 2026  |
+| [Australia](./AUS.md)              | AUS  | v7  | v7              | Yes        | November 2026 |
 | [Austria](./AUT.md)                | AUT  | v8  | v9              | No         | October 2026  |
 | [Bangladesh](./BGD.md)             | BGD  | v9  | v9              | Yes        | November 2026 |
 | [Belgium](./BEL.md)                | BEL  | v8  | v8              | Yes        | October 2026  |
