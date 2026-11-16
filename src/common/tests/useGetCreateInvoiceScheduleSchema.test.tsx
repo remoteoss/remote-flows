@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { useGetCreateInvoiceScheduleSchema } from '@/src/common/invoice-schedules';
+import { useGetCreateInvoiceScheduleSchema } from '@/src/common/invoice-schedules/api';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
 function renderForm(initialValues?: Record<string, unknown>) {

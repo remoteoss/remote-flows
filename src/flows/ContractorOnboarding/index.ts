@@ -12,8 +12,8 @@ export type {
   EligibilityQuestionnaireResponse,
   InvoiceScheduleFormPayload,
   InvoiceScheduleResponse,
-  ContractorInvoicePreview,
 } from './types';
+export type { ContractorInvoicePreview } from '@remoteoss/remote-flows-core';
 export type { ProductType } from './constants';
 export {
   onboardingWorkflows,

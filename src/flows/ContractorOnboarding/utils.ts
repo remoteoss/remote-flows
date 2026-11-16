@@ -1,4 +1,4 @@
-import { RECURRING_PERIODICITY_OPTIONS } from '@/src/common/invoice-schedules';
+import { RECURRING_PERIODICITY_OPTIONS } from '@remoteoss/remote-flows-core';
 import { Step } from '@/src/flows/useStepState';
 import {
   ProductType,
@@ -177,14 +177,6 @@ export const getBasicInformationSchemaVersion = (options?: {
     options?.jsonSchemaVersion?.employment_basic_information || DEFAULT_VERSION
   );
 };
-
-// Invoice-schedule payload builders are shared with the standalone InvoiceSchedule flow and
-// live in src/common/invoice-schedules. Re-exported here so existing imports keep resolving.
-export {
-  buildInvoiceItems,
-  buildInvoicePreviewPayload,
-  buildInvoiceSchedulePayload,
-} from '@/src/common/invoice-schedules/utils';
 
 const RECURRING_PERIODICITIES: string[] = RECURRING_PERIODICITY_OPTIONS.map(
   ({ const: value }) => value,
