@@ -284,20 +284,15 @@ export const useOnboarding = ({
     engagementAgreementDetailsSchema.fields.length > 0,
   );
 
-  const engagementAgreementDetailsQueryOptions = () =>
-    engagementAgreementDetailsOptions(
-      client as Client,
-      internalCountryCode as string,
-      {
-        jsonSchemaVersion: getEngagementAgreementDetailsSchemaVersion(options),
-        employmentId: engagementAgreementDetailsEmploymentId,
-      },
-    );
+  const warmedEngagementAgreementDetailsRef = useRef<ReturnType<
+    typeof engagementAgreementDetailsOptions
+  > | null>(null);
 
   const getLatestSteps = () => {
-    const cached = queryClient.getQueryData(
-      engagementAgreementDetailsQueryOptions().queryKey,
-    );
+    const warmed = warmedEngagementAgreementDetailsRef.current;
+    const cached = warmed
+      ? queryClient.getQueryData(warmed.queryKey)
+      : undefined;
     const cachedHasFields = Boolean(
       cached?.data?.data?.properties &&
       Object.keys(cached.data.data.properties).length,
@@ -1072,18 +1067,17 @@ export const useOnboarding = ({
     if (!useDynamicSteps || !internalCountryCode) {
       return;
     }
+    const queryOptions = engagementAgreementDetailsOptions(
+      client as Client,
+      internalCountryCode,
+      {
+        jsonSchemaVersion: getEngagementAgreementDetailsSchemaVersion(options),
+        employmentId: newEmploymentId,
+      },
+    );
+    warmedEngagementAgreementDetailsRef.current = queryOptions;
     try {
-      await queryClient.query(
-        engagementAgreementDetailsOptions(
-          client as Client,
-          internalCountryCode,
-          {
-            jsonSchemaVersion:
-              getEngagementAgreementDetailsSchemaVersion(options),
-            employmentId: newEmploymentId,
-          },
-        ),
-      );
+      await queryClient.query(queryOptions);
     } catch {
       return;
     }

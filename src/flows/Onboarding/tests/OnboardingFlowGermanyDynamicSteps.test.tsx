@@ -647,4 +647,40 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
 
     expect(portugalSchemaRequests).toEqual([]);
   });
+
+  it('should go to the engagement agreement details step after changing the country of an existing employment', async () => {
+    server.use(
+      http.get('*/v1/countries/PRT/employment_basic_information*', () =>
+        HttpResponse.json(basicInformationSchemaV3Germany),
+      ),
+      http.get('*/v1/countries/PRT/engagement_agreement_details*', () =>
+        HttpResponse.json(engagementAgreementDetailsSchemaV1Germany),
+      ),
+      http.get('*/v1/countries/PRT/contract_details*', () =>
+        HttpResponse.json(contractDetailsSchemaV1Germany),
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={generateUniqueEmploymentId()}
+        initialValues={{
+          ...employmentDefaultResponse.data.employment.basic_information,
+          mobile_number: `+49${phoneNumberMock}`,
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Select Country/i);
+
+    await fillSelect('Country', 'PRT');
+    screen.getByText(/Continue/i).click();
+    await screen.findByText(/Step: Basic Information/i);
+
+    (await screen.findByText(/Next Step/i)).click();
+
+    await screen.findByText(/Step: Engagement Agreement Details/i);
+  });
 });
