@@ -37,6 +37,9 @@ jobs:
       - name: Run type check
         run: pnpm run type-check
 
+      - name: Check core exports
+        run: pnpm run check-core-exports
+
   build-and-exports:
     name: Build and Check Exports
     runs-on: ubuntu-latest

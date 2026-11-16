@@ -1,4 +1,4 @@
-import { INVOICE_NUMBER_SEQUENCE_PATH } from '@/src/common/invoice-schedules/constants';
+import { INVOICE_NUMBER_SEQUENCE_PATH } from '@remoteoss/remote-flows-core';
 import { Statement } from '@/src/components/form/Statement';
 import {
   MagicLinkButton,

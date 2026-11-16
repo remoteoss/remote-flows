@@ -5,8 +5,10 @@ import {
   useGetCreateInvoiceScheduleSchema,
   usePreviewContractorInvoice,
 } from '@/src/common/invoice-schedules/api';
-import { ContractorInvoicePreview } from '@/src/common/invoice-schedules/types';
-import { buildInvoiceSchedulePayload } from '@/src/common/invoice-schedules/utils';
+import {
+  buildInvoiceSchedulePayload,
+  type ContractorInvoicePreview,
+} from '@remoteoss/remote-flows-core';
 import { useEmploymentQuery } from '@/src/common/api/employment';
 import { useDeepStable } from '@/src/common/hooks';
 import { getInitialValues } from '@/src/components/form/utils';

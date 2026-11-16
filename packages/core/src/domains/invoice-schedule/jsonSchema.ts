@@ -11,8 +11,8 @@ import {
   SEMI_MONTHLY_DEFAULT_CYCLE,
   SEMI_MONTHLY_DEFAULT_CYCLE_DAYS,
   SEMI_MONTHLY_PERIODICITY,
-} from '@/src/common/invoice-schedules/constants';
-import { toOrdinal } from '@/src/common/invoice-schedules/utils';
+} from './constants';
+import { toOrdinal } from './utils';
 
 export const INVOICE_NUMBER_SEQUENCE_FIELD = 'invoice_number_sequence';
 
@@ -551,9 +551,7 @@ export function buildCreateInvoiceScheduleSchema({
               {
                 const: PLACEHOLDER_OPTION,
                 // An empty list is an answer — this contractor has no currencies to be
-                // invoiced in — where no list at all means the fetch has not resolved. Both
-                // states exist: the flows build the schema once currencies arrive, but the
-                // static `createInvoiceScheduleSchema` fallback is built without any.
+                // invoiced in — where no list at all means the fetch has not resolved.
                 // Labelling the empty case "loading" left it looking stuck forever.
                 title: currencies
                   ? 'No currencies available'
@@ -759,9 +757,3 @@ export function buildCreateInvoiceScheduleSchema({
     ],
   };
 }
-
-/**
- * The schema as the in-flow onboarding step renders it.
- * Currencies are substituted at runtime — see `useGetCreateInvoiceScheduleSchema`.
- */
-export const createInvoiceScheduleSchema = buildCreateInvoiceScheduleSchema();

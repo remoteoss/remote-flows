@@ -1,8 +1,4 @@
 import {
-  ContractorInvoiceSchedule,
-  ContractorInvoiceScheduleItem,
-} from '@/src/client';
-import {
   END_TYPE_MULTIPLE,
   END_TYPE_NEVER,
   ONE_TIME_PERIODICITY,
@@ -12,7 +8,7 @@ import {
   SEMI_MONTHLY_DEFAULT_CYCLE,
   SEMI_MONTHLY_DEFAULT_CYCLE_DAYS,
   SEMI_MONTHLY_PERIODICITY,
-} from '@/src/common/invoice-schedules/constants';
+} from './constants';
 
 /**
  * Builds the invoice items array from the form's `items` rows
@@ -30,17 +26,15 @@ export function buildInvoiceItems(values: Record<string, unknown>) {
     .map(({ description, amount }) => ({ description, amount }));
 }
 
-type InvoiceScheduleFormSource = Pick<
-  ContractorInvoiceSchedule,
-  | 'currency'
-  | 'periodicity'
-  | 'start_date'
-  | 'number'
-  | 'note'
-  | 'nr_occurrences'
-  | 'custom_days'
-> & {
-  items?: Pick<ContractorInvoiceScheduleItem, 'description' | 'amount'>[];
+export type InvoiceScheduleFormSource = {
+  currency: string | null;
+  periodicity: string;
+  start_date: string;
+  number?: string | null;
+  note?: string | null;
+  nr_occurrences?: number | null;
+  custom_days?: [number, number] | null;
+  items?: { description: string; amount: number }[];
 };
 
 function buildSemiMonthlySettings(
