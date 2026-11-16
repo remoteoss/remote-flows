@@ -1,5 +1,4 @@
 import {
-  keepPreviousData,
   queryOptions,
   useMutation,
   useQuery,
@@ -768,7 +767,6 @@ export const useEngagementAgreementDetailsSchema = (
       jsonSchemaVersion: options?.jsonSchemaVersion,
       employmentId: options?.employmentId,
     }),
-    placeholderData: keepPreviousData,
     enabled: options?.queryOptions?.enabled ?? !!countryCode,
     select: ({ data }) => data?.data || {},
   });
