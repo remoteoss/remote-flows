@@ -1077,7 +1077,7 @@ export const useOnboarding = ({
       return;
     }
     try {
-      const response = await queryClient.fetchQuery(
+      const response = await queryClient.query(
         engagementAgreementDetailsOptions(
           client as Client,
           internalCountryCode,
