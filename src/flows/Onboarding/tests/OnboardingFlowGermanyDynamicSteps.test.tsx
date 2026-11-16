@@ -19,7 +19,12 @@ import {
   employmentUpdatedResponse,
   employmentDefaultResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
-import { fillRadio, queryClient, TestProviders } from '@/src/tests/testHelpers';
+import {
+  fillRadio,
+  fillSelect,
+  queryClient,
+  TestProviders,
+} from '@/src/tests/testHelpers';
 import { generateUniqueEmploymentId } from '@/src/flows/Onboarding/tests/helpers';
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
 import { mockBaseResponse } from '@/src/common/api/fixtures/base';
@@ -559,5 +564,49 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
     expect(
       screen.queryByText(/Step: Engagement Agreement Details/i),
     ).not.toBeInTheDocument();
+  });
+
+  it('should not send the previous employment id when the country changes', async () => {
+    const portugalSchemaRequests: string[] = [];
+
+    server.use(
+      http.get('*/v1/countries/PRT/employment_basic_information*', () =>
+        HttpResponse.json(basicInformationSchemaV3Germany),
+      ),
+      http.get(
+        '*/v1/countries/PRT/engagement_agreement_details*',
+        ({ request }) => {
+          portugalSchemaRequests.push(request.url);
+          if (new URL(request.url).searchParams.has('employment_id')) {
+            return HttpResponse.json(
+              { message: 'Employment does not belong to the country' },
+              { status: 404 },
+            );
+          }
+          return HttpResponse.json(engagementAgreementDetailsSchemaV1Germany);
+        },
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={generateUniqueEmploymentId()}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Select Country/i);
+
+    await fillSelect('Country', 'PRT');
+    screen.getByText(/Continue/i).click();
+    await screen.findByText(/Step: Basic Information/i);
+
+    await waitFor(() => {
+      expect(portugalSchemaRequests).toHaveLength(1);
+    });
+    expect(
+      new URL(portugalSchemaRequests[0]).searchParams.has('employment_id'),
+    ).toBe(false);
   });
 });
