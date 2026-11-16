@@ -33,7 +33,7 @@ Schema versions for employee onboarding in Puerto Rico.
 
 ### v5
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 

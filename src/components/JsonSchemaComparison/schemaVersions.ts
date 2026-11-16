@@ -12,7 +12,7 @@ export const BASIC_INFO_VERSIONS: VersionOption[] = [
 ];
 
 // AI generated from tiger
-// Last updated: 2026-11-09
+// Last updated: 2026-11-16
 export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   ALB: [
     { value: 1, label: 'v1' },
@@ -174,6 +174,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 3, label: 'v3' },
     { value: 4, label: 'v4' },
     { value: 5, label: 'v5' },
+    { value: 6, label: 'v6' },
   ],
   CYP: [
     { value: 1, label: 'v1' },
@@ -283,7 +284,6 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 5, label: 'v5' },
     { value: 6, label: 'v6' },
     { value: 7, label: 'v7' },
-    { value: 8, label: 'v8' },
   ],
   GEO: [
     { value: 1, label: 'v1' },
@@ -361,7 +361,6 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 3, label: 'v3' },
     { value: 4, label: 'v4' },
     { value: 5, label: 'v5' },
-    { value: 6, label: 'v6' },
   ],
   ISL: [
     { value: 1, label: 'v1' },
@@ -762,8 +761,6 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 7, label: 'v7' },
     { value: 8, label: 'v8' },
     { value: 9, label: 'v9' },
-    { value: 10, label: 'v10' },
-    { value: 11, label: 'v11' },
   ],
   VNM: [
     { value: 1, label: 'v1' },
