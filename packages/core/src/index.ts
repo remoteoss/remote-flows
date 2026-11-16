@@ -38,10 +38,19 @@ export type {
   JSONSchemaFormResultWithFieldsets,
   UploadedFileReference,
 } from './types';
-export { buildCreateInvoiceScheduleSchema } from './domains/invoice-schedule/jsonSchema';
+export {
+  INVOICE_NUMBER_SEQUENCE_PATH,
+  INVOICE_SCHEDULE_STATUS,
+  RECURRING_PERIODICITY_OPTIONS,
+} from './domains/invoice-schedule/constants';
+export {
+  buildCreateInvoiceScheduleSchema,
+  INVOICE_NUMBER_SEQUENCE_FIELD,
+} from './domains/invoice-schedule/jsonSchema';
 export {
   buildInvoiceSchedulePayload,
   buildInvoiceScheduleFormValues,
+  describeInvoiceNumberSequence,
 } from './domains/invoice-schedule/utils';
 export type { ContractorInvoicePreview } from './domains/invoice-schedule/types';
 export { clearBase64Data, formatCurrency } from './format';

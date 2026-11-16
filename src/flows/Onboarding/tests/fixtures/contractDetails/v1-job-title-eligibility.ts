@@ -99,7 +99,3 @@ export const contractDetailsSchemaV1JobTitleEligibility = {
     },
   },
 };
-
-export const contractDetailsSchemaV0JobTitleEligibility = {
-  data: jobTitleEligibilitySchema,
-};

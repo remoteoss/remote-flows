@@ -170,6 +170,34 @@ describe('GroupArrayField', () => {
     ]);
   });
 
+  it('focuses the first input of a row appended from the add button', () => {
+    renderGroup({ addFieldText: 'Add line' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add line' }));
+
+    expect(
+      within(screen.getByRole('group', { name: 'Items 2' })).getByLabelText(
+        'Description',
+      ),
+    ).toHaveFocus();
+  });
+
+  it('stops the add and remove buttons from taking focus on mouse down', () => {
+    renderGroup({
+      addFieldText: 'Add line',
+      rows: [{ description: 'First', amount: '1' }],
+    });
+
+    expect(
+      fireEvent.mouseDown(screen.getByRole('button', { name: 'Add line' })),
+    ).toBe(false);
+    expect(
+      fireEvent.mouseDown(
+        screen.getByRole('button', { name: 'Remove Items 1' }),
+      ),
+    ).toBe(false);
+  });
+
   it('removes the row whose remove button is pressed', () => {
     const { getItems } = renderGroup({
       rows: [

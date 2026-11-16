@@ -423,3 +423,18 @@ function fill(
     errors: errors ?? {},
   };
 }
+
+/** Parses `field=value,field=value` into string overrides for the seeded basic information. */
+export function parseBasicInfoOverrides(raw: string | undefined) {
+  const overrides: Record<string, string> = {};
+  for (const pair of raw ? raw.split(',') : []) {
+    const separator = pair.indexOf('=');
+    if (separator < 1) {
+      throw new Error(
+        `Basic information overrides expect <field>=<value> pairs separated by commas (got "${pair}").`,
+      );
+    }
+    overrides[pair.slice(0, separator)] = pair.slice(separator + 1);
+  }
+  return overrides;
+}
