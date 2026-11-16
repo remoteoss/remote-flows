@@ -302,9 +302,9 @@ export const useOnboarding = ({
       },
       jsonSchemaVersion: getEngagementAgreementDetailsSchemaVersion(options),
       employmentId:
-        employment?.country?.code === internalCountryCode
-          ? internalEmploymentId
-          : undefined,
+        employment && employment.country?.code !== internalCountryCode
+          ? undefined
+          : internalEmploymentId,
     },
   );
 
