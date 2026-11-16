@@ -292,6 +292,7 @@ export const useOnboarding = ({
         ),
       },
       jsonSchemaVersion: getEngagementAgreementDetailsSchemaVersion(options),
+      employmentId: internalEmploymentId,
     },
   );
 

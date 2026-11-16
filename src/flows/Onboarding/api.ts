@@ -712,23 +712,26 @@ export const useEngagementAgreementDetailsSchema = (
     jsfModify?: OnboardingJsfModify;
     queryOptions?: { enabled?: boolean };
     jsonSchemaVersion?: number | 'latest';
+    employmentId?: string;
   },
 ): Omit<HeadlessForm, 'form'> & {
   data: JSONSchemaFormResultWithFieldsets | null;
   isLoading: boolean;
 } => {
   const { client } = useClient();
-  const jsonSchemaQueryParam = options?.jsonSchemaVersion
-    ? {
-        json_schema_version: options.jsonSchemaVersion,
-      }
-    : {};
+  const jsonSchemaQueryParam = {
+    ...(options?.jsonSchemaVersion && {
+      json_schema_version: options.jsonSchemaVersion,
+    }),
+    ...(options?.employmentId && { employment_id: options.employmentId }),
+  };
 
   const { data: schema, isLoading } = useQuery({
     queryKey: [
       'engagement-agreement-details',
       countryCode,
       options?.jsonSchemaVersion,
+      options?.employmentId,
     ],
     retry: false,
     enabled: options?.queryOptions?.enabled ?? !!countryCode,

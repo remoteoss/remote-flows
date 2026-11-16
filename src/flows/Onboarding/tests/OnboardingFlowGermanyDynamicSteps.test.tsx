@@ -489,4 +489,75 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
       },
     });
   });
+
+  it('should ask for the engagement agreement details schema of the employment', async () => {
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+    const schemaRequestUrls: string[] = [];
+
+    server.use(
+      http.get(
+        '*/v1/countries/DEU/engagement_agreement_details*',
+        ({ request }) => {
+          schemaRequestUrls.push(request.url);
+          return HttpResponse.json(engagementAgreementDetailsSchemaV1Germany);
+        },
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={uniqueEmploymentId}
+        skipSteps={['select_country']}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    expect(schemaRequestUrls).toHaveLength(1);
+    expect(
+      new URL(schemaRequestUrls[0]).searchParams.get('employment_id'),
+    ).toBe(uniqueEmploymentId);
+  });
+
+  it('should skip the engagement agreement details step when the employment does not take them', async () => {
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+
+    server.use(
+      http.get(
+        '*/v1/countries/DEU/engagement_agreement_details*',
+        ({ request }) => {
+          if (new URL(request.url).searchParams.has('employment_id')) {
+            return HttpResponse.json(
+              {
+                message:
+                  'Engagement agreement details not found for country DEU',
+              },
+              { status: 404 },
+            );
+          }
+          return HttpResponse.json(engagementAgreementDetailsSchemaV1Germany);
+        },
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={uniqueEmploymentId}
+        skipSteps={['select_country']}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    screen.getByText(/Next Step/i).click();
+
+    await screen.findByText(/Step: Contract Details/i);
+    expect(
+      screen.queryByText(/Step: Engagement Agreement Details/i),
+    ).not.toBeInTheDocument();
+  });
 });
