@@ -40,7 +40,6 @@ export type {
 } from './types';
 export {
   INVOICE_NUMBER_SEQUENCE_PATH,
-  INVOICE_SCHEDULE_STATUS,
   RECURRING_PERIODICITY_OPTIONS,
 } from './domains/invoice-schedule/constants';
 export {
