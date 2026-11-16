@@ -87,7 +87,7 @@ type BuildDailyScheduleEditFormDefaultValuesOptions = {
   defaultStartTime: string;
   defaultEndTime: string;
   defaultBreakDurationMinutes: number;
-  value: DailyScheduleValue | undefined;
+  value: DailyScheduleValue | null | undefined;
 };
 
 export function buildDailyScheduleEditFormDefaultValues({
@@ -197,7 +197,7 @@ export type UseDailyScheduleEditFormOptions = {
   defaultStartTime: string;
   defaultEndTime: string;
   defaultBreakDurationMinutes: number;
-  value: DailyScheduleValue | undefined;
+  value: DailyScheduleValue | null | undefined;
   setValue: (value: DailyScheduleValue) => void;
   subtractBreaksFromWorkHours?: boolean;
   workHoursBounds?: WorkHoursRange;
