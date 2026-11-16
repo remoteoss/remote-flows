@@ -720,7 +720,7 @@ export const useEngagementAgreementDetailsSchema = (
   isLoading: boolean;
 } => {
   const { client } = useClient();
-  const jsonSchemaQueryParam = {
+  const queryParams = {
     ...(options?.jsonSchemaVersion && {
       json_schema_version: options.jsonSchemaVersion,
     }),
@@ -747,7 +747,7 @@ export const useEngagementAgreementDetailsSchema = (
           country_code: countryCode,
           form: 'engagement_agreement_details',
         },
-        query: jsonSchemaQueryParam,
+        query: queryParams,
       });
 
       if (response.error || !response.data) {
