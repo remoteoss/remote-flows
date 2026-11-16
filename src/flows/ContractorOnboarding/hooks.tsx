@@ -65,6 +65,8 @@ import {
   ContractorOnboardingHookOptions,
 } from '@/src/flows/ContractorOnboarding/types';
 import {
+  buildInvoiceSchedulePrefill,
+  syncInvoiceSchedulePrefill,
   buildSteps,
   reviewStepAllowedEmploymentStatus,
   disabledInviteButtonEmploymentStatus,
@@ -202,6 +204,13 @@ export const useContractorOnboarding = ({
 
   const [includeCreateInvoiceSchedule, setIncludeCreateInvoiceSchedule] =
     useState<boolean>(false);
+
+  const updateCreateInvoiceScheduleVisibility = useCallback(
+    (invoiceSchedulePreference: unknown) => {
+      setIncludeCreateInvoiceSchedule(invoiceSchedulePreference === 'schedule');
+    },
+    [],
+  );
 
   const [pendingNavigationStep, setPendingNavigationStep] =
     useState<StepKeys | null>(null);
@@ -718,6 +727,7 @@ export const useContractorOnboarding = ({
   const {
     data: contractorOnboardingDetailsForm,
     isLoading: isLoadingContractorOnboardingDetailsForm,
+    currencies,
   } = useContractorContractDetailsSchema({
     countryCode: internalCountryCode as string,
     fieldValues: fieldValues,
@@ -786,12 +796,40 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const submittedContractDetailsRef = useRef<FieldValues | undefined>(
+    undefined,
+  );
+
+  const currencyCodes = useMemo(
+    () => currencies?.map(({ code }: { code: string }) => code),
+    [currencies],
+  );
+
+  const getInvoiceSchedulePrefill = useCallback(
+    (contractDetails?: FieldValues) =>
+      buildInvoiceSchedulePrefill(
+        { ...employment?.contract_details, ...contractDetails },
+        currencyCodes,
+      ),
+    [employment?.contract_details, currencyCodes],
+  );
+
+  const inSessionContractDetails = stepState.values?.contract_details;
+
   const createInvoiceScheduleSavedValues = useMemo(
     () =>
       existingInvoiceSchedule
         ? buildInvoiceScheduleFormValues(existingInvoiceSchedule)
-        : { ...onboardingInitialValues },
-    [existingInvoiceSchedule, onboardingInitialValues],
+        : {
+            ...getInvoiceSchedulePrefill(inSessionContractDetails),
+            ...onboardingInitialValues,
+          },
+    [
+      existingInvoiceSchedule,
+      onboardingInitialValues,
+      getInvoiceSchedulePrefill,
+      inSessionContractDetails,
+    ],
   );
 
   const {
@@ -1370,6 +1408,23 @@ export const useContractorOnboarding = ({
             throw createStructuredError('Contract document ID not found');
           }
           setInternalContractDocumentId(contractDocumentId);
+          const savedInvoiceSchedule =
+            stepState.values?.create_invoice_schedule;
+          if (
+            !existingInvoiceSchedule &&
+            savedInvoiceSchedule &&
+            Object.keys(savedInvoiceSchedule).length > 0
+          ) {
+            setStepValues({
+              ...stepState.values,
+              create_invoice_schedule: syncInvoiceSchedulePrefill(
+                savedInvoiceSchedule,
+                getInvoiceSchedulePrefill(submittedContractDetailsRef.current),
+                getInvoiceSchedulePrefill(values),
+              ),
+            } as Record<StepKeys, FieldValues>);
+          }
+          submittedContractDetailsRef.current = values;
 
           return response;
         } catch (error) {
@@ -1522,10 +1577,9 @@ export const useContractorOnboarding = ({
       }
 
       case 'invoice_schedule': {
-        // Show create_invoice_schedule step only when user selects 'schedule'
-        const shouldShowCreateStep =
-          values.invoice_schedule_preference === 'schedule';
-        setIncludeCreateInvoiceSchedule(shouldShowCreateStep);
+        updateCreateInvoiceScheduleVisibility(
+          values.invoice_schedule_preference,
+        );
 
         return {
           data: {
@@ -1777,6 +1831,12 @@ export const useContractorOnboarding = ({
       if (stepState.currentStep.name === 'pricing_plan') {
         await onSubscriptionValuesChange(values);
       }
+      if (stepState.currentStep.name === 'invoice_schedule') {
+        updateCreateInvoiceScheduleVisibility(
+          values.invoice_schedule_preference,
+        );
+      }
+
       // new steps or refactor ones should rely on json-schema-form-mutability
       // instead of passing fieldValues
       const stepsUsingHandleValidation = [
@@ -1797,6 +1857,7 @@ export const useContractorOnboarding = ({
       stepState,
       handleValidation,
       onSubscriptionValuesChange,
+      updateCreateInvoiceScheduleVisibility,
     ],
   );
 

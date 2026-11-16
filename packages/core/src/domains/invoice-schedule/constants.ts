@@ -2,6 +2,9 @@
  * Invoice schedule status values
  * Based on ContractorInvoiceScheduleStatus from the API
  */
+export const INVOICE_NUMBER_SEQUENCE_PATH =
+  '/dashboard/company-settings/invoice-number-sequence';
+
 export const INVOICE_SCHEDULE_STATUS = {
   PENDING_CONTRACTOR_ACTION: 'pending_contractor_action',
   PROCESSING: 'processing',
