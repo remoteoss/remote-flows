@@ -26,6 +26,7 @@ const getInitialStep = <T extends string>(steps: Record<T, Step<T>>) => {
 export const useStepState = <T extends string, Fields = FieldValues>(
   steps: Record<T, Step<T>>,
   onStepChange?: (step: Step<T>) => void,
+  getSteps?: () => Record<T, Step<T>>,
 ) => {
   const stepKeys = Object.keys(steps) as Array<keyof typeof steps>;
 
@@ -39,6 +40,9 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   // step's visibility but before the component has re-rendered.
   const stepsRef = useRef(steps);
   stepsRef.current = steps;
+  const getStepsRef = useRef(getSteps);
+  getStepsRef.current = getSteps;
+  const resolveSteps = () => getStepsRef.current?.() ?? stepsRef.current;
 
   const [fieldValues, setFieldValues] = useState<Fields>({} as Fields);
   const fieldValuesRef = useRef(fieldValues);
@@ -60,7 +64,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
 
   function nextStep() {
     const { index } = stepState.currentStep;
-    const stepValues = Object.values<Step<T>>(stepsRef.current);
+    const stepValues = Object.values<Step<T>>(resolveSteps());
     const nextStep = stepValues.find(
       (step) => step.index > index && step.visible !== false,
     );
@@ -94,7 +98,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
 
   function previousStep() {
     const { index } = stepState.currentStep;
-    const stepValues = Object.values<Step<T>>(stepsRef.current);
+    const stepValues = Object.values<Step<T>>(resolveSteps());
     const previousStep = stepValues
       .reverse()
       .find((step) => step.index < index && step.visible !== false);
@@ -126,9 +130,9 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   function goToStep(step: T) {
     setStepState((previousState) => ({
       ...previousState,
-      currentStep: stepsRef.current[step],
+      currentStep: resolveSteps()[step],
     }));
-    onStepChange?.(stepsRef.current[step]);
+    onStepChange?.(resolveSteps()[step]);
   }
 
   function setStepValues(values: Record<T, Fields>) {
