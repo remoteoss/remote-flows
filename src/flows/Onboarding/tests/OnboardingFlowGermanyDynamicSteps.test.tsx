@@ -7,7 +7,7 @@ import {
 } from '@testing-library/react';
 
 import userEvent from '@testing-library/user-event';
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
@@ -567,6 +567,34 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
   });
 
   it('should go to the engagement agreement details step after creating the employment', async () => {
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode='DEU'
+        skipSteps={['select_country']}
+        initialValues={{
+          ...employmentDefaultResponse.data.employment.basic_information,
+          mobile_number: `+49${phoneNumberMock}`,
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    screen.getByText(/Next Step/i).click();
+
+    await screen.findByText(/Step: Engagement Agreement Details/i);
+  });
+
+  it('should go to the engagement agreement details step when the schema loads before the eligibility call finishes', async () => {
+    server.use(
+      http.post('*/v1/employments/*/contract-eligibility', async () => {
+        await delay(200);
+        return HttpResponse.json({ data: { status: 'ok' } });
+      }),
+    );
+
     render(
       <OnboardingFlow
         {...defaultProps}

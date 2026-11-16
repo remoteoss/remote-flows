@@ -317,7 +317,12 @@ export const useOnboarding = ({
   );
 
   const stepsRenderedResolverRef = useRef<(() => void) | null>(null);
+  const includeEngagementAgreementDetailsRef = useRef(
+    includeEngagementAgreementDetails,
+  );
   useEffect(() => {
+    includeEngagementAgreementDetailsRef.current =
+      includeEngagementAgreementDetails;
     stepsRenderedResolverRef.current?.();
     stepsRenderedResolverRef.current = null;
   }, [includeEngagementAgreementDetails]);
@@ -1061,7 +1066,7 @@ export const useOnboarding = ({
   };
 
   function applyIncludeEngagementAgreementDetails(hasFields: boolean) {
-    if (hasFields === includeEngagementAgreementDetails) {
+    if (hasFields === includeEngagementAgreementDetailsRef.current) {
       return Promise.resolve();
     }
     return new Promise<void>((resolve) => {
