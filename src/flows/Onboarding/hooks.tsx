@@ -14,7 +14,6 @@ import {
   reviewStepAllowedEmploymentStatus,
   buildSteps,
   StepKeys,
-  usesJsfV1ContractDetails,
   getJobTitleEligibilityStatement,
   JOB_TITLE_ELIGIBILITY_RESULT_FIELD,
 } from '@/src/flows/Onboarding/utils';
@@ -42,13 +41,12 @@ import {
   useEmploymentOnboardingReservesStatus,
   useEngagementAgreementDetailsSchema,
   useGetPreOnboardingRequirements,
-  useLegacyContractDetailsSchema,
   useUpdateBenefitsOffers,
   useUpdateEmployment,
   useUpdateEmploymentEngagementAgreementDetails,
   useUpsertContractEligibility,
 } from '@/src/flows/Onboarding/api';
-import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
+import { JSFModify } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
 import { $TSFixMe, JSFField, JSFFieldset } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
@@ -60,27 +58,9 @@ import { useJobTitleEligibilityCheck } from '@/src/flows/Onboarding/hooks/useJob
 
 type OnboardingHookProps = Omit<OnboardingFlowProps, 'render'>;
 
-const jsonSchemaToEmployment: Partial<
-  Record<JSONSchemaFormType, keyof Employment>
-> = {
-  employment_basic_information: 'basic_information',
-  contract_details: 'contract_details',
-};
-
-const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
-  select_country: null,
-  basic_information: 'employment_basic_information',
-  engagement_agreement_details: null,
-  contract_details: 'contract_details',
-  benefits: null,
-  employment_agreement_preview: null,
-  review: null,
-};
-
 const getLoadingStates = ({
   isLoadingBasicInformationForm,
   isLoadingContractDetailsForm,
-  isLoadingContractDetailsFormV1,
   isLoadingEngagementAgreementDetails,
   isLoadingEmploymentAgreementPreview,
   isLoadingEmploymentEngagementAgreementDetails,
@@ -101,7 +81,6 @@ const getLoadingStates = ({
 }: {
   isLoadingBasicInformationForm: boolean;
   isLoadingContractDetailsForm: boolean;
-  isLoadingContractDetailsFormV1: boolean;
   isLoadingEngagementAgreementDetails: boolean;
   isLoadingEmploymentEngagementAgreementDetails: boolean;
   isLoadingEmployment: boolean;
@@ -131,7 +110,6 @@ const getLoadingStates = ({
     isLoadingCompany ||
     isLoadingCountries ||
     isLoadingEmploymentAgreementPreview ||
-    isLoadingContractDetailsFormV1 ||
     isLoadingPreOnboardingRequirements ||
     isLoadingOnboardingReservesStatus;
 
@@ -498,30 +476,6 @@ export const useOnboarding = ({
   const { mutateAsync: updateContractEligibilityMutationAsync } =
     mutationToPromise(updateContractEligibilityMutation);
 
-  const formType =
-    stepToFormSchemaMap[stepState.currentStep.name] ||
-    'employment_basic_information';
-  const employmentKey = jsonSchemaToEmployment[formType] as keyof Employment;
-  const serverEmploymentData = (employment?.[employmentKey] || {}) as Record<
-    string,
-    unknown
-  >;
-
-  const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
-  // when you write on the fields, the values are stored in the fieldValues state
-  // when values are stored in the stepState is when the user has navigated to the step
-  // and then we have the values from the server and the onboardingInitialValues that the user can inject,
-  const mergedFormValues = hasUserEnteredAnyValues
-    ? {
-        ...onboardingInitialValues,
-        ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
-        ...fieldValues,
-      }
-    : {
-        ...onboardingInitialValues,
-        ...serverEmploymentData,
-      };
-
   const isBasicInformationDetailsEnabled = Boolean(
     internalCountryCode &&
     (stepState.currentStep.name === 'basic_information' ||
@@ -530,13 +484,6 @@ export const useOnboarding = ({
 
   const isContractDetailsEnabled = Boolean(
     internalCountryCode &&
-    ((stepState.currentStep.name === 'contract_details' &&
-      !usesJsfV1ContractDetails(internalCountryCode)) ||
-      Boolean(employmentId)),
-  );
-
-  const isJsfV1ContractDetailsEnabled = Boolean(
-    usesJsfV1ContractDetails(internalCountryCode) &&
     (stepState.currentStep.name === 'contract_details' ||
       Boolean(employmentId)),
   );
@@ -725,28 +672,6 @@ export const useOnboarding = ({
   const effectiveContractDetailsJsonSchemaVersion =
     getContractDetailsSchemaVersion(options, internalCountryCode);
 
-  const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
-    useLegacyContractDetailsSchema({
-      countryCode: internalCountryCode as string,
-      fieldValues: mergedFormValues,
-      query: {
-        employment_id: internalEmploymentId as string,
-      },
-      options: {
-        jsfModify: {
-          ...options?.jsfModify?.contract_details,
-          fields: {
-            ...options?.jsfModify?.contract_details?.fields,
-            ...contractDetailsCustomFields.fields,
-          },
-        },
-        queryOptions: {
-          enabled: isContractDetailsEnabled && !isJsfV1ContractDetailsEnabled,
-        },
-      },
-      jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
-    });
-
   const contractDetailsSavedValues = useMemo(
     () => ({
       ...onboardingInitialValues,
@@ -755,7 +680,7 @@ export const useOnboarding = ({
     [onboardingInitialValues, employment?.contract_details],
   );
 
-  const jsfV1Modify = useMemo(
+  const contractDetailsJsfModify = useMemo(
     () => ({
       ...options?.jsfModify?.contract_details,
       fields: {
@@ -767,19 +692,19 @@ export const useOnboarding = ({
   );
 
   const {
-    form: contractDetailsFormV1,
-    isLoading: isLoadingContractDetailsFormV1,
-    handleValidation: handleContractDetailsV1Validation,
-    parseFormValues: parseContractDetailsV1Values,
+    form: contractDetailsForm,
+    isLoading: isLoadingContractDetailsForm,
+    handleValidation: handleContractDetailsValidation,
+    parseFormValues: parseContractDetailsValues,
   } = useJsfV1ContractDetails({
     countryCode: internalCountryCode as string,
     initialValues: contractDetailsSavedValues,
     query: {
       employment_id: internalEmploymentId as string,
     },
-    enabled: isJsfV1ContractDetailsEnabled,
+    enabled: isContractDetailsEnabled,
     jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
-    jsfModify: jsfV1Modify,
+    jsfModify: contractDetailsJsfModify,
   });
 
   const benefitsSavedValues = useMemo(
@@ -824,9 +749,7 @@ export const useOnboarding = ({
       basic_information: basicInformationForm?.fields || [],
       engagement_agreement_details:
         engagementAgreementDetailsSchema?.fields || [],
-      contract_details: isJsfV1ContractDetailsEnabled
-        ? contractDetailsFormV1?.fields || []
-        : contractDetailsForm?.fields || [],
+      contract_details: contractDetailsForm?.fields || [],
       benefits: benefitOffersSchema?.fields || [],
       employment_agreement_preview: [],
       review: [],
@@ -837,8 +760,6 @@ export const useOnboarding = ({
       contractDetailsForm?.fields,
       benefitOffersSchema?.fields,
       engagementAgreementDetailsSchema?.fields,
-      isJsfV1ContractDetailsEnabled,
-      contractDetailsFormV1?.fields,
     ],
   );
 
@@ -851,9 +772,7 @@ export const useOnboarding = ({
       basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
       engagement_agreement_details:
         engagementAgreementDetailsSchema?.meta['x-jsf-fieldsets'],
-      contract_details: isJsfV1ContractDetailsEnabled
-        ? contractDetailsFormV1?.meta['x-jsf-fieldsets']
-        : contractDetailsForm?.meta['x-jsf-fieldsets'],
+      contract_details: contractDetailsForm?.meta['x-jsf-fieldsets'],
       benefits: null,
       employment_agreement_preview: null,
       review: null,
@@ -861,8 +780,6 @@ export const useOnboarding = ({
     [
       basicInformationForm?.meta,
       engagementAgreementDetailsSchema?.meta,
-      isJsfV1ContractDetailsEnabled,
-      contractDetailsFormV1?.meta,
       contractDetailsForm?.meta,
     ],
   );
@@ -876,9 +793,7 @@ export const useOnboarding = ({
       basic_information: basicInformationForm?.meta?.['x-jsf-presentation'],
       engagement_agreement_details:
         engagementAgreementDetailsSchema?.meta?.['x-jsf-presentation'],
-      contract_details: isJsfV1ContractDetailsEnabled
-        ? contractDetailsFormV1?.meta?.['x-jsf-presentation']
-        : contractDetailsForm?.meta?.['x-jsf-presentation'],
+      contract_details: contractDetailsForm?.meta?.['x-jsf-presentation'],
       benefits: benefitOffersSchema?.meta?.['x-jsf-presentation'],
       employment_agreement_preview: null,
       review: null,
@@ -887,8 +802,6 @@ export const useOnboarding = ({
       selectCountryForm?.meta,
       basicInformationForm?.meta,
       engagementAgreementDetailsSchema?.meta,
-      isJsfV1ContractDetailsEnabled,
-      contractDetailsFormV1?.meta,
       contractDetailsForm?.meta,
       benefitOffersSchema?.meta,
     ],
@@ -993,7 +906,6 @@ export const useOnboarding = ({
         getLoadingStates({
           isLoadingBasicInformationForm,
           isLoadingContractDetailsForm,
-          isLoadingContractDetailsFormV1,
           isLoadingEngagementAgreementDetails,
           isLoadingEmploymentEngagementAgreementDetails,
           isLoadingEmployment,
@@ -1031,7 +943,6 @@ export const useOnboarding = ({
         currentStepName,
         arePreOnboardingRequirementsFulfilled,
         isLoadingOnboardingReservesStatus,
-        isLoadingContractDetailsFormV1,
         shouldFreezeEmploymentData,
       ],
     );
@@ -1117,20 +1028,9 @@ export const useOnboarding = ({
 
     if (
       contractDetailsForm &&
-      stepState.currentStep.name === 'contract_details' &&
-      !isJsfV1ContractDetailsEnabled
+      stepState.currentStep.name === 'contract_details'
     ) {
-      return await parseJSFToValidate(values, contractDetailsForm?.fields, {
-        isPartialValidation: false,
-      });
-    }
-
-    if (
-      contractDetailsFormV1 &&
-      stepState.currentStep.name === 'contract_details' &&
-      isJsfV1ContractDetailsEnabled
-    ) {
-      return await parseContractDetailsV1Values(values);
+      return await parseContractDetailsValues(values);
     }
 
     if (benefitOffersSchema && stepState.currentStep.name === 'benefits') {
@@ -1288,23 +1188,9 @@ export const useOnboarding = ({
 
       if (
         contractDetailsForm &&
-        stepState.currentStep.name === 'contract_details' &&
-        !isJsfV1ContractDetailsEnabled
+        stepState.currentStep.name === 'contract_details'
       ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          contractDetailsForm?.fields,
-          { isPartialValidation: false },
-        );
-        return contractDetailsForm?.handleValidation(parsedValues);
-      }
-
-      if (
-        contractDetailsFormV1 &&
-        stepState.currentStep.name === 'contract_details' &&
-        isJsfV1ContractDetailsEnabled
-      ) {
-        return handleContractDetailsV1Validation(values);
+        return handleContractDetailsValidation(values);
       }
 
       return null;
@@ -1319,9 +1205,7 @@ export const useOnboarding = ({
       engagementAgreementDetailsSchema,
       handleEngagementAgreementDetailsValidation,
       contractDetailsForm,
-      contractDetailsFormV1,
-      handleContractDetailsV1Validation,
-      isJsfV1ContractDetailsEnabled,
+      handleContractDetailsValidation,
     ],
   );
 
@@ -1338,7 +1222,7 @@ export const useOnboarding = ({
         await onBenefitsValuesChange(values);
       }
       if (
-        isJsfV1ContractDetailsEnabled &&
+        isContractDetailsEnabled &&
         stepState.currentStep.name === 'contract_details'
       ) {
         await handleValidation(values);
@@ -1346,7 +1230,7 @@ export const useOnboarding = ({
     },
     [
       setFieldValues,
-      isJsfV1ContractDetailsEnabled,
+      isContractDetailsEnabled,
       stepState,
       handleValidation,
       onBasicInformationValuesChange,

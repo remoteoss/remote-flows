@@ -13,7 +13,7 @@ import { getV1Countries, getV1CountriesCountryCodeForm } from '@/src/client';
 import { Client } from '@/src/client/client';
 import {
   DEFAULT_VERSION,
-  getContractDetailsStrategy,
+  CONTRACT_DETAILS_STRATEGY,
   withJobTitleEligibilityRiskAcknowledgement,
 } from '@/src/flows/Onboarding/utils';
 import { createSandboxClient } from './schema-canary/auth';
@@ -149,7 +149,7 @@ async function checkCountry(
     );
     const fingerprint = await fingerprintSchema(
       schema,
-      getContractDetailsStrategy(country),
+      CONTRACT_DETAILS_STRATEGY,
     );
 
     if (UPDATE) {

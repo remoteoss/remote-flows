@@ -1,5 +1,53 @@
 # @remoteoss/remote-flows
 
+## 1.71.0
+
+### Minor Changes
+
+#### Features
+
+- export useIdentity to fix magic links demo (#1937) [#1937](https://github.com/remoteoss/remote-flows/pull/1937)
+- link to the invoice number sequence page from the invoice number field (#1930) [#1930](https://github.com/remoteoss/remote-flows/pull/1930)
+- prefill invoice schedule from contract details (#1925) [#1925](https://github.com/remoteoss/remote-flows/pull/1925)
+
+#### Fixes
+
+- hide create invoice schedule step when skip is selected (#1924) [#1924](https://github.com/remoteoss/remote-flows/pull/1924)
+- forward the field ref to default inputs (#1944) [#1944](https://github.com/remoteoss/remote-flows/pull/1944)
+- wait for identity before the schema is ready (#1956) [#1956](https://github.com/remoteoss/remote-flows/pull/1956)
+
+#### Docs
+
+- document the manager time-off flows (#1916) [#1916](https://github.com/remoteoss/remote-flows/pull/1916)
+- label extreme salary changes as compliance (#1936) [#1936](https://github.com/remoteoss/remote-flows/pull/1936)
+- list only contract details versions that change the schema (#1947) [#1947](https://github.com/remoteoss/remote-flows/pull/1947)
+- rename the Contract Details matrix column to SDK (#1941) [#1941](https://github.com/remoteoss/remote-flows/pull/1941)
+
+#### Chores
+
+- sync-contract-versions: sync (#1912) [#1912](https://github.com/remoteoss/remote-flows/pull/1912)
+- bump-contract-details: ECU, UKR (#1911) [#1911](https://github.com/remoteoss/remote-flows/pull/1911)
+- bump-contract-details: BGD, COL (#1910) [#1910](https://github.com/remoteoss/remote-flows/pull/1910)
+- add a pnpm workspace with an empty private core package (#1887) [#1887](https://github.com/remoteoss/remote-flows/pull/1887)
+- move plain form data types to core (#1889) [#1889](https://github.com/remoteoss/remote-flows/pull/1889)
+- move pure field helpers to core (#1890) [#1890](https://github.com/remoteoss/remote-flows/pull/1890)
+- move form value conversion to core with an injected file converter (#1891) [#1891](https://github.com/remoteoss/remote-flows/pull/1891)
+- update contract details schema canary report (#1922) [#1922](https://github.com/remoteoss/remote-flows/pull/1922)
+- bump-contract-details: HND, HRV (#1923) [#1923](https://github.com/remoteoss/remote-flows/pull/1923)
+- fail contract-document spec on a 5xx create response (#1919) [#1919](https://github.com/remoteoss/remote-flows/pull/1919)
+- update contract details schema canary report (#1934) [#1934](https://github.com/remoteoss/remote-flows/pull/1934)
+- refresh HRV, GTM and DNK v6 contract details baselines (#1940) [#1940](https://github.com/remoteoss/remote-flows/pull/1940)
+- bump LVA, MDA contract_details schema versions (#1935) [#1935](https://github.com/remoteoss/remote-flows/pull/1935)
+- move the headless form engine to core (#1893) [#1893](https://github.com/remoteoss/remote-flows/pull/1893)
+- update contract details schema canary report (#1952) [#1952](https://github.com/remoteoss/remote-flows/pull/1952)
+- bump TWN, BOL, SVK contract_details schema versions (#1946) [#1946](https://github.com/remoteoss/remote-flows/pull/1946)
+- add --basic-info overrides to dump:schema (#1943) [#1943](https://github.com/remoteoss/remote-flows/pull/1943)
+- bump-contract-details: CRI, CZE (#1945) [#1945](https://github.com/remoteoss/remote-flows/pull/1945)
+- update contract details schema canary report (#1954) [#1954](https://github.com/remoteoss/remote-flows/pull/1954)
+- update contract details schema canary report (#1955) [#1955](https://github.com/remoteoss/remote-flows/pull/1955)
+- add archive:employments for sandbox cleanup (#1951) [#1951](https://github.com/remoteoss/remote-flows/pull/1951)
+- build contract details once for every country (#1948) [#1948](https://github.com/remoteoss/remote-flows/pull/1948)
+
 ## 1.70.1
 
 ### Patch Changes

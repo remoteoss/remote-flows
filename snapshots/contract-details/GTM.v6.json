@@ -20,6 +20,7 @@
       "has_signing_bonus",
       "incentive_bonus_ack",
       "is_role_managerial",
+      "non_compete_clause_apply",
       "non_interference_apply",
       "non_solicitation_customers",
       "non_solicitation_employees",
@@ -49,6 +50,7 @@
       "has_signing_bonus",
       "incentive_bonus_ack",
       "is_role_managerial",
+      "non_compete_clause_apply",
       "non_interference_apply",
       "non_solicitation_customers",
       "non_solicitation_employees",
@@ -106,6 +108,10 @@
     "equity_compensation.equity_cliff": "number",
     "equity_compensation.equity_vesting_period": "number",
     "equity_compensation.equity_description": "textarea",
+    "non_compete_clause_apply": "radio",
+    "non_compete_clause_halt_period_months": "number",
+    "non_compete_clause_compensation_amount": "money",
+    "non_compete_clause_compensation_percentage": "number",
     "non_solicitation_employees": "radio",
     "non_solicitation_employees_number_of_months": "number",
     "non_solicitation_customers": "radio",
@@ -139,6 +145,7 @@
     "has_bonus": ["no", "yes"],
     "has_commissions": ["no", "yes"],
     "equity_compensation.offer_equity_compensation": ["no", "yes"],
+    "non_compete_clause_apply": ["no", "yes"],
     "non_solicitation_employees": ["no", "yes"],
     "non_solicitation_customers": ["no", "yes"],
     "non_interference_apply": ["no", "yes"],
@@ -237,6 +244,18 @@
       ],
       "removedVisible": [],
       "addedRequired": ["equity_compensation.equity_description"],
+      "removedRequired": []
+    },
+    "non_compete_clause_apply=yes": {
+      "addedVisible": [
+        "non_compete_clause_compensation_percentage",
+        "non_compete_clause_halt_period_months"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "non_compete_clause_compensation_percentage",
+        "non_compete_clause_halt_period_months"
+      ],
       "removedRequired": []
     },
     "non_solicitation_employees=yes": {
