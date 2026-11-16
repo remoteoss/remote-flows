@@ -65,6 +65,8 @@ import {
   ContractorOnboardingHookOptions,
 } from '@/src/flows/ContractorOnboarding/types';
 import {
+  buildInvoiceSchedulePrefill,
+  syncInvoiceSchedulePrefill,
   buildSteps,
   reviewStepAllowedEmploymentStatus,
   disabledInviteButtonEmploymentStatus,
@@ -725,6 +727,7 @@ export const useContractorOnboarding = ({
   const {
     data: contractorOnboardingDetailsForm,
     isLoading: isLoadingContractorOnboardingDetailsForm,
+    currencies,
   } = useContractorContractDetailsSchema({
     countryCode: internalCountryCode as string,
     fieldValues: fieldValues,
@@ -793,12 +796,40 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const submittedContractDetailsRef = useRef<FieldValues | undefined>(
+    undefined,
+  );
+
+  const currencyCodes = useMemo(
+    () => currencies?.map(({ code }: { code: string }) => code),
+    [currencies],
+  );
+
+  const getInvoiceSchedulePrefill = useCallback(
+    (contractDetails?: FieldValues) =>
+      buildInvoiceSchedulePrefill(
+        { ...employment?.contract_details, ...contractDetails },
+        currencyCodes,
+      ),
+    [employment?.contract_details, currencyCodes],
+  );
+
+  const inSessionContractDetails = stepState.values?.contract_details;
+
   const createInvoiceScheduleSavedValues = useMemo(
     () =>
       existingInvoiceSchedule
         ? buildInvoiceScheduleFormValues(existingInvoiceSchedule)
-        : { ...onboardingInitialValues },
-    [existingInvoiceSchedule, onboardingInitialValues],
+        : {
+            ...getInvoiceSchedulePrefill(inSessionContractDetails),
+            ...onboardingInitialValues,
+          },
+    [
+      existingInvoiceSchedule,
+      onboardingInitialValues,
+      getInvoiceSchedulePrefill,
+      inSessionContractDetails,
+    ],
   );
 
   const {
@@ -1377,6 +1408,23 @@ export const useContractorOnboarding = ({
             throw createStructuredError('Contract document ID not found');
           }
           setInternalContractDocumentId(contractDocumentId);
+          const savedInvoiceSchedule =
+            stepState.values?.create_invoice_schedule;
+          if (
+            !existingInvoiceSchedule &&
+            savedInvoiceSchedule &&
+            Object.keys(savedInvoiceSchedule).length > 0
+          ) {
+            setStepValues({
+              ...stepState.values,
+              create_invoice_schedule: syncInvoiceSchedulePrefill(
+                savedInvoiceSchedule,
+                getInvoiceSchedulePrefill(submittedContractDetailsRef.current),
+                getInvoiceSchedulePrefill(values),
+              ),
+            } as Record<StepKeys, FieldValues>);
+          }
+          submittedContractDetailsRef.current = values;
 
           return response;
         } catch (error) {

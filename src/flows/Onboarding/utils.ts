@@ -2,7 +2,6 @@ import {
   CreateJobTitleEligibilityCheckParams,
   JobTitleEligibilityCheck,
 } from '@/src/client';
-import { HeadlessFormStrategy } from '@/src/common/headlessForm';
 import { Employment, OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { Step } from '@/src/flows/useStepState';
 import { JSFField, JSFFields } from '@/src/types/remoteFlows';
@@ -143,132 +142,7 @@ export const statusesWithReserveAlreadyHandled: Employment['status'][] = [
 
 export const DEFAULT_VERSION = 1;
 
-/**
- * Countries whose contract details are built once through
- * useContractDetailsSchema; every other country still uses the legacy rebuild path.
- * FRA = wage portage, ITA = APL, ESP = CBA categories fieldset; the rest move over by usage tier.
- */
-const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
-  'FRA',
-  'ITA',
-  'DEU',
-  'ESP',
-  'CAN',
-  'GBR',
-  'IND',
-  'PHL',
-  'USA',
-  'POL',
-  'NGA',
-  'IRL',
-  'SWE',
-  'NLD',
-  'ZAF',
-  'AUS',
-  'MYS',
-  'DOM',
-  'MEX',
-  'COL',
-  'PAK',
-  'NZL',
-  'ISR',
-  'CZE',
-  'PRT',
-  'BEL',
-  'CHN',
-  'KEN',
-  'BGR',
-  'BRA',
-  'CHL',
-  'FIN',
-  'GTM',
-  'AUT',
-  'NOR',
-  'ARM',
-  'EST',
-  'LBN',
-  'KOR',
-  'DNK',
-  'JAM',
-  'SGP',
-  'UGA',
-  'THA',
-  'CRI',
-  'ARG',
-  'ARE',
-  'SLV',
-  'PER',
-  'LTU',
-  'SAU',
-  'SRB',
-  'URY',
-  'BGD',
-  'GEO',
-  'NIC',
-  'SVN',
-  'ALB',
-  'CYP',
-  'MUS',
-  'VNM',
-  'GRC',
-  'HKG',
-  'ISL',
-  'LUX',
-  'MAR',
-  'MLT',
-  'PAN',
-  'PRI',
-  'ROU',
-  'TUR',
-  'MKD',
-  'PRY',
-  'JPN',
-  'LKA',
-  'HUN',
-  'IDN',
-  'XKX',
-  'ZWE',
-  'TUN',
-  'BIH',
-  'CHE',
-  'ECU',
-  'UKR',
-  'HND',
-  'HRV',
-  'LVA',
-  'MDA',
-  'TWN',
-  'BOL',
-  'SVK',
-  'EGY',
-];
-
-/**
- * Checks if a country's contract details schema is served as jsfVersion 1
- *
- * @param countryCode - The country code to check
- */
-export const usesJsfV1ContractDetails = (countryCode: string | null) =>
-  Boolean(
-    countryCode && JSF_V1_CONTRACT_DETAILS_COUNTRIES.includes(countryCode),
-  );
-
-export const CONTRACT_DETAILS_STRATEGY = {
-  legacy: 'rebuild',
-  jsfV1: 'buildOnce',
-} as const;
-
-/**
- * Gets the useHeadlessForm strategy the contract details step uses for a country
- *
- * @param countryCode - The country code to check
- */
-export const getContractDetailsStrategy = (
-  countryCode: string | null,
-): HeadlessFormStrategy =>
-  usesJsfV1ContractDetails(countryCode)
-    ? CONTRACT_DETAILS_STRATEGY.jsfV1
-    : CONTRACT_DETAILS_STRATEGY.legacy;
+export const CONTRACT_DETAILS_STRATEGY = 'buildOnce' as const;
 
 /**
  * Gets the default (recommended) contract details schema version for a country

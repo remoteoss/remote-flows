@@ -4,11 +4,9 @@ import {
   getBasicInformationSchemaVersion,
   getBenefitOffersSchemaVersion,
   getContractDetailsSchemaVersion,
-  getContractDetailsStrategy,
   getJobTitleEligibilityParams,
   getJobTitleEligibilityValues,
   JOB_TITLE_ELIGIBILITY_SLUG_FIELD,
-  usesJsfV1ContractDetails,
   withoutProhibitedTaxServicingCountries,
 } from '../utils';
 
@@ -31,120 +29,6 @@ describe('getContractDetailsSchemaVersion', () => {
     const result = getContractDetailsSchemaVersion(options, 'DEU');
 
     expect(result).toEqual(2);
-  });
-});
-
-describe('usesJsfV1ContractDetails', () => {
-  it.each([
-    'CAN',
-    'GBR',
-    'IND',
-    'PHL',
-    'USA',
-    'POL',
-    'NGA',
-    'IRL',
-    'SWE',
-    'NLD',
-    'FRA',
-    'ITA',
-    'DEU',
-    'ESP',
-    'ZAF',
-    'AUS',
-    'MYS',
-    'DOM',
-    'MEX',
-    'COL',
-    'PAK',
-    'NZL',
-    'ISR',
-    'CZE',
-    'PRT',
-    'CHN',
-    'KEN',
-    'BGR',
-    'BRA',
-    'CHL',
-    'FIN',
-    'GTM',
-    'NOR',
-    'ARM',
-    'EST',
-    'LBN',
-    'KOR',
-    'DNK',
-    'JAM',
-    'SGP',
-    'UGA',
-    'THA',
-    'CRI',
-    'ARG',
-    'ARE',
-    'SLV',
-    'PER',
-    'LTU',
-    'SAU',
-    'SRB',
-    'URY',
-    'BGD',
-    'GEO',
-    'NIC',
-    'SVN',
-    'ALB',
-    'CYP',
-    'MUS',
-    'VNM',
-    'GRC',
-    'HKG',
-    'ISL',
-    'LUX',
-    'MAR',
-    'MLT',
-    'PAN',
-    'PRI',
-    'ROU',
-    'TUR',
-    'MKD',
-    'PRY',
-    'JPN',
-    'LKA',
-    'HUN',
-    'IDN',
-    'XKX',
-    'ZWE',
-    'TUN',
-    'BIH',
-    'CHE',
-    'ECU',
-    'UKR',
-    'HND',
-    'HRV',
-    'LVA',
-    'MDA',
-    'TWN',
-    'BOL',
-    'SVK',
-    'EGY',
-  ])('should return true for %s', (countryCode) => {
-    expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
-  });
-
-  it('should return false for the other countries', () => {
-    expect(usesJsfV1ContractDetails('RUS')).toBe(false);
-    expect(usesJsfV1ContractDetails(null)).toBe(false);
-  });
-});
-
-describe('getContractDetailsStrategy', () => {
-  it('returns buildOnce for countries on the jsf v1 contract details path', () => {
-    expect(getContractDetailsStrategy('DEU')).toBe('buildOnce');
-    expect(getContractDetailsStrategy('FRA')).toBe('buildOnce');
-  });
-
-  it('returns rebuild for every other country', () => {
-    expect(getContractDetailsStrategy('RUS')).toBe('rebuild');
-    expect(getContractDetailsStrategy(null)).toBe('rebuild');
   });
 });
 

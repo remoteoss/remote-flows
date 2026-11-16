@@ -44,6 +44,7 @@ export type { HeadlessFormOptions, HeadlessFormStrategy } from './headlessForm';
 export {
   INVOICE_NUMBER_SEQUENCE_PATH,
   INVOICE_SCHEDULE_STATUS,
+  RECURRING_PERIODICITY_OPTIONS,
 } from './invoiceSchedules/constants';
 export {
   buildCreateInvoiceScheduleSchema,

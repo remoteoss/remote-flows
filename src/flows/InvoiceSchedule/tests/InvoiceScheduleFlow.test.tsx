@@ -425,7 +425,7 @@ describe('InvoiceScheduleFlow', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows no sequence copy until the identity is known', async () => {
+  it('holds the form back until the identity is known so the sequence link appears with it', async () => {
     let releaseIdentity: () => void = () => undefined;
     const identityGate = new Promise<void>((resolve) => {
       releaseIdentity = resolve;
@@ -439,16 +439,20 @@ describe('InvoiceScheduleFlow', () => {
 
     renderFlow();
 
-    await screen.findByLabelText(/Invoice currency/i);
-
+    await waitFor(() => {
+      expect(
+        queryClient.getQueryData(['contractor-invoice-sequence']),
+      ).toBeDefined();
+    });
     expect(
-      screen.queryByText(/automatically number all invoices/),
+      screen.queryByLabelText(/Invoice currency/i),
     ).not.toBeInTheDocument();
 
     releaseIdentity();
 
+    await screen.findByLabelText(/Invoice currency/i);
     expect(
-      await screen.findByRole('button', {
+      screen.getByRole('button', {
         name: 'create an invoice number sequence',
       }),
     ).toBeInTheDocument();
