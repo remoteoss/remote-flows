@@ -210,11 +210,6 @@ export const useOnboarding = ({
   );
 
   const [
-    includeEngagementAgreementDetails,
-    setIncludeEngagementAgreementDetails,
-  ] = useState<boolean>(false);
-
-  const [
     includeEmploymentAgreementPreview,
     setIncludeEmploymentAgreementPreview,
   ] = useState<boolean>(false);
@@ -226,41 +221,6 @@ export const useOnboarding = ({
     options?.features?.includes('ea_preview') &&
     includeEmploymentAgreementPreview,
   );
-
-  const { steps, stepsArray } = useMemo(
-    () =>
-      buildSteps({
-        includeSelectCountry: !skipSteps?.includes('select_country'),
-        includeEngagementAgreementDetails,
-        useDynamicSteps,
-        useEAPreview,
-      }),
-    [
-      includeEngagementAgreementDetails,
-      skipSteps,
-      useDynamicSteps,
-      useEAPreview,
-    ],
-  );
-
-  const onStepChange = useCallback(
-    (step: Step<StepKeys>) => {
-      updateErrorContext({
-        step: step.name,
-      });
-    },
-    [updateErrorContext],
-  );
-
-  const {
-    fieldValues,
-    stepState,
-    setFieldValues,
-    previousStep,
-    nextStep,
-    goToStep,
-    setStepValues,
-  } = useStepState(steps, onStepChange);
 
   const {
     data: employment,
@@ -316,30 +276,45 @@ export const useOnboarding = ({
     },
   );
 
-  const stepsRenderedResolverRef = useRef<(() => void) | null>(null);
-  const includeEngagementAgreementDetailsRef = useRef(
-    includeEngagementAgreementDetails,
+  const includeEngagementAgreementDetails = Boolean(
+    engagementAgreementDetailsSchema?.fields &&
+    engagementAgreementDetailsSchema.fields.length > 0,
   );
-  useEffect(() => {
-    includeEngagementAgreementDetailsRef.current =
-      includeEngagementAgreementDetails;
-    stepsRenderedResolverRef.current?.();
-    stepsRenderedResolverRef.current = null;
-  }, [includeEngagementAgreementDetails]);
 
-  // logic to include the engagement agreement details step based on the schema fields
-  useEffect(() => {
-    const hasFields = Boolean(
-      engagementAgreementDetailsSchema?.fields &&
-      engagementAgreementDetailsSchema.fields.length > 0,
-    );
-    if (hasFields !== includeEngagementAgreementDetails) {
-      setIncludeEngagementAgreementDetails(hasFields);
-    }
-  }, [
-    engagementAgreementDetailsSchema?.fields,
-    includeEngagementAgreementDetails,
-  ]);
+  const { steps, stepsArray } = useMemo(
+    () =>
+      buildSteps({
+        includeSelectCountry: !skipSteps?.includes('select_country'),
+        includeEngagementAgreementDetails,
+        useDynamicSteps,
+        useEAPreview,
+      }),
+    [
+      includeEngagementAgreementDetails,
+      skipSteps,
+      useDynamicSteps,
+      useEAPreview,
+    ],
+  );
+
+  const onStepChange = useCallback(
+    (step: Step<StepKeys>) => {
+      updateErrorContext({
+        step: step.name,
+      });
+    },
+    [updateErrorContext],
+  );
+
+  const {
+    fieldValues,
+    stepState,
+    setFieldValues,
+    previousStep,
+    nextStep,
+    goToStep,
+    setStepValues,
+  } = useStepState(steps, onStepChange);
 
   const fieldsMetaRef = useRef<{
     select_country: NestedMeta;
@@ -472,6 +447,7 @@ export const useOnboarding = ({
 
   const { client } = useClient();
   const queryClient = useQueryClient();
+  const goToEngagementAgreementDetailsNextRef = useRef(false);
   const createEmploymentMutation = useCreateEmployment(options);
   const updateEmploymentMutation = useUpdateEmployment(
     internalCountryCode as string,
@@ -1065,21 +1041,9 @@ export const useOnboarding = ({
     return {};
   };
 
-  function applyIncludeEngagementAgreementDetails(hasFields: boolean) {
-    if (hasFields === includeEngagementAgreementDetailsRef.current) {
-      return Promise.resolve();
-    }
-    return new Promise<void>((resolve) => {
-      stepsRenderedResolverRef.current = resolve;
-      setIncludeEngagementAgreementDetails(hasFields);
-    });
-  }
-
-  async function resolveEngagementAgreementDetailsStep(
-    newEmploymentId: string,
-  ) {
+  async function shouldGoToEngagementAgreementDetails(newEmploymentId: string) {
     if (!useDynamicSteps || !internalCountryCode) {
-      return;
+      return false;
     }
     try {
       const response = await queryClient.query(
@@ -1094,11 +1058,9 @@ export const useOnboarding = ({
         ),
       );
       const properties = response.data?.data?.properties;
-      await applyIncludeEngagementAgreementDetails(
-        Boolean(properties && Object.keys(properties).length),
-      );
+      return Boolean(properties && Object.keys(properties).length);
     } catch {
-      await applyIncludeEngagementAgreementDetails(false);
+      return false;
     }
   }
 
@@ -1119,6 +1081,7 @@ export const useOnboarding = ({
         return Promise.resolve({ data: { countryCode: parsedValues.country } });
       }
       case 'basic_information': {
+        goToEngagementAgreementDetailsNextRef.current = false;
         const isEmploymentNotLoaded =
           !internalEmploymentId && internalCountryCode;
         const hasChangedCountry =
@@ -1151,7 +1114,8 @@ export const useOnboarding = ({
                   eligible_to_work_in_residing_country: 'citizen',
                   employer_or_work_restrictions: false,
                 });
-                await resolveEngagementAgreementDetailsStep(employmentId);
+                goToEngagementAgreementDetailsNextRef.current =
+                  await shouldGoToEngagementAgreementDetails(employmentId);
               }
 
               return response;
@@ -1214,6 +1178,14 @@ export const useOnboarding = ({
   }
 
   function next() {
+    if (
+      goToEngagementAgreementDetailsNextRef.current &&
+      stepState.currentStep.name === 'basic_information'
+    ) {
+      goToEngagementAgreementDetailsNextRef.current = false;
+      goToStep('engagement_agreement_details');
+      return;
+    }
     nextStep();
   }
 
