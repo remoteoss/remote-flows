@@ -706,6 +706,48 @@ export const useEmploymentOnboardingReservesStatus = (
   });
 };
 
+export const engagementAgreementDetailsOptions = (
+  client: Client,
+  countryCode: string,
+  params?: {
+    jsonSchemaVersion?: number | 'latest';
+    employmentId?: string;
+  },
+) =>
+  queryOptions({
+    queryKey: [
+      'engagement-agreement-details',
+      countryCode,
+      params?.jsonSchemaVersion,
+      params?.employmentId,
+    ] as const,
+    retry: false,
+    queryFn: async () => {
+      const response = await getV1CountriesCountryCodeForm({
+        client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          country_code: countryCode,
+          form: 'engagement_agreement_details',
+        },
+        query: {
+          ...(params?.jsonSchemaVersion && {
+            json_schema_version: params.jsonSchemaVersion,
+          }),
+          ...(params?.employmentId && { employment_id: params.employmentId }),
+        },
+      });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch engagement agreement details');
+      }
+
+      return response;
+    },
+  });
+
 export const useEngagementAgreementDetailsSchema = (
   countryCode: string,
   initialValues: FieldValues | undefined,
@@ -720,42 +762,14 @@ export const useEngagementAgreementDetailsSchema = (
   isLoading: boolean;
 } => {
   const { client } = useClient();
-  const queryParams = {
-    ...(options?.jsonSchemaVersion && {
-      json_schema_version: options.jsonSchemaVersion,
-    }),
-    ...(options?.employmentId && { employment_id: options.employmentId }),
-  };
 
   const { data: schema, isLoading } = useQuery({
-    queryKey: [
-      'engagement-agreement-details',
-      countryCode,
-      options?.jsonSchemaVersion,
-      options?.employmentId,
-    ],
-    retry: false,
+    ...engagementAgreementDetailsOptions(client as Client, countryCode, {
+      jsonSchemaVersion: options?.jsonSchemaVersion,
+      employmentId: options?.employmentId,
+    }),
     placeholderData: keepPreviousData,
     enabled: options?.queryOptions?.enabled ?? !!countryCode,
-    queryFn: async () => {
-      const response = await getV1CountriesCountryCodeForm({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: {
-          country_code: countryCode,
-          form: 'engagement_agreement_details',
-        },
-        query: queryParams,
-      });
-
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch engagement agreement details');
-      }
-
-      return response;
-    },
     select: ({ data }) => data?.data || {},
   });
 

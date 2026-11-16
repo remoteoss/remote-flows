@@ -27,6 +27,9 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Client } from '@/src/client/client';
+import { useClient } from '@/src/context';
 import mergeWith from 'lodash.mergewith';
 import {
   useBasicInformationSchema,
@@ -35,6 +38,7 @@ import {
   useCompany,
   useContractDetailsSchema,
   useCountriesSchemaField,
+  engagementAgreementDetailsOptions,
   useCreateEmployment,
   useEmploymentAgreementPreview,
   useEmploymentEngagementAgreementDetails,
@@ -284,6 +288,11 @@ export const useOnboarding = ({
     [onboardingInitialValues, employmentEngagementAgreementDetails],
   );
 
+  const engagementAgreementDetailsEmploymentId =
+    employment && employment.country?.code !== internalCountryCode
+      ? undefined
+      : internalEmploymentId;
+
   const {
     data: engagementAgreementDetailsSchema,
     isLoading: isLoadingEngagementAgreementDetails,
@@ -297,16 +306,21 @@ export const useOnboarding = ({
       jsfModify: options?.jsfModify,
       queryOptions: {
         enabled: Boolean(
-          !!internalCountryCode && options?.features?.includes('dynamic_steps'),
+          !!internalCountryCode &&
+          !!engagementAgreementDetailsEmploymentId &&
+          options?.features?.includes('dynamic_steps'),
         ),
       },
       jsonSchemaVersion: getEngagementAgreementDetailsSchemaVersion(options),
-      employmentId:
-        employment && employment.country?.code !== internalCountryCode
-          ? undefined
-          : internalEmploymentId,
+      employmentId: engagementAgreementDetailsEmploymentId,
     },
   );
+
+  const stepsRenderedResolverRef = useRef<(() => void) | null>(null);
+  useEffect(() => {
+    stepsRenderedResolverRef.current?.();
+    stepsRenderedResolverRef.current = null;
+  }, [includeEngagementAgreementDetails]);
 
   // logic to include the engagement agreement details step based on the schema fields
   useEffect(() => {
@@ -451,6 +465,8 @@ export const useOnboarding = ({
     },
   });
 
+  const { client } = useClient();
+  const queryClient = useQueryClient();
   const createEmploymentMutation = useCreateEmployment(options);
   const updateEmploymentMutation = useUpdateEmployment(
     internalCountryCode as string,
@@ -1044,6 +1060,43 @@ export const useOnboarding = ({
     return {};
   };
 
+  function applyIncludeEngagementAgreementDetails(hasFields: boolean) {
+    if (hasFields === includeEngagementAgreementDetails) {
+      return Promise.resolve();
+    }
+    return new Promise<void>((resolve) => {
+      stepsRenderedResolverRef.current = resolve;
+      setIncludeEngagementAgreementDetails(hasFields);
+    });
+  }
+
+  async function resolveEngagementAgreementDetailsStep(
+    newEmploymentId: string,
+  ) {
+    if (!useDynamicSteps || !internalCountryCode) {
+      return;
+    }
+    try {
+      const response = await queryClient.fetchQuery(
+        engagementAgreementDetailsOptions(
+          client as Client,
+          internalCountryCode,
+          {
+            jsonSchemaVersion:
+              getEngagementAgreementDetailsSchemaVersion(options),
+            employmentId: newEmploymentId,
+          },
+        ),
+      );
+      const properties = response.data?.data?.properties;
+      await applyIncludeEngagementAgreementDetails(
+        Boolean(properties && Object.keys(properties).length),
+      );
+    } catch {
+      await applyIncludeEngagementAgreementDetails(false);
+    }
+  }
+
   async function onSubmit(values: FieldValues) {
     // Prettify values for the current step
     const currentStepName = stepState.currentStep.name;
@@ -1093,6 +1146,7 @@ export const useOnboarding = ({
                   eligible_to_work_in_residing_country: 'citizen',
                   employer_or_work_restrictions: false,
                 });
+                await resolveEngagementAgreementDetailsStep(employmentId);
               }
 
               return response;

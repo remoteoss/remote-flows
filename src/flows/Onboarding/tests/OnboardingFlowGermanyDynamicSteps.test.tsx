@@ -566,7 +566,28 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('should not send the previous employment id when the country changes', async () => {
+  it('should go to the engagement agreement details step after creating the employment', async () => {
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode='DEU'
+        skipSteps={['select_country']}
+        initialValues={{
+          ...employmentDefaultResponse.data.employment.basic_information,
+          mobile_number: `+49${phoneNumberMock}`,
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    screen.getByText(/Next Step/i).click();
+
+    await screen.findByText(/Step: Engagement Agreement Details/i);
+  });
+
+  it('should not request the engagement agreement schema until the employment matches the new country', async () => {
     const portugalSchemaRequests: string[] = [];
 
     server.use(
@@ -577,12 +598,6 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
         '*/v1/countries/PRT/engagement_agreement_details*',
         ({ request }) => {
           portugalSchemaRequests.push(request.url);
-          if (new URL(request.url).searchParams.has('employment_id')) {
-            return HttpResponse.json(
-              { message: 'Employment does not belong to the country' },
-              { status: 404 },
-            );
-          }
           return HttpResponse.json(engagementAgreementDetailsSchemaV1Germany);
         },
       ),
@@ -602,11 +617,6 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
     screen.getByText(/Continue/i).click();
     await screen.findByText(/Step: Basic Information/i);
 
-    await waitFor(() => {
-      expect(portugalSchemaRequests).toHaveLength(1);
-    });
-    expect(
-      new URL(portugalSchemaRequests[0]).searchParams.has('employment_id'),
-    ).toBe(false);
+    expect(portugalSchemaRequests).toEqual([]);
   });
 });
