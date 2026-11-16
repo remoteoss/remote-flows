@@ -1,4 +1,5 @@
 import {
+  keepPreviousData,
   queryOptions,
   useMutation,
   useQuery,
@@ -734,6 +735,7 @@ export const useEngagementAgreementDetailsSchema = (
       options?.employmentId,
     ],
     retry: false,
+    placeholderData: keepPreviousData,
     enabled: options?.queryOptions?.enabled ?? !!countryCode,
     queryFn: async () => {
       const response = await getV1CountriesCountryCodeForm({
