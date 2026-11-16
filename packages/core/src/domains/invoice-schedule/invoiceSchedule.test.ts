@@ -9,8 +9,8 @@ import {
   buildRecurrence,
   toOrdinal,
 } from './utils';
-import { createHeadlessForm } from '../headlessForm';
-import type { $TSFixMe } from '../types';
+import { createHeadlessForm } from '../../form/headlessForm';
+import type { $TSFixMe } from '../../types';
 
 const baseValues = {
   currency: 'USD',
