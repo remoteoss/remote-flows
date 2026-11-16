@@ -259,6 +259,15 @@ export const useOnboarding = ({
   } = useStepState(steps, onStepChange);
 
   const {
+    data: employment,
+    isLoading: isLoadingEmployment,
+    refetch: refetchEmployment,
+  } = useEmploymentQuery({
+    employmentId: internalEmploymentId as string,
+    queryParams: { exclude_files: true },
+  });
+
+  const {
     data: employmentEngagementAgreementDetails,
     isLoading: isLoadingEmploymentEngagementAgreementDetails,
   } = useEmploymentEngagementAgreementDetails(internalEmploymentId, {
@@ -292,7 +301,10 @@ export const useOnboarding = ({
         ),
       },
       jsonSchemaVersion: getEngagementAgreementDetailsSchemaVersion(options),
-      employmentId: internalEmploymentId,
+      employmentId:
+        employment?.country?.code === internalCountryCode
+          ? internalEmploymentId
+          : undefined,
     },
   );
 
@@ -324,15 +336,6 @@ export const useOnboarding = ({
     benefits: {},
     engagement_agreement_details: {},
     employment_agreement_preview: {},
-  });
-
-  const {
-    data: employment,
-    isLoading: isLoadingEmployment,
-    refetch: refetchEmployment,
-  } = useEmploymentQuery({
-    employmentId: internalEmploymentId as string,
-    queryParams: { exclude_files: true },
   });
 
   // if the employment is loaded, country code has not been set yet
