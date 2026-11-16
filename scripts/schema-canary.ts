@@ -7,7 +7,7 @@ import { getV1Countries, getV1CountriesCountryCodeForm } from '@/src/client';
 import { Client } from '@/src/client/client';
 import {
   DEFAULT_VERSION,
-  getContractDetailsStrategy,
+  CONTRACT_DETAILS_STRATEGY,
   withJobTitleEligibilityRiskAcknowledgement,
 } from '@/src/flows/Onboarding/utils';
 import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
@@ -395,7 +395,7 @@ async function checkCountry(
   client: Client,
   country: string,
 ): Promise<CountryResult> {
-  const strategy = getContractDetailsStrategy(country);
+  const strategy = CONTRACT_DETAILS_STRATEGY;
   const sharedChecks = CHECK_TYPES.filter((check) => check !== 'latest-submit');
   const result =
     sharedChecks.length > 0

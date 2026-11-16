@@ -32,7 +32,7 @@ Schema versions for employee onboarding in Panama.
 
 ### v6
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
