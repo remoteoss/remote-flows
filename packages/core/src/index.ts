@@ -54,3 +54,4 @@ export {
   describeInvoiceNumberSequence,
 } from './domains/invoice-schedule/utils';
 export type { ContractorInvoicePreview } from './domains/invoice-schedule/types';
+export { clearBase64Data, formatCurrency } from './format';
