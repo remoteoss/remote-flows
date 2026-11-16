@@ -1,8 +1,14 @@
-import { FormDescription } from '@/src/components/ui/form';
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+} from '@/src/components/ui/form';
+import { Input } from '@/src/components/ui/input';
 import { screen, render } from '@testing-library/react';
 import { TestProviders } from '@/src/tests/testHelpers';
-import { PropsWithChildren, ReactNode } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { createRef, PropsWithChildren, ReactNode } from 'react';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { FormFieldsContext } from '@/src/context';
 import { lazyDefaultComponents } from '@/src/lazy-default-components';
@@ -224,6 +230,86 @@ describe('Form', () => {
 
       expect(screen.queryByText('alert("xss")')).not.toBeInTheDocument();
       expect(screen.getByTestId('safe')).toBeInTheDocument();
+    });
+  });
+  describe('FormControl', () => {
+    function ControlledField({
+      renderControl,
+      controlRef,
+    }: {
+      renderControl: (field: $TSFixMe) => ReactNode;
+      controlRef?: React.Ref<HTMLElement>;
+    }) {
+      const { control } = useFormContext();
+      return (
+        <FormField
+          control={control}
+          name='email'
+          render={({ field }) => (
+            <FormItem>
+              <FormControl ref={controlRef}>{renderControl(field)}</FormControl>
+            </FormItem>
+          )}
+        />
+      );
+    }
+
+    it('gives the input both the field ref and the control ref', () => {
+      const controlRef = createRef<HTMLElement>();
+      const fieldRef = createRef<HTMLInputElement>();
+
+      render(
+        <ControlledField
+          controlRef={controlRef}
+          renderControl={(field) => (
+            <Input
+              {...field}
+              ref={(node) => {
+                field.ref(node);
+                (fieldRef as { current: HTMLInputElement | null }).current =
+                  node;
+              }}
+              aria-label='Email'
+            />
+          )}
+        />,
+        { wrapper },
+      );
+
+      const input = screen.getByLabelText('Email');
+      expect(fieldRef.current).toBe(input);
+      expect(controlRef.current).toBe(input);
+    });
+
+    it('hands the input element to the field ref', () => {
+      const fieldRef = vi.fn();
+
+      render(
+        <ControlledField
+          renderControl={() => <Input ref={fieldRef} aria-label='Email' />}
+        />,
+        { wrapper },
+      );
+
+      expect(fieldRef).toHaveBeenCalledWith(screen.getByLabelText('Email'));
+    });
+
+    it('does not hand a ref to a child that has none to receive', () => {
+      const consoleError = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined);
+      const NoRefChild = () => <input aria-label='Email' />;
+
+      render(<ControlledField renderControl={() => <NoRefChild />} />, {
+        wrapper,
+      });
+
+      expect(consoleError).not.toHaveBeenCalledWith(
+        expect.stringContaining('Function components cannot be given refs'),
+        expect.anything(),
+        expect.anything(),
+      );
+      consoleError.mockRestore();
     });
   });
 });
