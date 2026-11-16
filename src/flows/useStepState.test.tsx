@@ -217,6 +217,27 @@ describe('useStepState', () => {
     expect(result.current.stepState.currentStep).toEqual(mockSteps.step2);
   });
 
+  it('should resolve the next step from getSteps instead of the steps prop', () => {
+    const hiddenSteps = {
+      step1: { index: 0, name: 'step1', visible: true },
+      step2: { index: 1, name: 'step2', visible: false },
+      step3: { index: 2, name: 'step3', visible: true },
+    };
+    const latestSteps = {
+      ...hiddenSteps,
+      step2: { index: 1, name: 'step2', visible: true },
+    };
+    const { result } = renderHook(() =>
+      useStepState(hiddenSteps, undefined, () => latestSteps),
+    );
+
+    act(() => {
+      result.current.nextStep();
+    });
+
+    expect(result.current.stepState.currentStep).toEqual(latestSteps.step2);
+  });
+
   it('should set all step values at once with setStepValues', () => {
     const { result } = renderHook(() => useStepState(mockSteps));
 
