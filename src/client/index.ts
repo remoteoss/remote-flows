@@ -460,6 +460,8 @@ export type {
   ContractorInvoiceStatus,
   ContractorRate,
   ContractorRateId,
+  ContractorRateStatementOfWork,
+  ContractorRateStatementOfWorkId,
   ContractorSubscriptionsSummary,
   ContractorSubscriptionSummariesResponse,
   ContractorTimesheet,
