@@ -244,3 +244,22 @@ export function buildInvoicePreviewPayload(
 
   return payload;
 }
+
+const SEQUENCE_FIELD_LABELS: Record<string, string> = {
+  date_format: 'Date format',
+  invoice_counter: 'Invoice count',
+  text: 'Text',
+  custom_field: 'Custom field',
+  employment_short_slug: 'Employment ID',
+};
+
+/**
+ * Describes an invoice number sequence by the kind of each part, e.g. `Text/Invoice count`.
+ */
+export function describeInvoiceNumberSequence(
+  fields: Array<{ type: string }>,
+): string {
+  return fields
+    .map((field) => SEQUENCE_FIELD_LABELS[field.type] ?? field.type)
+    .join('/');
+}

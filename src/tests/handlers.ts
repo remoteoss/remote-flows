@@ -338,7 +338,13 @@ const previewContractorInvoiceHandler = http.post(
   },
 );
 
+const contractorInvoiceSequenceHandler = http.get(
+  '*/v1/contractor-invoice-sequence',
+  () => HttpResponse.json({ message: 'Not Found' }, { status: 404 }),
+);
+
 export const defaultHandlers = [
+  contractorInvoiceSequenceHandler,
   identityHandler,
   legalEntitiesHandler,
   eligibilityQuestionnaireHandler,

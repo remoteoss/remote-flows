@@ -64,10 +64,11 @@ async function fetchSchema(
 
 export type SeededEmployment = { employmentId: string; companyId: string };
 
-/** Creates a sandbox employment for `country` up to contract_details and returns its employment and company ids. */
+/** Creates a sandbox employment for `country` up to contract_details and returns its employment and company ids. `basicInfoOverrides` replaces the generated basic information answers. */
 export async function seedEmploymentForCountry(
   client: Client,
   country: string,
+  basicInfoOverrides: Record<string, string> = {},
 ): Promise<SeededEmployment> {
   const basicInfoSchema = await fetchSchema(
     client,
@@ -84,6 +85,7 @@ export async function seedEmploymentForCountry(
   const { values: basicInformation } = fillSchema(basicInfoSchema, {
     job_title: 'Software Engineer',
     provisional_start_date: startDate,
+    ...basicInfoOverrides,
   });
 
   const created = await postV1Employments({
