@@ -8,6 +8,6 @@
     "noEmit": true,
     "jsx": null
   },
-  "include": ["src"],
+  "include": ["src", "types"],
   "exclude": ["src/**/*.test.ts"]
 }
