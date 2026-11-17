@@ -35,7 +35,7 @@ export type TimeOffStatusFilterFormValues = {
 
 export type UseTimeOffListOptions = {
   /**
-   * How many requests a page of the list holds. The API documents `1` to `100` and uses `20` when omitted.
+   * How many requests a page of the list holds, passed to the API as given. The API documents no default or maximum.
    */
   pageSize?: number;
 };
@@ -57,7 +57,7 @@ export type UseTimeOffRequestsOptions = {
    */
   page?: number;
   /**
-   * How many requests a page holds. The API documents `1` to `100` and uses `20` when omitted.
+   * How many requests a page holds, passed to the API as given. The API documents no default or maximum.
    */
   pageSize?: number;
 };

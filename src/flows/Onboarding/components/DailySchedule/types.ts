@@ -51,7 +51,7 @@ type DailyScheduleFieldProps = Omit<
   JSFCustomComponentProps,
   'value' | 'setValue'
 > & {
-  value: DailyScheduleValue | undefined;
+  value: DailyScheduleValue | null | undefined;
   setValue: (value: DailyScheduleValue) => void;
   metadata: DailyScheduleMetadata;
 };

@@ -3,7 +3,7 @@ import { StatementComponentProps } from '@/src/types/fields';
 import { AlertCircle } from 'lucide-react';
 
 export function StatementDefault({ data }: StatementComponentProps) {
-  const { title, description, severity } = data;
+  const { title, description, severity, action } = data;
 
   const mapSeverityToVariant: Record<
     string,
@@ -26,6 +26,7 @@ export function StatementDefault({ data }: StatementComponentProps) {
       {description && (
         <AlertDescription dangerouslySetInnerHTML={{ __html: description }} />
       )}
+      {action ? <div className='col-start-2 mt-1'>{action}</div> : null}
     </Alert>
   );
 }

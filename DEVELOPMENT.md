@@ -199,6 +199,17 @@ Runs when a release PR is merged:
 - Publishes package to npm
 - Creates GitHub release
 
+#### PR Preview Workflow (`.github/workflows/pr-preview.yml`)
+
+Runs on pull requests carrying the `preview-pkg` label:
+
+- Builds the PR and publishes it to [pkg.pr.new](https://pkg.pr.new), not to npm
+- Posts a comment on the PR with the install command, for example `npm i https://pkg.pr.new/@remoteoss/remote-flows@<pr-number>`
+- Rebuilds on every push while the label stays on the PR
+- Needs the pkg.pr.new GitHub app installed on the repository
+
+Use it to let a partner try a fix while the PR is still in review. Preview builds are not releases: they are not versioned and should not go to production.
+
 ### Bundle Size Reporting
 
 When you open a PR, the size-check workflow will automatically:
