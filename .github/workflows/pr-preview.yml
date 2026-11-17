@@ -5,7 +5,7 @@ on:
     types: [labeled, synchronize]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}-${{ (github.event.action == 'synchronize' || github.event.label.name == 'preview-pkg') && 'build' || github.run_id }}
   cancel-in-progress: true
 
 permissions:
