@@ -106,7 +106,7 @@ Forms follow the form rule. Also check:
 OpenAPI-driven development - never manually write client code:
 
 - **Regenerate after schema changes** - Run `pnpm run openapi-ts` after API updates
-- **Use generated types and SDK** - Import from `src/client/types.gen.ts` and `src/client/sdk.gen.ts`
+- **Use generated types and SDK** - Import from `@/src/client/types.gen` and `@/src/client/sdk.gen` (they re-export the generated files in `packages/core/src/client/`)
 - **Environment config** - Use environment configs from `src/environments.ts`
 
 For wrapping the client in a query, follow the React Query rule: pick a `queryOptions` factory or a custom hook as it describes (see `src/common/api/countries.ts` and `src/common/api/identity.ts`).
@@ -220,7 +220,7 @@ The flow layout is in [AGENTS.md](../AGENTS.md). Key principles to check:
 
 ### 9. Build and Release Issues
 
-- Uncommitted changes in generated files (`src/client/*.gen.ts`)
+- Uncommitted changes in generated files (`packages/core/src/client/*.gen.ts`)
 - Breaking changes without `BREAKING CHANGE:` in commit message
 - Version bump doesn't match change type (feat vs fix)
 - Peer dependency changes without testing in example app
