@@ -1,6 +1,6 @@
 import equal from 'fast-deep-equal';
 import { supportedTypes } from './fieldTypes';
-import type { $TSFixMe } from './types';
+import type { $TSFixMe } from '../types';
 
 export function isMultiSelect(field: $TSFixMe) {
   return field.type === supportedTypes.SELECT && field.multiple;
