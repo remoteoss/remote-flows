@@ -6,21 +6,23 @@ const BASE_REF = 'HEAD^1';
 
 // Keep in sync with `pull_request.paths` in .github/workflows/schema-canary.yml.
 // Files outside this list (docs, e2e, example app) cannot change canary results.
-const OTHER_INPUTS = [
+export const OTHER_INPUTS = [
   'pnpm-lock.yaml',
   'src/common/createHeadlessForm.tsx',
   'src/common/headlessForm.ts',
   'src/components/form/utils.ts',
   'src/flows/Onboarding/utils.ts',
+  'packages/core/src/money.ts',
   'example/src/flows/Onboarding/constants.ts',
   'example/playwright.canary.config.ts',
   'scripts/contract-details-seeds.ts',
   'scripts/fill-schema.ts',
   'scripts/schema-canary.ts',
+  'scripts/schema-canary-archive.ts',
   '.github/workflows/schema-canary.yml',
 ];
-const OTHER_INPUT_PREFIXES = [
-  'packages/core/src/',
+export const OTHER_INPUT_PREFIXES = [
+  'packages/core/src/form/',
   'scripts/schema-canary/',
   'example/e2e/canary/',
   '.github/actions/schema-canary-browser/',
