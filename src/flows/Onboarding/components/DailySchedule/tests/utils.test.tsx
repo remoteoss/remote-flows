@@ -10,8 +10,10 @@ import {
   convertTimeStringToMinutes,
   DAYS_OF_THE_WEEK,
   getDailyScheduleHoursError,
+  getDailyScheduleSummaryDays,
   getDefaultsFromSchema,
   getWorkHoursBounds,
+  resolveDailyScheduleValue,
   normalizeRowValue,
   normalizeTimeInput,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
@@ -40,6 +42,51 @@ describe('DailySchedule utils', () => {
         getDefaultsFromSchema(metadataWithoutWorkDays as DailyScheduleMetadata)
           .availableWorkDays,
       ).toEqual(DAYS_OF_THE_WEEK);
+    });
+  });
+
+  describe('resolveDailyScheduleValue', () => {
+    const { defaultSchedule } = getDefaultsFromSchema(germanyMetadata);
+
+    it.each([undefined, null])(
+      'builds the schedule from the metadata defaults when the value is %s',
+      (value) => {
+        const resolved = resolveDailyScheduleValue({ value, defaultSchedule });
+
+        expect(resolved.selected_days).toEqual(
+          defaultSchedule.map((day) => day.day),
+        );
+        expect(resolved.schedule.monday).toEqual({
+          start_time: defaultSchedule[0].start_time,
+          end_time: defaultSchedule[0].end_time,
+          break_duration_minutes: defaultSchedule[0].break_duration_minutes,
+        });
+      },
+    );
+
+    it('returns a saved value untouched', () => {
+      const value = {
+        selected_days: ['monday' as const],
+        schedule: {
+          monday: {
+            start_time: '10:00',
+            end_time: '14:00',
+            break_duration_minutes: 0,
+          },
+        },
+      };
+
+      expect(resolveDailyScheduleValue({ value, defaultSchedule })).toBe(value);
+    });
+  });
+
+  describe('getDailyScheduleSummaryDays', () => {
+    it('summarises the default schedule when the saved value is null', () => {
+      const { defaultSchedule } = getDefaultsFromSchema(germanyMetadata);
+
+      expect(
+        getDailyScheduleSummaryDays(null, defaultSchedule).map((d) => d.day),
+      ).toEqual(defaultSchedule.map((day) => day.day));
     });
   });
 
