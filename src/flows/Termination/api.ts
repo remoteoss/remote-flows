@@ -204,6 +204,7 @@ export const useSummaryTimeOffDataQuery = ({
     date: proposedTerminationDate,
   });
 
+  /* oxlint-disable typescript/no-deprecated -- TODO: move to value/unit/breakdown */
   const entitledDays =
     leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.type ===
     'limited'
@@ -237,6 +238,7 @@ export const useSummaryTimeOffDataQuery = ({
     days: leavePoliciesSummaryQuery.data?.data?.[0].used.days || 0,
     hours: leavePoliciesSummaryQuery.data?.data?.[0].used.hours || 0,
   };
+  /* oxlint-enable typescript/no-deprecated */
 
   const approvedDaysBeforeTermination = bookedTimeQuery.data
     ?.bookedDaysBeforeTermination || { days: 0, hours: 0 };
