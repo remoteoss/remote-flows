@@ -71,20 +71,23 @@ describe('DailySchedule', () => {
     ).toBeInTheDocument();
   });
 
-  it('summarizes the default schedule when no value is set yet, grouping consecutive days', () => {
-    renderWithForm([createDailyScheduleField()], { daily_schedule: undefined });
+  it.each([undefined, null])(
+    'summarizes the default schedule when the value is %s, grouping consecutive days',
+    (value) => {
+      renderWithForm([createDailyScheduleField()], { daily_schedule: value });
 
-    expect(
-      screen.getByText(byOwnText('Monday to Friday, from 09h00 to 18h00')),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(byOwnText('With 1h daily breaks')),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(byOwnText('Total of 40 hours per week')),
-    ).toBeInTheDocument();
-    expect(screen.queryByText(/Saturday/)).not.toBeInTheDocument();
-  });
+      expect(
+        screen.getByText(byOwnText('Monday to Friday, from 09h00 to 18h00')),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(byOwnText('With 1h daily breaks')),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(byOwnText('Total of 40 hours per week')),
+      ).toBeInTheDocument();
+      expect(screen.queryByText(/Saturday/)).not.toBeInTheDocument();
+    },
+  );
 
   it('summarizes an already-saved schedule, grouping consecutive days', () => {
     renderWithForm([createDailyScheduleField()], {

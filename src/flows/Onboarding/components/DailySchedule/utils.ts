@@ -413,10 +413,10 @@ export function resolveDailyScheduleValue({
   value,
   defaultSchedule,
 }: {
-  value: DailyScheduleValue | undefined;
+  value: DailyScheduleValue | null | undefined;
   defaultSchedule: DailyScheduleDefaultDay[];
 }): DailyScheduleValue {
-  if (value !== undefined) {
+  if (value !== undefined && value !== null) {
     return value;
   }
 
@@ -444,7 +444,7 @@ export function resolveDailyScheduleValue({
  * @returns The days of the week that are selected in the daily schedule, and the start/end time and break duration for each day.
  */
 export function getDailyScheduleSummaryDays(
-  value: DailyScheduleValue | undefined,
+  value: DailyScheduleValue | null | undefined,
   defaultSchedule: DailyScheduleDefaultDay[],
 ): DailyScheduleSummaryDay[] {
   const { selected_days: selectedDays, schedule } = resolveDailyScheduleValue({

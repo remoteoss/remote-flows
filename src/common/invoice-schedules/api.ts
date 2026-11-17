@@ -1,34 +1,28 @@
 import { createElement, useMemo } from 'react';
-import { useMutation, useQuery, queryOptions } from '@tanstack/react-query';
-import { FieldValues } from 'react-hook-form';
-import {
-  BulkContractorInvoiceScheduleCreateParams,
-  ContractorInvoiceScheduleCreateParams,
-  getV1ContractorInvoiceSchedules,
-  getV1ContractorInvoiceSequence,
-  patchV1ContractorInvoiceSchedulesId2,
-  postV1ContractorInvoiceSchedules,
-  postV1EmploymentsEmploymentIdContractorInvoicesPreview,
-  PreviewContractorInvoiceParams,
-  UpdateScheduleContractorInvoiceParams,
-} from '@/src/client';
+import { useQuery } from '@tanstack/react-query';
+import { getV1ContractorInvoiceSequence } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 import { useDeepStable } from '@/src/common/hooks';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
-import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
+import { useContractorCurrenciesOptions } from '@/src/common/api/contractor-contract-details';
 import { useIdentity } from '@/src/common/api/identity';
 import { InvoiceNumberSequenceLink } from '@/src/common/invoice-schedules/components/InvoiceNumberSequence/InvoiceNumberSequenceLink';
 import { InvoiceNumberSequenceBanner } from '@/src/common/invoice-schedules/components/InvoiceNumberSequence/InvoiceNumberSequenceBanner';
+import { JSFModify } from '@/src/flows/types';
+import { createClientMutation, withClient } from '@/src/lib/withClient';
 import {
   buildCreateInvoiceScheduleSchema,
-  buildInvoicePreviewPayload,
-  buildInvoiceSchedulePayload,
+  createInvoiceScheduleMutation,
   describeInvoiceNumberSequence,
   INVOICE_NUMBER_SEQUENCE_FIELD,
-  INVOICE_SCHEDULE_STATUS,
+  invoiceSchedulesOptions as invoiceSchedulesOptionsCore,
+  previewContractorInvoiceMutation,
+  selectContractorCurrencyCodes,
+  selectExistingInvoiceSchedule,
+  skipInvoiceScheduleMutation,
+  updateInvoiceScheduleMutation,
 } from '@remoteoss/remote-flows-core';
-import { JSFModify } from '@/src/flows/types';
 
 /**
  * The company's invoice number sequence as text, or null when it has none or it is off.
@@ -83,11 +77,10 @@ export const useGetCreateInvoiceScheduleSchema = ({
   includeFieldsets,
   initialValues,
 }: UseGetCreateInvoiceScheduleSchemaParams) => {
-  const { data: currencies, isLoading } = useContractorCurrencies({
-    employmentId: employmentId as string,
-    options: {
-      queryOptions: { enabled: enabled && Boolean(employmentId) },
-    },
+  const { data: currencies, isLoading } = useQuery({
+    ...useContractorCurrenciesOptions(employmentId as string),
+    enabled: enabled && Boolean(employmentId),
+    select: selectContractorCurrencyCodes,
   });
 
   const { data: invoiceNumberSequence, isLoading: isLoadingSequence } =
@@ -110,9 +103,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
     }
 
     return buildCreateInvoiceScheduleSchema({
-      currencies: currencies.map(
-        (currency: { code: string; source: string }) => currency.code,
-      ),
+      currencies,
       isContractorOfRecord,
       includeFieldsets,
       invoiceNumberSequence: invoiceNumberSequence ?? undefined,
@@ -175,32 +166,9 @@ export const useGetCreateInvoiceScheduleSchema = ({
   };
 };
 
-/**
- * Query options factory for fetching invoice schedules by employment id
- * @param client - The API client
- * @param employmentId - The employment ID
- * @returns Query options for contractor invoice schedules
- */
-export const invoiceSchedulesOptions = (
-  client: Client,
-  employmentId: string,
-) => {
-  return queryOptions({
-    queryKey: ['contractor-invoice-schedules', employmentId] as const,
-    queryFn: async () => {
-      const response = await getV1ContractorInvoiceSchedules({
-        client,
-        query: { employment_id: employmentId },
-      });
-
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch invoice schedules');
-      }
-
-      return response;
-    },
-  });
-};
+export const useInvoiceSchedulesOptions = withClient(
+  invoiceSchedulesOptionsCore,
+);
 
 /**
  * Get the last invoice schedule for an employment that matches specific statuses.
@@ -217,20 +185,10 @@ export const useGetExistingInvoiceSchedule = ({
   employmentId: string;
   options?: { queryOptions?: { enabled?: boolean } };
 }) => {
-  const { client } = useClient();
   return useQuery({
-    ...invoiceSchedulesOptions(client as Client, employmentId),
+    ...useInvoiceSchedulesOptions(employmentId),
     enabled: options?.queryOptions?.enabled,
-    select: (response) => {
-      // Find the first invoice schedule that matches the editing criteria
-      return response.data?.data?.contractor_invoice_schedules?.find(
-        (invoice) =>
-          invoice.status ===
-            INVOICE_SCHEDULE_STATUS.PENDING_CONTRACTOR_ACTION ||
-          invoice.status === INVOICE_SCHEDULE_STATUS.PROCESSING ||
-          invoice.status === INVOICE_SCHEDULE_STATUS.PENDING_COMPANY_ACTION,
-      );
-    },
+    select: selectExistingInvoiceSchedule,
   });
 };
 
@@ -240,32 +198,9 @@ export const useGetExistingInvoiceSchedule = ({
  * @param values - The form values containing invoice schedule data
  * @returns The created invoice schedules
  */
-export const useCreateInvoiceSchedule = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({
-      employmentId,
-      values,
-    }: {
-      employmentId: string;
-      values: FieldValues;
-    }) => {
-      const payload: BulkContractorInvoiceScheduleCreateParams = {
-        contractor_invoice_schedules: [
-          {
-            employment_id: employmentId,
-            ...buildInvoiceSchedulePayload(values),
-          } as ContractorInvoiceScheduleCreateParams,
-        ],
-      };
-
-      return postV1ContractorInvoiceSchedules({
-        client: client as Client,
-        body: payload,
-      });
-    },
-  });
-};
+export const useCreateInvoiceSchedule = createClientMutation(
+  createInvoiceScheduleMutation,
+);
 
 /**
  * Updates an existing contractor invoice schedule
@@ -273,49 +208,18 @@ export const useCreateInvoiceSchedule = () => {
  * @param values - The form values containing invoice schedule data
  * @returns The updated invoice schedule
  */
-export const useUpdateInvoiceSchedule = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({
-      scheduleId,
-      values,
-    }: {
-      scheduleId: string;
-      values: FieldValues;
-    }) => {
-      const payload: UpdateScheduleContractorInvoiceParams =
-        buildInvoiceSchedulePayload(values);
-
-      return patchV1ContractorInvoiceSchedulesId2({
-        client: client as Client,
-        path: { id: scheduleId },
-        body: payload,
-      });
-    },
-  });
-};
+export const useUpdateInvoiceSchedule = createClientMutation(
+  updateInvoiceScheduleMutation,
+);
 
 /**
  * Skips (cancels) an existing contractor invoice schedule by marking it as deleted.
  * @param scheduleId - The invoice schedule ID
  * @returns The updated invoice schedule
  */
-export const useSkipInvoiceSchedule = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({ scheduleId }: { scheduleId: string }) => {
-      const payload: UpdateScheduleContractorInvoiceParams = {
-        status: 'deleted',
-      };
-
-      return patchV1ContractorInvoiceSchedulesId2({
-        client: client as Client,
-        path: { id: scheduleId },
-        body: payload,
-      });
-    },
-  });
-};
+export const useSkipInvoiceSchedule = createClientMutation(
+  skipInvoiceScheduleMutation,
+);
 
 /**
  * Previews a contractor invoice as a draft PDF, without persisting it.
@@ -323,25 +227,6 @@ export const useSkipInvoiceSchedule = () => {
  * @param values - The form values containing invoice details
  * @returns The base64-encoded PDF preview
  */
-export const usePreviewContractorInvoice = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({
-      employmentId,
-      values,
-    }: {
-      employmentId: string;
-      values: FieldValues;
-    }) => {
-      const payload = buildInvoicePreviewPayload(
-        values,
-      ) as PreviewContractorInvoiceParams;
-
-      return postV1EmploymentsEmploymentIdContractorInvoicesPreview({
-        client: client as Client,
-        path: { employment_id: employmentId },
-        body: payload,
-      });
-    },
-  });
-};
+export const usePreviewContractorInvoice = createClientMutation(
+  previewContractorInvoiceMutation,
+);

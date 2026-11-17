@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'src/**'
+      - 'packages/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - 'tsdown.config.ts'
