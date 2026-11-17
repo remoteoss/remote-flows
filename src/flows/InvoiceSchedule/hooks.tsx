@@ -18,7 +18,6 @@ import {
   UseInvoiceScheduleOptions,
 } from '@/src/flows/InvoiceSchedule/types';
 import { clearBase64Data, createStructuredError } from '@/src/lib/utils';
-import { mutationToPromise } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { Fields } from '@remoteoss/remote-json-schema-form-kit';
 
@@ -89,13 +88,11 @@ export const useInvoiceSchedule = ({
   );
 
   const createInvoiceScheduleMutation = useCreateInvoiceSchedule();
-  const { mutateAsyncOrThrow } = mutationToPromise(
-    createInvoiceScheduleMutation,
-  );
+  const { mutateAsyncOrThrow } = createInvoiceScheduleMutation;
 
   const previewContractorInvoiceMutation = usePreviewContractorInvoice();
   const { mutateAsyncOrThrow: previewContractorInvoiceAsync } =
-    mutationToPromise(previewContractorInvoiceMutation);
+    previewContractorInvoiceMutation;
 
   const parseFormValues = useCallback(
     async (values: InvoiceScheduleFormValues) => {
