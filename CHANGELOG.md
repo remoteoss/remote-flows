@@ -1,5 +1,26 @@
 # @remoteoss/remote-flows
 
+## 1.71.1
+
+### Patch Changes
+
+#### Fixes
+
+- treat a null daily schedule like an empty one (#1963) [#1963](https://github.com/remoteoss/remote-flows/pull/1963)
+
+#### Docs
+
+- add agent rules for the core package boundary (#1902) [#1902](https://github.com/remoteoss/remote-flows/pull/1902)
+
+#### Chores
+
+- bump-contract-details: GBR-v8, AUS-v7, IRL-v6, NZL-v10, ALB-v5 (#1961) [#1961](https://github.com/remoteoss/remote-flows/pull/1961)
+- sync-contract-versions: sync-22a16484 (#1962) [#1962](https://github.com/remoteoss/remote-flows/pull/1962)
+- move the invoice schedule schema and payload builders to core (#1894) [#1894](https://github.com/remoteoss/remote-flows/pull/1894)
+- update contract details schema canary report (#1965) [#1965](https://github.com/remoteoss/remote-flows/pull/1965)
+- move the generated API client into core (#1898) [#1898](https://github.com/remoteoss/remote-flows/pull/1898)
+- publish a preview package for PRs labeled preview-pkg (#1966) [#1966](https://github.com/remoteoss/remote-flows/pull/1966)
+
 ## 1.71.0
 
 ### Minor Changes
