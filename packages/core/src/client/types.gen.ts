@@ -722,9 +722,38 @@ export type EmploymentCustomField = {
  * Includes all upcoming requested time off.
  */
 export type LeavePolicySummaryBooked = {
+  /**
+   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
+   */
+  breakdown?:
+    | {
+        days: number;
+      }
+    | {
+        hours: number;
+        minutes: number;
+      };
+  /**
+   * Legacy. Whole days of an 8-hour day.
+   *
+   * @deprecated
+   */
   days: number;
+  /**
+   * Legacy. Hours left over after `days`, of an 8-hour day.
+   *
+   * @deprecated
+   */
   hours: number;
   type: 'limited';
+  /**
+   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
+   */
+  unit?: 'days' | 'hours';
+  /**
+   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
+   */
+  value?: number;
 };
 
 /**
@@ -804,7 +833,7 @@ export type CompanyDepartmentCreatedResponse = {
  */
 export type CompanyManagerBillingContact = {
   /**
-   * Whether this manager is the primary billing contact for the legal entity
+   * Whether this manager should be the primary billing contact for the legal entity. True replaces the current primary contact.
    */
   is_primary_billing_contact: boolean;
   /**
@@ -1086,9 +1115,38 @@ export type BillingDocumentBreakdownItem = {
  * Includes only approved time off in the past.
  */
 export type LeavePolicySummaryUsed = {
+  /**
+   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
+   */
+  breakdown?:
+    | {
+        days: number;
+      }
+    | {
+        hours: number;
+        minutes: number;
+      };
+  /**
+   * Legacy. Whole days of an 8-hour day.
+   *
+   * @deprecated
+   */
   days: number;
+  /**
+   * Legacy. Hours left over after `days`, of an 8-hour day.
+   *
+   * @deprecated
+   */
   hours: number;
   type: 'limited';
+  /**
+   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
+   */
+  unit?: 'days' | 'hours';
+  /**
+   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
+   */
+  value?: number;
 };
 
 /**
@@ -1147,6 +1205,21 @@ export type Employment = {
    * Name of related department, if any. Otherwise, null.
    */
   department?: string | null;
+  /**
+   * Whether the Statement of Work (SOW) of an active Contractor of Record (COR) employment has rolled over.
+   * Only present for contractor employments, and `null` unless the employment is an active COR employment.
+   *
+   * - `true`: the SOW is past its `expiration_date`. If the contractor keeps providing services, the SOW
+   *   continues month to month on the same terms until it is replaced or ended, so no new SOW is needed.
+   *   It is based on `expiration_date` and does not show whether services continue.
+   * - `false`: the SOW has not passed its `expiration_date` (it is still `false` on that date), or it has none.
+   *
+   * It stays `true` while a termination is in progress. Before telling a contractor the SOW continues, check
+   * `GET /contractors/cor-termination-requests?employment_id={id}&status=initiated` or subscribe to the
+   * `employment.contractor_of_record_termination.initiated` webhook.
+   *
+   */
+  sow_rolled_over?: boolean | null;
   /**
    * The email address of the employee's manager. Null if no manager is assigned.
    */
@@ -1610,6 +1683,13 @@ export type TotalPay = {
   fields?: Array<CustomField>;
   totalGross: Amount;
   totalNet: Amount;
+};
+
+/**
+ * DaysBreakdown
+ */
+export type DaysBreakdown = {
+  days: number;
 };
 
 /**
@@ -2718,11 +2798,42 @@ export type ValidateResignationRequestParams =
 
 /**
  * LimitedDaysandHoursResponse
+ *
+ * A limited amount of leave. Read `unit`, `value` and `breakdown`: they are counted in the unit the policy counts leave in, and need no conversion. `days` and `hours` are the legacy pair, encoded with an 8-hour day for clients that have not moved yet; do not sum or show them for new work.
  */
 export type LimitedDaysandHoursResponse = {
+  /**
+   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
+   */
+  breakdown?:
+    | {
+        days: number;
+      }
+    | {
+        hours: number;
+        minutes: number;
+      };
+  /**
+   * Legacy. Whole days of an 8-hour day.
+   *
+   * @deprecated
+   */
   days: number;
+  /**
+   * Legacy. Hours left over after `days`, of an 8-hour day.
+   *
+   * @deprecated
+   */
   hours: number;
   type: 'limited';
+  /**
+   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
+   */
+  unit?: 'days' | 'hours';
+  /**
+   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
+   */
+  value?: number;
 };
 
 /**
@@ -2845,9 +2956,38 @@ export type ListDirectOffboardingResponse = {
  * Includes all time off (past and future, pending or approved).
  */
 export type LeavePolicySummaryTaken = {
+  /**
+   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
+   */
+  breakdown?:
+    | {
+        days: number;
+      }
+    | {
+        hours: number;
+        minutes: number;
+      };
+  /**
+   * Legacy. Whole days of an 8-hour day.
+   *
+   * @deprecated
+   */
   days: number;
+  /**
+   * Legacy. Hours left over after `days`, of an 8-hour day.
+   *
+   * @deprecated
+   */
   hours: number;
   type: 'limited';
+  /**
+   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
+   */
+  unit?: 'days' | 'hours';
+  /**
+   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
+   */
+  value?: number;
 };
 
 /**
@@ -3293,10 +3433,10 @@ export type ImportJobRow = {
         name: string;
         roles?: Array<{
           user_type:
-            | 'contractor'
-            | 'admin'
             | 'employer'
             | 'employee'
+            | 'admin'
+            | 'contractor'
             | 'freelancer';
         }>;
         slug: string;
@@ -3685,6 +3825,10 @@ export type AccountsAccount = {
  * The list of benefit offers for an employment schema
  */
 export type EmploymentsBenefitOffersListBenefitOffers = {
+  /**
+   * Whether the current benefit selection passes the check that runs when the employee is invited, as a company user sees it. True when the country has no benefits to choose. False when the selection is missing, out of date or not allowed, and when the employment has no contract yet. For a contractor or direct employee, which cannot have benefit offers, true when there are none and false when there are some.
+   */
+  benefits_valid: boolean;
   data: Array<UnifiedEmploymentBenefitOffer>;
 };
 
@@ -3868,9 +4012,38 @@ export type ContractorInvoiceSchedule = {
  * Includes all upcoming requested time off.
  */
 export type LeavePolicySummaryUpcomingRequested = {
+  /**
+   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
+   */
+  breakdown?:
+    | {
+        days: number;
+      }
+    | {
+        hours: number;
+        minutes: number;
+      };
+  /**
+   * Legacy. Whole days of an 8-hour day.
+   *
+   * @deprecated
+   */
   days: number;
+  /**
+   * Legacy. Hours left over after `days`, of an 8-hour day.
+   *
+   * @deprecated
+   */
   hours: number;
   type: 'limited';
+  /**
+   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
+   */
+  unit?: 'days' | 'hours';
+  /**
+   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
+   */
+  value?: number;
 };
 
 /**
@@ -4261,17 +4434,17 @@ export type AccountsAssignedRoles = Array<{
   data_scope?:
     | 'all'
     | 'employment_entities'
-    | 'external'
-    | 'internal'
-    | 'rps'
-    | 'secondary_reports'
-    | 'direct_reports'
     | 'employment_countries'
+    | 'onboarding_reports'
+    | 'direct_reports'
     | 'direct_and_indirect_reports'
+    | 'assigned_billing_legal_entities'
     | 'employment_departments'
     | 'employment_company_structure_nodes'
-    | 'onboarding_reports'
-    | 'assigned_billing_legal_entities';
+    | 'secondary_reports'
+    | 'external'
+    | 'internal'
+    | 'rps';
   name: string;
   slug: string;
   type?: 'default' | 'custom' | 'template' | 'owner';
@@ -4903,6 +5076,24 @@ export type BulkEmploymentImportJob = {
           | 'candidate';
         signup_source?: string | null;
       };
+  /**
+   * What the last merge or append did to the draft. Null after a replace, or while a newly uploaded file still waits for its columns to be matched. The counts stay until the next upload or replace: editing, deleting or fixing rows does not clear them.
+   */
+  last_reupload_summary?: {
+    /**
+     * Rows added below the existing ones.
+     */
+    added: number;
+    /**
+     * Rows that matched an existing row and were updated.
+     */
+    merged: number;
+    mode: 'merge_or_add' | 'merge_only' | 'append';
+    /**
+     * Rows left out: no matching row in "Update existing rows only", or already imported.
+     */
+    skipped: number;
+  } | null;
   legal_entity?: {
     name?: string;
     slug?: UuidSlug;
@@ -4914,6 +5105,10 @@ export type BulkEmploymentImportJob = {
     [key: string]: unknown;
   };
   name: string;
+  /**
+   * Set while the file of a merge or append waits for its columns to be matched, with `stage` at `column_mapping`. Null otherwise: it is cleared once the mapping is confirmed, and `last_reupload_summary` then carries the counts.
+   */
+  pending_reupload_mode?: 'merge_or_add' | 'merge_only' | 'append';
   /**
    * The number of processed rows, regardless of success or failure
    */
@@ -6037,6 +6232,7 @@ export type ContractorRate = {
    * Date the services under the Statement of Work that established this rate begin. Null when no Statement of Work record established the rate: one the company recorded itself, or one signed before Remote recorded service terms.
    */
   service_start_date: string | null;
+  statement_of_work: ContractorRateStatementOfWork;
   /**
    * The unit the amount is paid per.
    */
@@ -7970,6 +8166,40 @@ export type IdentityCustomerAccessTokenResponse = {
 };
 
 /**
+ * ContractorRateStatementOfWork
+ *
+ * The Statement of Work that established the rate. Null when no Statement of Work record backs
+ * the rate: a rate the company entered or edited itself, or a rate from a Statement of Work signed
+ * before Remote kept a record of each Statement of Work.
+ *
+ * When the company edits a rate after its Statement of Work is signed, the edit is listed as a new
+ * main rate with a null `statement_of_work`, and the signed rate stays listed with its reference
+ * while that Statement of Work is in force. The main rate is listed whatever its Statement of
+ * Work's state, so its reference can name one that was later replaced or ended.
+ *
+ * A new version of a signed Statement of Work is a new record: its rate has a new `id` and a
+ * `version` one higher. The Statement of Work's name is on its document: read it from the contract
+ * documents endpoints with `contract_document_id`.
+ *
+ */
+export type ContractorRateStatementOfWork = {
+  /**
+   * ID of the signed document that carries the Statement of Work, as the contract documents endpoints return it. For a Statement of Work inside a Contractor Services Agreement, the agreement's document.
+   */
+  contract_document_id: string;
+  /**
+   * ContractorRateStatementOfWorkID
+   *
+   * Unique identifier of this version of the Statement of Work. Edits made before signature keep it; each new version gets a new one.
+   */
+  id: string;
+  /**
+   * 1 for a new Statement of Work, one higher for each new version that replaces it.
+   */
+  version: number;
+} | null;
+
+/**
  * CreateContractDocument
  *
  * Parameters for creating a contract document
@@ -8732,9 +8962,38 @@ export type LeavePolicySummary = {
    * Includes all upcoming requested time off.
    */
   booked: {
+    /**
+     * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
+     */
+    breakdown?:
+      | {
+          days: number;
+        }
+      | {
+          hours: number;
+          minutes: number;
+        };
+    /**
+     * Legacy. Whole days of an 8-hour day.
+     *
+     * @deprecated
+     */
     days: number;
+    /**
+     * Legacy. Hours left over after `days`, of an 8-hour day.
+     *
+     * @deprecated
+     */
     hours: number;
     type: 'limited';
+    /**
+     * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
+     */
+    unit?: 'days' | 'hours';
+    /**
+     * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
+     */
+    value?: number;
   };
   /**
    * The current entitlement is the accrued time entitled for the employee plus any other extra entitlements (such as carryover).
@@ -8749,9 +9008,38 @@ export type LeavePolicySummary = {
    * Includes requested timeoffs (not approved) in the past or in the future.
    */
   pending_approval: {
+    /**
+     * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
+     */
+    breakdown?:
+      | {
+          days: number;
+        }
+      | {
+          hours: number;
+          minutes: number;
+        };
+    /**
+     * Legacy. Whole days of an 8-hour day.
+     *
+     * @deprecated
+     */
     days: number;
+    /**
+     * Legacy. Hours left over after `days`, of an 8-hour day.
+     *
+     * @deprecated
+     */
     hours: number;
     type: 'limited';
+    /**
+     * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
+     */
+    unit?: 'days' | 'hours';
+    /**
+     * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
+     */
+    value?: number;
   };
   /**
    * LeavePolicySummaryTaken
@@ -8759,9 +9047,38 @@ export type LeavePolicySummary = {
    * Includes all time off (past and future, pending or approved).
    */
   taken: {
+    /**
+     * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
+     */
+    breakdown?:
+      | {
+          days: number;
+        }
+      | {
+          hours: number;
+          minutes: number;
+        };
+    /**
+     * Legacy. Whole days of an 8-hour day.
+     *
+     * @deprecated
+     */
     days: number;
+    /**
+     * Legacy. Hours left over after `days`, of an 8-hour day.
+     *
+     * @deprecated
+     */
     hours: number;
     type: 'limited';
+    /**
+     * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
+     */
+    unit?: 'days' | 'hours';
+    /**
+     * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
+     */
+    value?: number;
   };
   /**
    * LeavePolicySummaryUpcomingApproved
@@ -8769,9 +9086,38 @@ export type LeavePolicySummary = {
    * Includes all upcoming approved time off.
    */
   upcoming_approved: {
+    /**
+     * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
+     */
+    breakdown?:
+      | {
+          days: number;
+        }
+      | {
+          hours: number;
+          minutes: number;
+        };
+    /**
+     * Legacy. Whole days of an 8-hour day.
+     *
+     * @deprecated
+     */
     days: number;
+    /**
+     * Legacy. Hours left over after `days`, of an 8-hour day.
+     *
+     * @deprecated
+     */
     hours: number;
     type: 'limited';
+    /**
+     * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
+     */
+    unit?: 'days' | 'hours';
+    /**
+     * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
+     */
+    value?: number;
   };
   /**
    * LeavePolicySummaryUpcomingRequested
@@ -8779,9 +9125,38 @@ export type LeavePolicySummary = {
    * Includes all upcoming requested time off.
    */
   upcoming_requested: {
+    /**
+     * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
+     */
+    breakdown?:
+      | {
+          days: number;
+        }
+      | {
+          hours: number;
+          minutes: number;
+        };
+    /**
+     * Legacy. Whole days of an 8-hour day.
+     *
+     * @deprecated
+     */
     days: number;
+    /**
+     * Legacy. Hours left over after `days`, of an 8-hour day.
+     *
+     * @deprecated
+     */
     hours: number;
     type: 'limited';
+    /**
+     * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
+     */
+    unit?: 'days' | 'hours';
+    /**
+     * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
+     */
+    value?: number;
   };
   /**
    * LeavePolicySummaryUsed
@@ -8789,9 +9164,38 @@ export type LeavePolicySummary = {
    * Includes only approved time off in the past.
    */
   used: {
+    /**
+     * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
+     */
+    breakdown?:
+      | {
+          days: number;
+        }
+      | {
+          hours: number;
+          minutes: number;
+        };
+    /**
+     * Legacy. Whole days of an 8-hour day.
+     *
+     * @deprecated
+     */
     days: number;
+    /**
+     * Legacy. Hours left over after `days`, of an 8-hour day.
+     *
+     * @deprecated
+     */
     hours: number;
     type: 'limited';
+    /**
+     * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
+     */
+    unit?: 'days' | 'hours';
+    /**
+     * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
+     */
+    value?: number;
   };
   working_hours_per_day: number;
 };
@@ -9983,6 +10387,14 @@ export type FeatureFlag = {
 };
 
 /**
+ * HoursBreakdown
+ */
+export type HoursBreakdown = {
+  hours: number;
+  minutes: number;
+};
+
+/**
  * MagicLinkParams
  *
  * Magic link params
@@ -10311,7 +10723,11 @@ export type CompanyLegalEntity = {
  */
 export type CompanyManager = {
   /**
-   * The legal entities this manager is a billing contact for.
+   * The legal entities this manager receives Remote invoices for. Each listed legal entity has one
+   * primary billing contact: the manager chosen as primary, or the company owner when none is chosen.
+   * The owner is listed as primary on those legal entities even without being chosen as a recipient.
+   * The list can leave out legal entities the caller can't access, so it can be empty.
+   *
    */
   billing_contacts: Array<CompanyManagerBillingContactStatus>;
   /**
@@ -10480,9 +10896,38 @@ export type CreateSingleSelectCustomFieldDefinitionParams = {
  * Includes requested timeoffs (not approved) in the past or in the future.
  */
 export type LeavePolicySummaryPendingApproval = {
+  /**
+   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
+   */
+  breakdown?:
+    | {
+        days: number;
+      }
+    | {
+        hours: number;
+        minutes: number;
+      };
+  /**
+   * Legacy. Whole days of an 8-hour day.
+   *
+   * @deprecated
+   */
   days: number;
+  /**
+   * Legacy. Hours left over after `days`, of an 8-hour day.
+   *
+   * @deprecated
+   */
   hours: number;
   type: 'limited';
+  /**
+   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
+   */
+  unit?: 'days' | 'hours';
+  /**
+   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
+   */
+  value?: number;
 };
 
 /**
@@ -12599,9 +13044,38 @@ export type ResignationFile = {
  * Includes all upcoming approved time off.
  */
 export type LeavePolicySummaryUpcomingApproved = {
+  /**
+   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
+   */
+  breakdown?:
+    | {
+        days: number;
+      }
+    | {
+        hours: number;
+        minutes: number;
+      };
+  /**
+   * Legacy. Whole days of an 8-hour day.
+   *
+   * @deprecated
+   */
   days: number;
+  /**
+   * Legacy. Hours left over after `days`, of an 8-hour day.
+   *
+   * @deprecated
+   */
   hours: number;
   type: 'limited';
+  /**
+   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
+   */
+  unit?: 'days' | 'hours';
+  /**
+   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
+   */
+  value?: number;
 };
 
 /**
@@ -13760,7 +14234,9 @@ export type AdpSubscriptionOrderErrorAck = {
  */
 export type CompanyManagerBillingContactStatus = {
   /**
-   * Whether this manager will become the primary billing contact once they have an active login
+   * Deprecated. Always false.
+   *
+   * @deprecated
    */
   is_pending_primary_billing_contact: boolean;
   /**
@@ -13949,6 +14425,13 @@ export type ListContractAmendmentResponse = {
     total_pages?: number;
   };
 };
+
+/**
+ * ContractorRateStatementOfWorkID
+ *
+ * Unique identifier of this version of the Statement of Work. Edits made before signature keep it; each new version gets a new one.
+ */
+export type ContractorRateStatementOfWorkId = string;
 
 /**
  * AuthorizationCodeParams
@@ -14303,7 +14786,8 @@ export type TimeTracking = {
     | 'break'
     | 'unpaid_break'
     | 'time_off'
-    | 'public_holiday';
+    | 'public_holiday'
+    | 'top_up';
   weekend_hours: HoursAndMinutes;
 };
 
@@ -14529,7 +15013,7 @@ export type EmploymentPersonalDetailsParams = {
  */
 export type CompanyManagerUpdateParams = {
   /**
-   * The legal entities to assign or unassign this manager as billing contact for.
+   * Every legal entity this manager should be a billing contact for. Each must be listed by the caller's GET and covered by one of their roles with permission to update billing communications, or the call returns 404. A role assigned to some legal entities only limits the caller to those, even where another role covers the whole company. Legal entities left out that the caller can change stop having this manager as a billing contact.
    */
   billing_contact_for: Array<CompanyManagerBillingContact>;
 };
@@ -15391,7 +15875,7 @@ export type PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -15477,7 +15961,7 @@ export type PostV1CancelOnboardingEmploymentIdErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -15584,7 +16068,7 @@ export type PostV1PayItemsBulkErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -15696,7 +16180,7 @@ export type PutV2EmploymentsEmploymentIdAddressDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -15958,7 +16442,7 @@ export type GetV1CountriesCountryCodeContractorContractDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -16101,7 +16585,7 @@ export type GetV1EmploymentsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -16165,7 +16649,7 @@ export type PostV1EmploymentsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -16260,7 +16744,7 @@ export type GetV1EmployeeBankAccountErrors = {
    */
   404: NotFoundResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -16315,7 +16799,7 @@ export type PutV1EmployeeBankAccountErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -16435,7 +16919,7 @@ export type GetV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -16490,7 +16974,7 @@ export type PostV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -16789,7 +17273,7 @@ export type GetV1SsoConfigurationDetailsErrors = {
    */
   404: NotFoundResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -17211,7 +17695,7 @@ export type GetV1ContractorsEmploymentsEmploymentIdRatesErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -17570,7 +18054,7 @@ export type PostV1TimeoffTimeoffIdCancelErrors = {
    */
   422: TimeoffErrorResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -17748,7 +18232,7 @@ export type PatchV1EmployeeTimeoffId2Errors = {
    */
   422: TimeoffErrorResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -17799,7 +18283,7 @@ export type PatchV1EmployeeTimeoffIdErrors = {
    */
   422: TimeoffErrorResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -17978,7 +18462,7 @@ export type PostV1SandboxBenefitRenewalRequestsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -18351,7 +18835,7 @@ export type GetV1SsoConfigurationErrors = {
    */
   404: NotFoundResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -18401,7 +18885,7 @@ export type PostV1SsoConfigurationErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -19351,7 +19835,7 @@ export type GetV1ContractorInvoiceSchedulesIdErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -19594,7 +20078,7 @@ export type GetV1BillingDocumentsBillingDocumentIdErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -19741,7 +20225,7 @@ export type GetV1EmploymentsBulkErrors = {
    */
   403: ForbiddenResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -19794,7 +20278,7 @@ export type GetV1EmploymentsEmploymentIdCostCenterAllocationsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -20002,7 +20486,7 @@ export type PutV2EmploymentsEmploymentIdFederalTaxesErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -20450,7 +20934,7 @@ export type GetV1EmployeeAddressErrors = {
    */
   404: NotFoundResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -20505,7 +20989,7 @@ export type PutV1EmployeeAddressErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -20557,7 +21041,7 @@ export type GetV1ResignationsOffboardingRequestIdResignationLetterErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -20614,7 +21098,7 @@ export type GetV2EmploymentsEmploymentIdBasicInformationErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -20674,7 +21158,7 @@ export type PutV2EmploymentsEmploymentIdBasicInformationErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -20729,7 +21213,7 @@ export type PutV1EmploymentsEmploymentIdFederalTaxesErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -21071,7 +21555,7 @@ export type GetV1ExpensesExpenseIdReceiptErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -21431,7 +21915,7 @@ export type PostV1EmployeeTimeoffIdCancelErrors = {
    */
   422: TimeoffErrorResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -21472,7 +21956,7 @@ export type GetV1CountriesCountryCodeFormData = {
   };
   query?: {
     /**
-     * Required for `contract_amendment`, `global_payroll_contract_details` and `global_payroll_state_taxes` forms. Optional for `contract_details`, where it tailors the schema to that employment.
+     * Required for `contract_amendment`, `global_payroll_contract_details` and `global_payroll_state_taxes` forms. Optional for `contract_details`, where it tailors the schema to that employment, and for `engagement_agreement_details`, where the schema is returned only if that employment's contract takes engagement agreement details.
      */
     employment_id?: string;
     /**
@@ -21513,7 +21997,7 @@ export type GetV1CountriesCountryCodeFormErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -22143,7 +22627,7 @@ export type GetV1EmployeeFederalTaxesErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -22193,7 +22677,7 @@ export type PutV1EmployeeFederalTaxesErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -22355,7 +22839,7 @@ export type PutV2EmploymentsEmploymentIdEmergencyContactErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -22482,7 +22966,7 @@ export type GetV1BenefitRenewalRequestsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -22843,7 +23327,7 @@ export type PostV1TimeoffTimeoffIdCancelRequestDeclineErrors = {
    */
   422: TimeoffErrorResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -22899,7 +23383,7 @@ export type PutV1EmploymentsEmploymentIdBasicInformationErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -23354,7 +23838,7 @@ export type GetV1EmploymentsEmploymentIdErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -23463,7 +23947,7 @@ export type PatchV1EmploymentsEmploymentId2Errors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -23572,7 +24056,7 @@ export type PatchV1EmploymentsEmploymentIdErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -23730,7 +24214,7 @@ export type GetV1CompanyCompanyIdCostCenterAllocationsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -23836,7 +24320,7 @@ export type PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetai
      */
     422: UnprocessableEntityResponse;
     /**
-     * Unprocessable Entity
+     * Too Many Requests
      */
     429: TooManyRequestsResponse;
   };
@@ -24034,7 +24518,7 @@ export type GetV1BulkEmploymentJobsJobIdRowsErrors = {
    */
   404: NotFoundResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -24082,7 +24566,7 @@ export type GetV1EmployeeEmergencyContactErrors = {
    */
   404: NotFoundResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -24137,7 +24621,7 @@ export type PutV1EmployeeEmergencyContactErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -24240,7 +24724,7 @@ export type PostV1EmploymentsEmploymentIdContractEligibilityErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -24360,7 +24844,7 @@ export type PutV2EmploymentsEmploymentIdContractDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -24553,7 +25037,7 @@ export type PostV1ReadyErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -24653,7 +25137,7 @@ export type PostV1EmploymentsEmploymentIdContractOriginErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -24746,7 +25230,7 @@ export type GetV1TimeoffTypesErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -24883,7 +25367,7 @@ export type GetV1EmployeePersonalDetailsErrors = {
    */
   404: NotFoundResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -24938,7 +25422,7 @@ export type PutV1EmployeePersonalDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -25181,7 +25665,7 @@ export type DeleteV1PayItemsIdErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -25240,7 +25724,7 @@ export type PatchV1PayItemsIdErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -25375,7 +25859,7 @@ export type GetV1TimeoffIdErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -25435,7 +25919,7 @@ export type PatchV1TimeoffId2Errors = {
    */
   422: TimeoffErrorResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -25495,7 +25979,7 @@ export type PatchV1TimeoffIdErrors = {
    */
   422: TimeoffErrorResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -25546,7 +26030,7 @@ export type PostV1TimeoffTimeoffIdDeclineErrors = {
    */
   422: TimeoffErrorResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -25649,7 +26133,7 @@ export type PostV1TimeoffTimeoffIdApproveErrors = {
    */
   422: TimeoffErrorResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -26115,7 +26599,7 @@ export type GetV1ResignationsOffboardingRequestIdErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -26219,7 +26703,7 @@ export type PostV1EmploymentsEmploymentIdInviteErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -26450,7 +26934,7 @@ export type PutV2EmploymentsEmploymentIdBankAccountDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -26560,7 +27044,7 @@ export type PostV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -26659,6 +27143,10 @@ export type GetV1EmployeeCurrentData = {
 
 export type GetV1EmployeeCurrentErrors = {
   /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
    * Unauthorized
    */
   401: UnauthorizedResponse;
@@ -26666,6 +27154,10 @@ export type GetV1EmployeeCurrentErrors = {
    * Forbidden
    */
   403: ForbiddenResponse;
+  /**
+   * Too Many Requests
+   */
+  429: TooManyRequestsResponse;
 };
 
 export type GetV1EmployeeCurrentError =
@@ -26875,7 +27367,7 @@ export type PutV1ResignationsOffboardingRequestIdValidateErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -27792,7 +28284,7 @@ export type GetV1BulkEmploymentJobsJobIdErrors = {
    */
   404: NotFoundResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -28099,7 +28591,7 @@ export type GetV1EmployeeTimeoffErrors = {
    */
   404: NotFoundResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -28145,7 +28637,7 @@ export type PostV1EmployeeTimeoffErrors = {
    */
   422: TimeoffErrorResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -28201,7 +28693,7 @@ export type PatchV2EmploymentsEmploymentId2Errors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -28257,7 +28749,7 @@ export type PatchV2EmploymentsEmploymentIdErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -28321,7 +28813,7 @@ export type PutV2EmploymentsEmploymentIdPersonalDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -28593,7 +29085,7 @@ export type GetV1ExpensesExpenseIdReceiptsReceiptIdErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -28704,7 +29196,7 @@ export type GetV1CountriesCountryCodeLegalEntityFormsFormErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -28837,7 +29329,7 @@ export type GetV1TimeoffErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -28891,7 +29383,7 @@ export type PostV1TimeoffErrors = {
    */
   422: TimeoffErrorResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -29308,7 +29800,7 @@ export type PostV1CompaniesErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -29372,7 +29864,7 @@ export type PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -29414,7 +29906,7 @@ export type PostV1BulkEmploymentJobsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -29559,7 +30051,7 @@ export type PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -29822,7 +30314,7 @@ export type PutV1EmploymentsEmploymentIdPersonalDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -30266,7 +30758,7 @@ export type GetV1EmployeeStateTaxesJurisdictionErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -30321,7 +30813,7 @@ export type PutV1EmployeeStateTaxesJurisdictionErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -30369,7 +30861,7 @@ export type GetV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -30424,7 +30916,7 @@ export type PostV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -30482,7 +30974,7 @@ export type GetV1BillingDocumentsBillingDocumentIdBreakdownErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -30616,7 +31108,7 @@ export type PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors = {
    */
   422: UnprocessableEntityResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
@@ -30827,7 +31319,7 @@ export type PostV1TimeoffTimeoffIdCancelRequestApproveErrors = {
    */
   422: TimeoffErrorResponse;
   /**
-   * Unprocessable Entity
+   * Too Many Requests
    */
   429: TooManyRequestsResponse;
 };
