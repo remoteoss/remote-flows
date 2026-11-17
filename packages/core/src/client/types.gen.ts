@@ -1337,6 +1337,18 @@ export type Employment = {
    */
   files: Array<File>;
   /**
+   * Whether an active discount fully waives the offboarding service charge (Termination) for this
+   * employment. The charge applies to a termination, and to a cancellation before the start date made by
+   * the customer.
+   *
+   * - `true`: a discount fully waives the charge, so the employer is not charged it on the reconciliation
+   *   invoice.
+   * - `false`: no active discount fully waives the charge. Whether the charge applies to a given offboarding
+   *   is decided separately, so `false` does not guarantee that the employer is charged.
+   *
+   */
+  is_offboarding_service_charge_waived?: boolean | null;
+  /**
    * The unique identifier (UUID) of the currently active contract for this employment.
    */
   active_contract_id?: string;
