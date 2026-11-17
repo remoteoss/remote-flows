@@ -1,14 +1,14 @@
 import { createClient } from '@/src/auth/createClient';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
-vi.mock('@/src/client/client', () => ({
+vi.mock('@remoteoss/remote-flows-core/client/client', () => ({
   createClient: vi.fn((config) => ({
     ...config,
     auth: config.auth,
   })),
 }));
 
-vi.mock('@/src/client/client.gen', () => ({
+vi.mock('@remoteoss/remote-flows-core/client/client.gen', () => ({
   client: {
     getConfig: vi.fn(() => ({
       headers: {},

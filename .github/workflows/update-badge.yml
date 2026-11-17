@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'src/**'
+      - 'packages/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - 'tsdown.config.ts'
