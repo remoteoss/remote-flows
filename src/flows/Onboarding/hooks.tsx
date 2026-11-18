@@ -288,7 +288,25 @@ export const useOnboarding = ({
     typeof engagementAgreementDetailsOptions
   > | null>(null);
 
+  const hasEngagementAgreementDetailsSchema = Boolean(
+    engagementAgreementDetailsSchema,
+  );
+
+  const buildCurrentSteps = useCallback(
+    (includeEngagementAgreementDetails: boolean) =>
+      buildSteps({
+        includeSelectCountry: !skipSteps?.includes('select_country'),
+        includeEngagementAgreementDetails,
+        useDynamicSteps,
+        useEAPreview,
+      }),
+    [skipSteps, useDynamicSteps, useEAPreview],
+  );
+
   const getLatestSteps = useCallback(() => {
+    if (hasEngagementAgreementDetailsSchema) {
+      return buildCurrentSteps(includeEngagementAgreementDetails).steps;
+    }
     const warmed = warmedEngagementAgreementDetailsRef.current;
     const cached = warmed
       ? queryClient.getQueryData(warmed.queryKey)
@@ -297,35 +315,17 @@ export const useOnboarding = ({
       cached?.data?.data?.properties &&
       Object.keys(cached.data.data.properties).length,
     );
-    return buildSteps({
-      includeSelectCountry: !skipSteps?.includes('select_country'),
-      includeEngagementAgreementDetails:
-        includeEngagementAgreementDetails || cachedHasFields,
-      useDynamicSteps,
-      useEAPreview,
-    }).steps;
+    return buildCurrentSteps(cachedHasFields).steps;
   }, [
     queryClient,
-    skipSteps,
+    buildCurrentSteps,
+    hasEngagementAgreementDetailsSchema,
     includeEngagementAgreementDetails,
-    useDynamicSteps,
-    useEAPreview,
   ]);
 
   const { stepsArray } = useMemo(
-    () =>
-      buildSteps({
-        includeSelectCountry: !skipSteps?.includes('select_country'),
-        includeEngagementAgreementDetails,
-        useDynamicSteps,
-        useEAPreview,
-      }),
-    [
-      includeEngagementAgreementDetails,
-      skipSteps,
-      useDynamicSteps,
-      useEAPreview,
-    ],
+    () => buildCurrentSteps(includeEngagementAgreementDetails),
+    [buildCurrentSteps, includeEngagementAgreementDetails],
   );
 
   const onStepChange = useCallback(
@@ -1084,8 +1084,8 @@ export const useOnboarding = ({
     warmedEngagementAgreementDetailsRef.current = queryOptions;
     try {
       await queryClient.query(queryOptions);
-    } catch {
-      return;
+    } catch (error) {
+      console.warn('Error prefetching engagement agreement details:', error);
     }
   }
 

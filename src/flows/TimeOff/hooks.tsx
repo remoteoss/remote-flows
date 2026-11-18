@@ -160,12 +160,12 @@ export const useTimeOffRequestReview = ({
   };
 };
 
-/**
- * Headless hook powering the time-off flow.
- */
 const getSteps = () => STEPS;
 const getListSteps = () => LIST_STEPS;
 
+/**
+ * Headless hook powering the time-off flow.
+ */
 export const useTimeOff = ({
   timeOffId: initialTimeOffId,
 }: UseTimeOffOptions = {}) => {
