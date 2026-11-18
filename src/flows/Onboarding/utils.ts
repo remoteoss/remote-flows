@@ -2,6 +2,11 @@ import {
   CreateJobTitleEligibilityCheckParams,
   JobTitleEligibilityCheck,
 } from '@/src/client';
+import { EorHiringModel } from '@/src/client/types.gen';
+import {
+  getCountryHiringModels,
+  isKnownHiringModel,
+} from '@/src/flows/Onboarding/hiringModels';
 import { Employment, OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { Step } from '@/src/flows/useStepState';
 import { JSFField, JSFFields } from '@/src/types/remoteFlows';
@@ -151,27 +156,53 @@ const getDefaultContractDetailsSchemaVersion = (): number => {
   return DEFAULT_VERSION;
 };
 
+const warnedUnknownHiringModels = new Set<string>();
+
 /**
  * Resolves the effective contract details schema version for a country
  *
  * @param options - The flow options containing version configurations
  * @param countryCode - The country code to resolve version for
+ * @param hiringModel - The employment's hiring model, when it has one
  * @returns The effective jsonSchemaVersion configuration
  */
 export const getContractDetailsSchemaVersion = (
   options: OnboardingFlowProps['options'],
   countryCode: string | null,
-) => {
+  hiringModel?: EorHiringModel | null,
+): number | 'latest' => {
   const jsonSchemaVersionByCountry = options?.jsonSchemaVersionByCountry;
   const countrySpecificVersion = countryCode
     ? jsonSchemaVersionByCountry?.[countryCode]?.contract_details
     : undefined;
+  const countryHiringModels = countryCode
+    ? getCountryHiringModels(countryCode)
+    : undefined;
 
-  const requestedVersion = countrySpecificVersion
+  if (
+    hiringModel &&
+    !isKnownHiringModel(hiringModel) &&
+    !warnedUnknownHiringModels.has(hiringModel)
+  ) {
+    warnedUnknownHiringModels.add(hiringModel);
+    console.warn(
+      `Unknown eor_hiring_model "${hiringModel}": its contract details schema version falls back to ${DEFAULT_VERSION}.`,
+    );
+  }
+
+  const model = hiringModel ?? countryHiringModels?.default;
+
+  if (typeof countrySpecificVersion === 'object') {
+    const modelVersion = model ? countrySpecificVersion[model] : undefined;
+    return modelVersion || getDefaultContractDetailsSchemaVersion();
+  }
+
+  const isDefaultModel =
+    !countryHiringModels || model === countryHiringModels.default;
+
+  return countrySpecificVersion && isDefaultModel
     ? countrySpecificVersion
     : getDefaultContractDetailsSchemaVersion();
-
-  return requestedVersion;
 };
 
 /**
