@@ -573,14 +573,6 @@ Some countries have more than one hiring model. The employment's `eor_hiring_mod
 - A number pins the country's default model, so every existing pin keeps working. Countries without hiring models, such as `ESP`, only take a number.
 - An object pins each model on its own. A model you leave out gets version 1, never another model's number.
 - The model comes from the employment, so for these countries the contract details schema loads once the employment has loaded.
-- A model this SDK version doesn't know yet logs one console warning and gets version 1. Update the SDK to pin it.
-
-| Country | A number pins      | Other models                                           |
-| ------- | ------------------ | ------------------------------------------------------ |
-| `CZE`   | `cze_consulting`   | `cze_tea`                                              |
-| `DEU`   | `deu_aug`          | `deu_aug_de3`, `deu_solutions`, `deu_solutions_legacy` |
-| `FRA`   | `fra_wage_portage` | `fra_consulting`                                       |
-| `ITA`   | `ita_apl`          | `ita_consulting`                                       |
 
 #### Example
 
