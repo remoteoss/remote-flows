@@ -722,38 +722,9 @@ export type EmploymentCustomField = {
  * Includes all upcoming requested time off.
  */
 export type LeavePolicySummaryBooked = {
-  /**
-   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
-   */
-  breakdown?:
-    | {
-        days: number;
-      }
-    | {
-        hours: number;
-        minutes: number;
-      };
-  /**
-   * Legacy. Whole days of an 8-hour day.
-   *
-   * @deprecated
-   */
   days: number;
-  /**
-   * Legacy. Hours left over after `days`, of an 8-hour day.
-   *
-   * @deprecated
-   */
   hours: number;
   type: 'limited';
-  /**
-   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
-   */
-  unit?: 'days' | 'hours';
-  /**
-   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
-   */
-  value?: number;
 };
 
 /**
@@ -805,34 +776,6 @@ export type PayItemProviderDataParams = {
    * Expected work day duration in seconds
    */
   work_day_duration?: number;
-};
-
-/**
- * EngagementAgreementDetailsCZE
- */
-export type EngagementAgreementDetailsCze = {
-  arduous_work_premium_percentage?: number | null;
-  available_pto?: number | null;
-  has_bonus?: string | null;
-  has_commissions?: string | null;
-  has_signing_bonus?: string | null;
-  has_similar_roles?: string;
-  has_similar_work_conditions?: string | null;
-  max_annual_gross_salary?: number | null;
-  min_annual_gross_salary?: number | null;
-  night_work_premium_percentage?: number | null;
-  obstacle_to_work_premium_percentage?: number | null;
-  on_call_premium_percentage?: number | null;
-  overtime_premium_percentage?: number | null;
-  probation_period_months?: number | null;
-  provided_equipment?: Array<string> | null;
-  provided_training?: Array<string> | null;
-  public_holiday_work_premium_percentage?: number | null;
-  similar_role_job_title?: string | null;
-  similar_work_conditions_details?: string | null;
-  weekend_work_premium_percentage?: number | null;
-  work_hours_per_week?: number | null;
-  working_days?: Array<string> | null;
 };
 
 /**
@@ -1143,38 +1086,9 @@ export type BillingDocumentBreakdownItem = {
  * Includes only approved time off in the past.
  */
 export type LeavePolicySummaryUsed = {
-  /**
-   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
-   */
-  breakdown?:
-    | {
-        days: number;
-      }
-    | {
-        hours: number;
-        minutes: number;
-      };
-  /**
-   * Legacy. Whole days of an 8-hour day.
-   *
-   * @deprecated
-   */
   days: number;
-  /**
-   * Legacy. Hours left over after `days`, of an 8-hour day.
-   *
-   * @deprecated
-   */
   hours: number;
   type: 'limited';
-  /**
-   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
-   */
-  unit?: 'days' | 'hours';
-  /**
-   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
-   */
-  value?: number;
 };
 
 /**
@@ -1296,22 +1210,6 @@ export type Employment = {
     requires_work_confirmation?: boolean;
   } | null;
   employment_lifecycle_stage: EmploymentLifecycleStage;
-  /**
-   * EorHiringModel
-   *
-   * EOR hiring model the active contract is under. Null when it has none.
-   */
-  eor_hiring_model?:
-    | 'deu_solutions'
-    | 'deu_aug'
-    | 'deu_aug_de3'
-    | 'deu_solutions_legacy'
-    | 'cze_consulting'
-    | 'cze_tea'
-    | 'fra_wage_portage'
-    | 'fra_consulting'
-    | 'ita_apl'
-    | 'ita_consulting';
   /**
    * Administrative information. Its properties may vary depending on the country.
    */
@@ -1453,18 +1351,6 @@ export type Employment = {
    * Documents associated with this employment (e.g., contracts, tax forms, identity documents).
    */
   files: Array<File>;
-  /**
-   * Whether an active discount fully waives the offboarding service charge (Termination) for this
-   * employment. The charge applies to a termination, and to a cancellation before the start date made by
-   * the customer.
-   *
-   * - `true`: a discount fully waives the charge, so the employer is not charged it on the reconciliation
-   *   invoice.
-   * - `false`: no active discount fully waives the charge. Whether the charge applies to a given offboarding
-   *   is decided separately, so `false` does not guarantee that the employer is charged.
-   *
-   */
-  is_offboarding_service_charge_waived?: boolean | null;
   /**
    * The unique identifier (UUID) of the currently active contract for this employment.
    */
@@ -1727,13 +1613,6 @@ export type TotalPay = {
   fields?: Array<CustomField>;
   totalGross: Amount;
   totalNet: Amount;
-};
-
-/**
- * DaysBreakdown
- */
-export type DaysBreakdown = {
-  days: number;
 };
 
 /**
@@ -2422,22 +2301,6 @@ export type EmploymentBasicResponse = {
   created_at?: string;
   employment_lifecycle_stage?: EmploymentLifecycleStage;
   /**
-   * EorHiringModel
-   *
-   * EOR hiring model the active contract is under. Null when it has none.
-   */
-  eor_hiring_model?:
-    | 'deu_solutions'
-    | 'deu_aug'
-    | 'deu_aug_de3'
-    | 'deu_solutions_legacy'
-    | 'cze_consulting'
-    | 'cze_tea'
-    | 'fra_wage_portage'
-    | 'fra_consulting'
-    | 'ita_apl'
-    | 'ita_consulting';
-  /**
    * The employee's full name.
    */
   full_name?: string;
@@ -2858,42 +2721,11 @@ export type ValidateResignationRequestParams =
 
 /**
  * LimitedDaysandHoursResponse
- *
- * A limited amount of leave. Read `unit`, `value` and `breakdown`: they are counted in the unit the policy counts leave in, and need no conversion. `days` and `hours` are the legacy pair, encoded with an 8-hour day for clients that have not moved yet; do not sum or show them for new work.
  */
 export type LimitedDaysandHoursResponse = {
-  /**
-   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
-   */
-  breakdown?:
-    | {
-        days: number;
-      }
-    | {
-        hours: number;
-        minutes: number;
-      };
-  /**
-   * Legacy. Whole days of an 8-hour day.
-   *
-   * @deprecated
-   */
   days: number;
-  /**
-   * Legacy. Hours left over after `days`, of an 8-hour day.
-   *
-   * @deprecated
-   */
   hours: number;
   type: 'limited';
-  /**
-   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
-   */
-  unit?: 'days' | 'hours';
-  /**
-   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
-   */
-  value?: number;
 };
 
 /**
@@ -3016,38 +2848,9 @@ export type ListDirectOffboardingResponse = {
  * Includes all time off (past and future, pending or approved).
  */
 export type LeavePolicySummaryTaken = {
-  /**
-   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
-   */
-  breakdown?:
-    | {
-        days: number;
-      }
-    | {
-        hours: number;
-        minutes: number;
-      };
-  /**
-   * Legacy. Whole days of an 8-hour day.
-   *
-   * @deprecated
-   */
   days: number;
-  /**
-   * Legacy. Hours left over after `days`, of an 8-hour day.
-   *
-   * @deprecated
-   */
   hours: number;
   type: 'limited';
-  /**
-   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
-   */
-  unit?: 'days' | 'hours';
-  /**
-   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
-   */
-  value?: number;
 };
 
 /**
@@ -3885,10 +3688,6 @@ export type AccountsAccount = {
  * The list of benefit offers for an employment schema
  */
 export type EmploymentsBenefitOffersListBenefitOffers = {
-  /**
-   * Whether the current benefit selection passes the check that runs when the employee is invited, as a company user sees it. True when the country has no benefits to choose. False when the selection is missing, out of date or not allowed, and when the employment has no contract yet. For a contractor or direct employee, which cannot have benefit offers, true when there are none and false when there are some.
-   */
-  benefits_valid: boolean;
   data: Array<UnifiedEmploymentBenefitOffer>;
 };
 
@@ -4072,38 +3871,9 @@ export type ContractorInvoiceSchedule = {
  * Includes all upcoming requested time off.
  */
 export type LeavePolicySummaryUpcomingRequested = {
-  /**
-   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
-   */
-  breakdown?:
-    | {
-        days: number;
-      }
-    | {
-        hours: number;
-        minutes: number;
-      };
-  /**
-   * Legacy. Whole days of an 8-hour day.
-   *
-   * @deprecated
-   */
   days: number;
-  /**
-   * Legacy. Hours left over after `days`, of an 8-hour day.
-   *
-   * @deprecated
-   */
   hours: number;
   type: 'limited';
-  /**
-   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
-   */
-  unit?: 'days' | 'hours';
-  /**
-   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
-   */
-  value?: number;
 };
 
 /**
@@ -5819,22 +5589,6 @@ export type WebhookTriggerEmploymentParams = {
 };
 
 /**
- * TopUpHours
- *
- * The total of `top_up_time_trackings`: hours Remote pays on top of the hours logged on the timesheet. It covers every reason a top-up is written and is not worked time, so it is not included in `total_hours`.
- */
-export type TopUpHours = {
-  /**
-   * The number of whole hours.
-   */
-  hours?: number;
-  /**
-   * The number of remaining minutes (0-59).
-   */
-  minutes?: number;
-};
-
-/**
  * ListCompanyLegalEntitiesResponse
  *
  * Response schema listing many legal_entities
@@ -7205,31 +6959,6 @@ export type ConvertCurrencyParams = {
    * The currency code to convert to
    */
   target_currency: string;
-};
-
-/**
- * TopUpTimeTracking
- *
- * An entry Remote writes to pay hours the employee did not work, such as the guaranteed hours on their contract. It is never worked time and never carries a work interval: `total_hours` is the amount this entry pays, and `date` is the day the entry is filed under. A `guaranteed_hours` entry covers the whole timesheet week, so its amount is not one day's pay.
- */
-export type TopUpTimeTracking = {
-  /**
-   * The day this entry is filed under. A `minimum_engagement` or `late_cancellation` entry is filed under the local day of the call-in, or of the shift the change was about, in the entry's timezone. A `guaranteed_hours` entry is filed under the last day of the timesheet week, or the last day in that week the contract guarantees hours; its `total_hours` covers the whole week, so it is not that day's pay.
-   */
-  date: string;
-  /**
-   * Free-text notes about this entry. Always present; both top-up writers set one.
-   */
-  notes: string | null;
-  /**
-   * Why Remote wrote the top-up. `guaranteed_hours`: the week's worked time is below the contract's guaranteed hours. `minimum_engagement`: a call-in is shorter than the policy's minimum paid time. `late_cancellation`: an employer cancelled, shortened or moved a shift inside the paid notice window, and the worker is paid the hours lost. Null only for an entry the system never writes.
-   */
-  reason: 'guaranteed_hours' | 'minimum_engagement' | 'late_cancellation';
-  total_hours: HoursAndMinutes;
-  /**
-   * Always `top_up`: the entry pays hours the employee did not work.
-   */
-  type: 'top_up';
 };
 
 /**
@@ -9063,38 +8792,9 @@ export type LeavePolicySummary = {
    * Includes all upcoming requested time off.
    */
   booked: {
-    /**
-     * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
-     */
-    breakdown?:
-      | {
-          days: number;
-        }
-      | {
-          hours: number;
-          minutes: number;
-        };
-    /**
-     * Legacy. Whole days of an 8-hour day.
-     *
-     * @deprecated
-     */
     days: number;
-    /**
-     * Legacy. Hours left over after `days`, of an 8-hour day.
-     *
-     * @deprecated
-     */
     hours: number;
     type: 'limited';
-    /**
-     * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
-     */
-    unit?: 'days' | 'hours';
-    /**
-     * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
-     */
-    value?: number;
   };
   /**
    * The current entitlement is the accrued time entitled for the employee plus any other extra entitlements (such as carryover).
@@ -9109,38 +8809,9 @@ export type LeavePolicySummary = {
    * Includes requested timeoffs (not approved) in the past or in the future.
    */
   pending_approval: {
-    /**
-     * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
-     */
-    breakdown?:
-      | {
-          days: number;
-        }
-      | {
-          hours: number;
-          minutes: number;
-        };
-    /**
-     * Legacy. Whole days of an 8-hour day.
-     *
-     * @deprecated
-     */
     days: number;
-    /**
-     * Legacy. Hours left over after `days`, of an 8-hour day.
-     *
-     * @deprecated
-     */
     hours: number;
     type: 'limited';
-    /**
-     * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
-     */
-    unit?: 'days' | 'hours';
-    /**
-     * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
-     */
-    value?: number;
   };
   /**
    * LeavePolicySummaryTaken
@@ -9148,38 +8819,9 @@ export type LeavePolicySummary = {
    * Includes all time off (past and future, pending or approved).
    */
   taken: {
-    /**
-     * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
-     */
-    breakdown?:
-      | {
-          days: number;
-        }
-      | {
-          hours: number;
-          minutes: number;
-        };
-    /**
-     * Legacy. Whole days of an 8-hour day.
-     *
-     * @deprecated
-     */
     days: number;
-    /**
-     * Legacy. Hours left over after `days`, of an 8-hour day.
-     *
-     * @deprecated
-     */
     hours: number;
     type: 'limited';
-    /**
-     * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
-     */
-    unit?: 'days' | 'hours';
-    /**
-     * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
-     */
-    value?: number;
   };
   /**
    * LeavePolicySummaryUpcomingApproved
@@ -9187,38 +8829,9 @@ export type LeavePolicySummary = {
    * Includes all upcoming approved time off.
    */
   upcoming_approved: {
-    /**
-     * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
-     */
-    breakdown?:
-      | {
-          days: number;
-        }
-      | {
-          hours: number;
-          minutes: number;
-        };
-    /**
-     * Legacy. Whole days of an 8-hour day.
-     *
-     * @deprecated
-     */
     days: number;
-    /**
-     * Legacy. Hours left over after `days`, of an 8-hour day.
-     *
-     * @deprecated
-     */
     hours: number;
     type: 'limited';
-    /**
-     * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
-     */
-    unit?: 'days' | 'hours';
-    /**
-     * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
-     */
-    value?: number;
   };
   /**
    * LeavePolicySummaryUpcomingRequested
@@ -9226,38 +8839,9 @@ export type LeavePolicySummary = {
    * Includes all upcoming requested time off.
    */
   upcoming_requested: {
-    /**
-     * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
-     */
-    breakdown?:
-      | {
-          days: number;
-        }
-      | {
-          hours: number;
-          minutes: number;
-        };
-    /**
-     * Legacy. Whole days of an 8-hour day.
-     *
-     * @deprecated
-     */
     days: number;
-    /**
-     * Legacy. Hours left over after `days`, of an 8-hour day.
-     *
-     * @deprecated
-     */
     hours: number;
     type: 'limited';
-    /**
-     * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
-     */
-    unit?: 'days' | 'hours';
-    /**
-     * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
-     */
-    value?: number;
   };
   /**
    * LeavePolicySummaryUsed
@@ -9265,38 +8849,9 @@ export type LeavePolicySummary = {
    * Includes only approved time off in the past.
    */
   used: {
-    /**
-     * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
-     */
-    breakdown?:
-      | {
-          days: number;
-        }
-      | {
-          hours: number;
-          minutes: number;
-        };
-    /**
-     * Legacy. Whole days of an 8-hour day.
-     *
-     * @deprecated
-     */
     days: number;
-    /**
-     * Legacy. Hours left over after `days`, of an 8-hour day.
-     *
-     * @deprecated
-     */
     hours: number;
     type: 'limited';
-    /**
-     * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
-     */
-    unit?: 'days' | 'hours';
-    /**
-     * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
-     */
-    value?: number;
   };
   working_hours_per_day: number;
 };
@@ -9618,64 +9173,42 @@ export type Slug = string;
  */
 export type EmploymentEngagementAgreementDetailsResponse = {
   data: {
-    details:
-      | {
-          allowances_details?: Array<string> | null;
-          available_pto?: number | null;
-          break_time_per_day?: number | null;
-          business_expenses?: string | null;
-          cba?: string | null;
-          cba_document?: Array<EngagementAgreementDetailsFile> | null;
-          covenants?: Array<string> | null;
-          has_allowances?: string | null;
-          has_bonus?: string | null;
-          has_business_expenses?: string | null;
-          has_business_presence?: string;
-          has_cba?: string | null;
-          has_commissions?: string | null;
-          has_covenants?: string | null;
-          has_illness_remuneration?: string | null;
-          has_overtime_compensation?: string | null;
-          has_pension_scheme?: string | null;
-          has_signing_bonus?: string | null;
-          has_similar_roles?: string;
-          has_similar_work_conditions?: string | null;
-          illness_remuneration_details?: string | null;
-          max_annual_gross_salary?: number | null;
-          min_annual_gross_salary?: number | null;
-          overtime_compensation_begins?: number | null;
-          overtime_compensation_type?: string | null;
-          overtime_pay_percentage?: number | null;
-          pension_scheme?: string | null;
-          similar_roles?: string | null;
-          similar_work_conditions_details?: string | null;
-          work_hours_per_week?: number | null;
-          working_days?: Array<string> | null;
-        }
-      | {
-          arduous_work_premium_percentage?: number | null;
-          available_pto?: number | null;
-          has_bonus?: string | null;
-          has_commissions?: string | null;
-          has_signing_bonus?: string | null;
-          has_similar_roles?: string;
-          has_similar_work_conditions?: string | null;
-          max_annual_gross_salary?: number | null;
-          min_annual_gross_salary?: number | null;
-          night_work_premium_percentage?: number | null;
-          obstacle_to_work_premium_percentage?: number | null;
-          on_call_premium_percentage?: number | null;
-          overtime_premium_percentage?: number | null;
-          probation_period_months?: number | null;
-          provided_equipment?: Array<string> | null;
-          provided_training?: Array<string> | null;
-          public_holiday_work_premium_percentage?: number | null;
-          similar_role_job_title?: string | null;
-          similar_work_conditions_details?: string | null;
-          weekend_work_premium_percentage?: number | null;
-          work_hours_per_week?: number | null;
-          working_days?: Array<string> | null;
-        };
+    /**
+     * EngagementAgreementDetailsDEU
+     */
+    details: {
+      allowances_details?: Array<string> | null;
+      available_pto?: number | null;
+      break_time_per_day?: number | null;
+      business_expenses?: string | null;
+      cba?: string | null;
+      cba_document?: Array<EngagementAgreementDetailsFile> | null;
+      covenants?: Array<string> | null;
+      has_allowances?: string | null;
+      has_bonus?: string | null;
+      has_business_expenses?: string | null;
+      has_business_presence?: string;
+      has_cba?: string | null;
+      has_commissions?: string | null;
+      has_covenants?: string | null;
+      has_illness_remuneration?: string | null;
+      has_overtime_compensation?: string | null;
+      has_pension_scheme?: string | null;
+      has_signing_bonus?: string | null;
+      has_similar_roles?: string;
+      has_similar_work_conditions?: string | null;
+      illness_remuneration_details?: string | null;
+      max_annual_gross_salary?: number | null;
+      min_annual_gross_salary?: number | null;
+      overtime_compensation_begins?: number | null;
+      overtime_compensation_type?: string | null;
+      overtime_pay_percentage?: number | null;
+      pension_scheme?: string | null;
+      similar_roles?: string | null;
+      similar_work_conditions_details?: string | null;
+      work_hours_per_week?: number | null;
+      working_days?: Array<string> | null;
+    };
     slug: string;
   };
 };
@@ -9991,44 +9524,11 @@ export type Timesheet = {
    */
   submitted_at: string | null;
   /**
-   * The entries recorded against this timesheet: regular hours, overtime, on-call and breaks that were logged, plus the time off and public holidays Remote writes. Do not add these up for worked time: breaks, time off and public holidays are in here too. Read `total_hours` instead. Top-ups are never among these entries: they come back in `top_up_time_trackings`.
+   * The individual time tracking entries that make up this timesheet.
    */
   time_trackings: Array<TimeTracking>;
   timeoff_hours?: HoursAndMinutes;
-  /**
-   * TopUpHours
-   *
-   * The total of `top_up_time_trackings`: hours Remote pays on top of the hours logged on the timesheet. It covers every reason a top-up is written and is not worked time, so it is not included in `total_hours`.
-   */
-  top_up_hours: {
-    /**
-     * The number of whole hours.
-     */
-    hours?: number;
-    /**
-     * The number of remaining minutes (0-59).
-     */
-    minutes?: number;
-  };
-  /**
-   * Entries Remote writes to pay hours the employee did not work, such as the guaranteed hours on their contract or the minimum paid time of a call-in. Filled when approval processing writes them, so re-read a timesheet that was just approved. A send back or reopen before payroll took them removes them, and approving again writes them afresh; a timesheet reopened after payroll already took its top-ups keeps them.
-   */
-  top_up_time_trackings: Array<TopUpTimeTracking>;
-  /**
-   * WorkedHours
-   *
-   * The worked time on this timesheet: the clocked time of the regular, overtime and on-call entries. Paid breaks, time off and top-ups are not included, so this is the number to use for worked hours.
-   */
-  total_hours: {
-    /**
-     * The number of whole hours.
-     */
-    hours?: number;
-    /**
-     * The number of remaining minutes (0-59).
-     */
-    minutes?: number;
-  };
+  total_hours: HoursAndMinutes;
   unpaid_break_hours: HoursAndMinutes;
   weekend_hours: HoursAndMinutes;
 };
@@ -10543,14 +10043,6 @@ export type FeatureFlag = {
 };
 
 /**
- * HoursBreakdown
- */
-export type HoursBreakdown = {
-  hours: number;
-  minutes: number;
-};
-
-/**
  * MagicLinkParams
  *
  * Magic link params
@@ -10693,18 +10185,6 @@ export type ImportJobRowsResponse = {
         successful: number;
       };
       /**
-       * Country pay item uploads only: how many active legal entity pay items submitting the upload will overwrite, because it changes their country pay item's locked fields. An upper bound, counted when the file was last validated. `null` before validation, after a row is edited until the file is validated again, and when validation couldn't check the changes
-       */
-      locked_field_overwrite?: {
-        count: number;
-        /**
-         * Why `count` is 0 though the upload may change locked fields, so nothing is copied to legal entity pay items: `propagation_disabled` when copying from imports isn't turned on for this importer (checked first), `no_templates_update_permission` when the importer can't update country pay items
-         */
-        skipped_reason:
-          | 'propagation_disabled'
-          | 'no_templates_update_permission';
-      } | null;
-      /**
        * Distinct team members across the complete import job, counted once even when they are split across several table records. `needs_changes` and `ready_to_submit` are mutually exclusive; `successfully_assigned` and `failed_to_assign` are subsets of `ready_to_submit`. The counts describe the job as of `job_stage`: the same rows count as needing changes before submission and as failed to assign afterwards.
        */
       team_member_counts?: {
@@ -10832,34 +10312,6 @@ export type Status = {
 };
 
 /**
- * EngagementAgreementDetailsParamsCZE
- */
-export type EngagementAgreementDetailsParamsCze = {
-  arduous_work_premium_percentage?: number | null;
-  available_pto?: number | null;
-  has_bonus?: string | null;
-  has_commissions?: string | null;
-  has_signing_bonus?: string | null;
-  has_similar_roles?: string;
-  has_similar_work_conditions?: string | null;
-  max_annual_gross_salary?: number | null;
-  min_annual_gross_salary?: number | null;
-  night_work_premium_percentage?: number | null;
-  obstacle_to_work_premium_percentage?: number | null;
-  on_call_premium_percentage?: number | null;
-  overtime_premium_percentage?: number | null;
-  probation_period_months?: number | null;
-  provided_equipment?: Array<string> | null;
-  provided_training?: Array<string> | null;
-  public_holiday_work_premium_percentage?: number | null;
-  similar_role_job_title?: string | null;
-  similar_work_conditions_details?: string | null;
-  weekend_work_premium_percentage?: number | null;
-  work_hours_per_week?: number | null;
-  working_days?: Array<string> | null;
-};
-
-/**
  * ContractorCreateTimesheetUnprocessableEntityResponse
  *
  * A validation error (HTTP 422). Either a standard error response, or — when the submitted
@@ -10919,11 +10371,7 @@ export type CompanyLegalEntity = {
  */
 export type CompanyManager = {
   /**
-   * The legal entities this manager receives Remote invoices for. Each listed legal entity has one
-   * primary billing contact: the manager chosen as primary, or the company owner when none is chosen.
-   * The owner is listed as primary on those legal entities even without being chosen as a recipient.
-   * The list can leave out legal entities the caller can't access, so it can be empty.
-   *
+   * The legal entities this manager is a billing contact for.
    */
   billing_contacts: Array<CompanyManagerBillingContactStatus>;
   /**
@@ -11092,38 +10540,9 @@ export type CreateSingleSelectCustomFieldDefinitionParams = {
  * Includes requested timeoffs (not approved) in the past or in the future.
  */
 export type LeavePolicySummaryPendingApproval = {
-  /**
-   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
-   */
-  breakdown?:
-    | {
-        days: number;
-      }
-    | {
-        hours: number;
-        minutes: number;
-      };
-  /**
-   * Legacy. Whole days of an 8-hour day.
-   *
-   * @deprecated
-   */
   days: number;
-  /**
-   * Legacy. Hours left over after `days`, of an 8-hour day.
-   *
-   * @deprecated
-   */
   hours: number;
   type: 'limited';
-  /**
-   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
-   */
-  unit?: 'days' | 'hours';
-  /**
-   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
-   */
-  value?: number;
 };
 
 /**
@@ -11760,23 +11179,6 @@ export type ConflictResponse = {
    */
   message?: string;
 };
-
-/**
- * EorHiringModel
- *
- * EOR hiring model the active contract is under. Null when it has none.
- */
-export type EorHiringModel =
-  | 'deu_solutions'
-  | 'deu_aug'
-  | 'deu_aug_de3'
-  | 'deu_solutions_legacy'
-  | 'cze_consulting'
-  | 'cze_tea'
-  | 'fra_wage_portage'
-  | 'fra_consulting'
-  | 'ita_apl'
-  | 'ita_consulting';
 
 /**
  * ContractorEligibilityResponse
@@ -13257,38 +12659,9 @@ export type ResignationFile = {
  * Includes all upcoming approved time off.
  */
 export type LeavePolicySummaryUpcomingApproved = {
-  /**
-   * The same amount split for display. On a days policy only `days` (the same fraction as `value`), because a day has no fixed length in hours. On an hours policy `hours` and the remaining `minutes`.
-   */
-  breakdown?:
-    | {
-        days: number;
-      }
-    | {
-        hours: number;
-        minutes: number;
-      };
-  /**
-   * Legacy. Whole days of an 8-hour day.
-   *
-   * @deprecated
-   */
   days: number;
-  /**
-   * Legacy. Hours left over after `days`, of an 8-hour day.
-   *
-   * @deprecated
-   */
   hours: number;
   type: 'limited';
-  /**
-   * The unit the leave policy counts leave in. `value` and `breakdown` are in this unit.
-   */
-  unit?: 'days' | 'hours';
-  /**
-   * The amount as a decimal in `unit`, rounded to two decimals: day fractions on a days policy, hours on an hours policy. Show it as is. Do not add rounded values up: use the totals Tiger returns.
-   */
-  value?: number;
 };
 
 /**
@@ -13560,22 +12933,6 @@ export type EmploymentBasicInformationParams = {
   basic_information: {
     [key: string]: unknown;
   };
-};
-
-/**
- * WorkedHours
- *
- * The worked time on this timesheet: the clocked time of the regular, overtime and on-call entries. Paid breaks, time off and top-ups are not included, so this is the number to use for worked hours.
- */
-export type WorkedHours = {
-  /**
-   * The number of whole hours.
-   */
-  hours?: number;
-  /**
-   * The number of remaining minutes (0-59).
-   */
-  minutes?: number;
 };
 
 /**
@@ -14934,75 +14291,52 @@ export type EmploymentCreateParams = {
  */
 export type EmploymentEngagementAgreementDetailsParams = {
   /**
+   * EngagementAgreementDetailsParamsDEU
+   *
    * Engagement agreement details params. As its properties may vary depending on the country,
    * you must query the [Show form schema](#tag/Countries/operation/get_v1_countries_country_code_form) endpoint
    * passing the country code and the `engagement_agreement_details` form name.
    *
    */
-  engagement_agreement_details:
-    | {
-        allowances_details?: Array<string> | null;
-        available_pto?: number | null;
-        break_time_per_day?: number | null;
-        business_expenses?: string | null;
-        cba?: string | null;
-        cba_document?: Array<EngagementAgreementDetailsFileParams> | null;
-        covenants?: Array<string> | null;
-        has_allowances?: string | null;
-        has_bonus?: string | null;
-        has_business_expenses?: string | null;
-        has_business_presence?: string;
-        has_cba?: string | null;
-        has_commissions?: string | null;
-        has_covenants?: string | null;
-        has_illness_remuneration?: string | null;
-        has_overtime_compensation?: string | null;
-        has_pension_scheme?: string | null;
-        has_signing_bonus?: string | null;
-        has_similar_roles?: string;
-        has_similar_work_conditions?: string | null;
-        illness_remuneration_details?: string | null;
-        max_annual_gross_salary?: number | null;
-        min_annual_gross_salary?: number | null;
-        overtime_compensation_begins?: number | null;
-        overtime_compensation_type?: string | null;
-        overtime_pay_percentage?: number | null;
-        pension_scheme?: string | null;
-        similar_roles?: string | null;
-        similar_work_conditions_details?: string | null;
-        work_hours_per_week?: number | null;
-        working_days?: Array<string> | null;
-      }
-    | {
-        arduous_work_premium_percentage?: number | null;
-        available_pto?: number | null;
-        has_bonus?: string | null;
-        has_commissions?: string | null;
-        has_signing_bonus?: string | null;
-        has_similar_roles?: string;
-        has_similar_work_conditions?: string | null;
-        max_annual_gross_salary?: number | null;
-        min_annual_gross_salary?: number | null;
-        night_work_premium_percentage?: number | null;
-        obstacle_to_work_premium_percentage?: number | null;
-        on_call_premium_percentage?: number | null;
-        overtime_premium_percentage?: number | null;
-        probation_period_months?: number | null;
-        provided_equipment?: Array<string> | null;
-        provided_training?: Array<string> | null;
-        public_holiday_work_premium_percentage?: number | null;
-        similar_role_job_title?: string | null;
-        similar_work_conditions_details?: string | null;
-        weekend_work_premium_percentage?: number | null;
-        work_hours_per_week?: number | null;
-        working_days?: Array<string> | null;
-      };
+  engagement_agreement_details: {
+    allowances_details?: Array<string> | null;
+    available_pto?: number | null;
+    break_time_per_day?: number | null;
+    business_expenses?: string | null;
+    cba?: string | null;
+    cba_document?: Array<EngagementAgreementDetailsFileParams> | null;
+    covenants?: Array<string> | null;
+    has_allowances?: string | null;
+    has_bonus?: string | null;
+    has_business_expenses?: string | null;
+    has_business_presence?: string;
+    has_cba?: string | null;
+    has_commissions?: string | null;
+    has_covenants?: string | null;
+    has_illness_remuneration?: string | null;
+    has_overtime_compensation?: string | null;
+    has_pension_scheme?: string | null;
+    has_signing_bonus?: string | null;
+    has_similar_roles?: string;
+    has_similar_work_conditions?: string | null;
+    illness_remuneration_details?: string | null;
+    max_annual_gross_salary?: number | null;
+    min_annual_gross_salary?: number | null;
+    overtime_compensation_begins?: number | null;
+    overtime_compensation_type?: string | null;
+    overtime_pay_percentage?: number | null;
+    pension_scheme?: string | null;
+    similar_roles?: string | null;
+    similar_work_conditions_details?: string | null;
+    work_hours_per_week?: number | null;
+    working_days?: Array<string> | null;
+  };
 };
 
 /**
  * TimeTracking
  *
- * A single time tracking entry within a timesheet, representing a block of time with clock-in/out times: work, a break, or time off. Includes detailed breakdowns of hours by type (regular, overtime, night, weekend, holiday). Top-ups are not logged time and come back in `top_up_time_trackings`, under their own schema.
+ * A single time tracking entry within a timesheet, representing a block of work with clock-in/out times. Includes detailed breakdowns of hours by type (regular, overtime, night, weekend, holiday).
  */
 export type TimeTracking = {
   clock_in: DateTimeIso8601;
@@ -15029,7 +14363,7 @@ export type TimeTracking = {
   timezone: Timezone;
   total_hours: HoursAndMinutes;
   /**
-   * The category of time being tracked (e.g., regular hours, overtime, on-call, break time). `time_off` and `public_holiday` are system-generated, and cannot be set when creating a timesheet. `top_up` is system-generated too but never appears in this array: top-ups come back in `top_up_time_trackings`.
+   * The category of time being tracked (e.g., regular hours, overtime, on-call, break time).
    */
   type:
     | 'regular_hours'
