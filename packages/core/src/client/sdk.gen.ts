@@ -18357,6 +18357,9 @@ export const getV1CompanyManagersUserId = <
  *   Changing a deleted manager returns 404.
  *   Deleting the manager is still refused while they are primary for any legal entity,
  *   including ones the caller can't see.
+ * - The response lists the manager's billing contacts only on the legal entities the
+ *   caller can access, also on integrations that don't limit callers to those. So the
+ *   response can leave out legal entities the same caller's GET lists.
  *
  * Requires permission to update billing communications. If your integration checks
  * callers' roles, it also requires permission to update team members.
@@ -18463,6 +18466,9 @@ export const patchV1CompanyManagersUserId2 = <
  *   Changing a deleted manager returns 404.
  *   Deleting the manager is still refused while they are primary for any legal entity,
  *   including ones the caller can't see.
+ * - The response lists the manager's billing contacts only on the legal entities the
+ *   caller can access, also on integrations that don't limit callers to those. So the
+ *   response can leave out legal entities the same caller's GET lists.
  *
  * Requires permission to update billing communications. If your integration checks
  * callers' roles, it also requires permission to update team members.
