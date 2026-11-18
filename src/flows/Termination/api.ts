@@ -204,23 +204,20 @@ export const useSummaryTimeOffDataQuery = ({
     date: proposedTerminationDate,
   });
 
+  /* oxlint-disable typescript/no-deprecated -- TODO: move to value/unit/breakdown */
   const entitledDays =
     leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.type ===
     'limited'
       ? {
           days: leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement
-            // oxlint-disable-next-line typescript/no-deprecated
             .days,
           hours:
-            // oxlint-disable-next-line typescript/no-deprecated
             leavePoliciesSummaryQuery.data?.data?.[0].annual_entitlement.hours,
         }
       : { days: minimumStatutoryDays, hours: 0 };
 
   const bookedDays = {
-    // oxlint-disable-next-line typescript/no-deprecated
     days: leavePoliciesSummaryQuery.data?.data?.[0].booked.days || 0,
-    // oxlint-disable-next-line typescript/no-deprecated
     hours: leavePoliciesSummaryQuery.data?.data?.[0].booked.hours || 0,
   };
 
@@ -230,21 +227,18 @@ export const useSummaryTimeOffDataQuery = ({
       ? {
           days:
             leavePoliciesSummaryQuery.data?.data?.[0].current_entitlement
-              // oxlint-disable-next-line typescript/no-deprecated
               .days || 0,
           hours:
             leavePoliciesSummaryQuery.data?.data?.[0].current_entitlement
-              // oxlint-disable-next-line typescript/no-deprecated
               .hours || 0,
         }
       : { days: minimumStatutoryDays, hours: 0 };
 
   const usedDays = {
-    // oxlint-disable-next-line typescript/no-deprecated
     days: leavePoliciesSummaryQuery.data?.data?.[0].used.days || 0,
-    // oxlint-disable-next-line typescript/no-deprecated
     hours: leavePoliciesSummaryQuery.data?.data?.[0].used.hours || 0,
   };
+  /* oxlint-enable typescript/no-deprecated */
 
   const approvedDaysBeforeTermination = bookedTimeQuery.data
     ?.bookedDaysBeforeTermination || { days: 0, hours: 0 };
