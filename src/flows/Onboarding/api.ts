@@ -162,7 +162,7 @@ export const useEmploymentEngagementAgreementDetails = (
         },
       }).then((response) => {
         if (response.error || !response.data) {
-          throw new Error('Failed to fetch engagement agreement details');
+          throw new EngagementAgreementDetailsError(response.response?.status);
         }
         return response;
       });
@@ -704,6 +704,15 @@ export const useEmploymentOnboardingReservesStatus = (
     select: ({ data }) => data?.data?.status,
   });
 };
+
+export class EngagementAgreementDetailsError extends Error {
+  status?: number;
+
+  constructor(status?: number) {
+    super('Failed to fetch engagement agreement details');
+    this.status = status;
+  }
+}
 
 export const engagementAgreementDetailsOptions = (
   client: Client,

@@ -38,6 +38,7 @@ import {
   useCompany,
   useContractDetailsSchema,
   useCountriesSchemaField,
+  EngagementAgreementDetailsError,
   engagementAgreementDetailsOptions,
   useCreateEmployment,
   useEmploymentAgreementPreview,
@@ -1085,7 +1086,12 @@ export const useOnboarding = ({
     try {
       await queryClient.query(queryOptions);
     } catch (error) {
-      console.warn('Error prefetching engagement agreement details:', error);
+      const isExpectedNotFound =
+        error instanceof EngagementAgreementDetailsError &&
+        error.status === 404;
+      if (!isExpectedNotFound) {
+        console.warn('Error prefetching engagement agreement details:', error);
+      }
     }
   }
 
