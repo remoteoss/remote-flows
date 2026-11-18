@@ -81,6 +81,7 @@ import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getContractDetailsSchemaVersion } from '@/src/flows/Onboarding/utils';
 import {
   ONBOARDING_JSON_SCHEMA_VERSION,
   ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY,
@@ -520,10 +521,10 @@ async function seedEmployee() {
 }
 
 async function submitContractDetails(employmentId: string) {
-  const version =
-    ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY[
-      COUNTRY as keyof typeof ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY
-    ]?.contract_details ?? 1;
+  const version = getContractDetailsSchemaVersion(
+    { jsonSchemaVersionByCountry: ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY },
+    COUNTRY,
+  );
   console.log(
     `\nFetching contract_details v${version} schema for ${COUNTRY}...`,
   );

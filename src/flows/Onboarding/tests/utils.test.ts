@@ -1,6 +1,8 @@
+import { EorHiringModel } from '@/src/client/types.gen';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import {
   buildSteps,
+  DEFAULT_VERSION,
   getBasicInformationSchemaVersion,
   getBenefitOffersSchemaVersion,
   getContractDetailsSchemaVersion,
@@ -29,6 +31,79 @@ describe('getContractDetailsSchemaVersion', () => {
     const result = getContractDetailsSchemaVersion(options, 'DEU');
 
     expect(result).toEqual(2);
+  });
+
+  describe('hiring models', () => {
+    const numberOptions = {
+      jsonSchemaVersionByCountry: {
+        CZE: { contract_details: 7 },
+        PRT: { contract_details: 9 },
+      },
+    };
+    const objectOptions = {
+      jsonSchemaVersionByCountry: {
+        CZE: { contract_details: { cze_consulting: 7, cze_tea: 3 } },
+        ITA: { contract_details: { ita_apl: 2 } },
+      },
+    };
+
+    it('returns the country number when no hiring model is given', () => {
+      expect(getContractDetailsSchemaVersion(numberOptions, 'CZE')).toEqual(7);
+    });
+
+    it('returns the country number for the default hiring model', () => {
+      expect(
+        getContractDetailsSchemaVersion(numberOptions, 'CZE', 'cze_consulting'),
+      ).toEqual(7);
+    });
+
+    it('returns the default version for a non-default hiring model with a number pin', () => {
+      expect(
+        getContractDetailsSchemaVersion(numberOptions, 'CZE', 'cze_tea'),
+      ).toEqual(DEFAULT_VERSION);
+    });
+
+    it('returns the pin of a hiring model pinned in the object form', () => {
+      expect(
+        getContractDetailsSchemaVersion(objectOptions, 'CZE', 'cze_tea'),
+      ).toEqual(3);
+    });
+
+    it('returns the default version for a hiring model not pinned in the object form', () => {
+      expect(
+        getContractDetailsSchemaVersion(objectOptions, 'ITA', 'ita_consulting'),
+      ).toEqual(DEFAULT_VERSION);
+    });
+
+    it('resolves a null hiring model through the country default model', () => {
+      expect(
+        getContractDetailsSchemaVersion(objectOptions, 'CZE', null),
+      ).toEqual(7);
+      expect(
+        getContractDetailsSchemaVersion(numberOptions, 'CZE', null),
+      ).toEqual(7);
+    });
+
+    it('applies the country number for a country without hiring models', () => {
+      expect(
+        getContractDetailsSchemaVersion(numberOptions, 'PRT', null),
+      ).toEqual(9);
+    });
+
+    it('warns once and returns the default version for an unknown hiring model', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const unknownModel = 'cze_unknown' as EorHiringModel;
+
+      expect(
+        getContractDetailsSchemaVersion(numberOptions, 'CZE', unknownModel),
+      ).toEqual(DEFAULT_VERSION);
+      expect(
+        getContractDetailsSchemaVersion(objectOptions, 'CZE', unknownModel),
+      ).toEqual(DEFAULT_VERSION);
+
+      expect(warn).toHaveBeenCalledTimes(1);
+      warn.mockRestore();
+    });
   });
 });
 

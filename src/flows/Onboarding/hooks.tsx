@@ -451,6 +451,7 @@ export const useOnboarding = ({
   const updateEmploymentMutation = useUpdateEmployment(
     internalCountryCode as string,
     options,
+    employment?.eor_hiring_model,
   );
   const updateBenefitsOffersMutation = useUpdateBenefitsOffers(options);
   const updateEngagementAgreementMutation =
@@ -670,7 +671,11 @@ export const useOnboarding = ({
   );
 
   const effectiveContractDetailsJsonSchemaVersion =
-    getContractDetailsSchemaVersion(options, internalCountryCode);
+    getContractDetailsSchemaVersion(
+      options,
+      internalCountryCode,
+      employment?.eor_hiring_model,
+    );
 
   const contractDetailsSavedValues = useMemo(
     () => ({
