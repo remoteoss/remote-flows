@@ -6,7 +6,7 @@ import {
 } from '@/src/client';
 import { JSFFields, NestedMeta } from '@/src/types/remoteFlows';
 import { useStepState, Step } from '@/src/flows/useStepState';
-import { getCountryHiringModels } from '@/src/flows/Onboarding/hiringModels';
+import { getDefaultHiringModel } from '@/src/flows/Onboarding/hiringModels';
 import {
   disabledInviteButtonEmploymentStatus,
   getContractDetailsSchemaVersion,
@@ -488,7 +488,7 @@ export const useOnboarding = ({
     internalCountryCode &&
     (stepState.currentStep.name === 'contract_details' ||
       Boolean(employmentId)) &&
-    (employment || !getCountryHiringModels(internalCountryCode)),
+    (employment || !getDefaultHiringModel(internalCountryCode)),
   );
 
   const isJobTitleEligibilityEnabled = Boolean(

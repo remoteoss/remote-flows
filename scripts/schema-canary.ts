@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 import { getV1Countries, getV1CountriesCountryCodeForm } from '@/src/client';
 import { Client } from '@/src/client/client';
+import { EorHiringModel } from '@/src/client/types.gen';
 import {
   DEFAULT_VERSION,
   CONTRACT_DETAILS_STRATEGY,
@@ -109,10 +110,14 @@ async function fetchLiveCountries(client: Client): Promise<string[]> {
   return countries;
 }
 
-function versionFor(country: string, check: SchemaCheckType) {
+function versionFor(
+  country: string,
+  check: SchemaCheckType,
+  hiringModel?: EorHiringModel | null,
+) {
   return check === 'latest' || check === 'latest-submit'
     ? 'latest'
-    : resolvePinnedVersion(country, DEFAULT_VERSION);
+    : resolvePinnedVersion(country, DEFAULT_VERSION, hiringModel);
 }
 
 async function fetchLiveSchema(
@@ -249,12 +254,15 @@ async function checkSharedEmployment(
 
   let employmentId: string;
   let companyId: string;
+  let hiringModel: EorHiringModel | null | undefined;
   try {
-    ({ employmentId, companyId } = await seedEmploymentForCountry(
+    ({ employmentId, companyId, hiringModel } = await seedEmploymentForCountry(
       client,
       country,
     ));
-    console.log(`[${country}] seeded employment ${employmentId}`);
+    console.log(
+      `[${country}] seeded employment ${employmentId}${hiringModel ? ` (${hiringModel})` : ''}`,
+    );
   } catch (error) {
     const reason = `employment seeding failed: ${error instanceof Error ? error.message : String(error)}`;
     console.log(`[${country}] ${reason}`);
@@ -290,7 +298,7 @@ async function checkSharedEmployment(
     let pinnedBuildFailed = false;
     for (const check of checks) {
       const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
-      const version = versionFor(country, check);
+      const version = versionFor(country, check, hiringModel);
 
       if (skipEntry) {
         rows.push({
@@ -324,7 +332,7 @@ async function checkSharedEmployment(
             client,
             employmentId,
             schema,
-            resolvePinnedVersion(country, DEFAULT_VERSION),
+            resolvePinnedVersion(country, DEFAULT_VERSION, hiringModel),
             submitOptionsFor(country, strategy),
           );
           if (submitted.ok) {

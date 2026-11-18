@@ -4,7 +4,7 @@ import {
 } from '@/src/client';
 import { EorHiringModel } from '@/src/client/types.gen';
 import {
-  getCountryHiringModels,
+  getDefaultHiringModel,
   isKnownHiringModel,
 } from '@/src/flows/Onboarding/hiringModels';
 import { Employment, OnboardingFlowProps } from '@/src/flows/Onboarding/types';
@@ -175,8 +175,8 @@ export const getContractDetailsSchemaVersion = (
   const countrySpecificVersion = countryCode
     ? jsonSchemaVersionByCountry?.[countryCode]?.contract_details
     : undefined;
-  const countryHiringModels = countryCode
-    ? getCountryHiringModels(countryCode)
+  const defaultHiringModel = countryCode
+    ? getDefaultHiringModel(countryCode)
     : undefined;
 
   if (
@@ -190,15 +190,14 @@ export const getContractDetailsSchemaVersion = (
     );
   }
 
-  const model = hiringModel ?? countryHiringModels?.default;
+  const model = hiringModel ?? defaultHiringModel;
 
   if (typeof countrySpecificVersion === 'object') {
     const modelVersion = model ? countrySpecificVersion[model] : undefined;
     return modelVersion || getDefaultContractDetailsSchemaVersion();
   }
 
-  const isDefaultModel =
-    !countryHiringModels || model === countryHiringModels.default;
+  const isDefaultModel = !defaultHiringModel || model === defaultHiringModel;
 
   return countrySpecificVersion && isDefaultModel
     ? countrySpecificVersion

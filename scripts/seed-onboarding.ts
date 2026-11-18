@@ -81,6 +81,7 @@ import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { EorHiringModel } from '@/src/client/types.gen';
 import { getContractDetailsSchemaVersion } from '@/src/flows/Onboarding/utils';
 import {
   ONBOARDING_JSON_SCHEMA_VERSION,
@@ -521,12 +522,18 @@ async function seedEmployee() {
 }
 
 async function submitContractDetails(employmentId: string) {
+  const hiringModel = await api<{
+    data?: { employment?: { eor_hiring_model?: EorHiringModel | null } };
+  }>('GET', `/v1/employments/${employmentId}`).then(
+    (res) => res.data?.employment?.eor_hiring_model,
+  );
   const version = getContractDetailsSchemaVersion(
     { jsonSchemaVersionByCountry: ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY },
     COUNTRY,
+    hiringModel,
   );
   console.log(
-    `\nFetching contract_details v${version} schema for ${COUNTRY}...`,
+    `\nFetching contract_details v${version} schema for ${COUNTRY}${hiringModel ? ` (${hiringModel})` : ''}...`,
   );
   const schema = await api<{ data: FormSchema }>(
     'GET',
