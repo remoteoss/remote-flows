@@ -4,7 +4,57 @@ Schema versions for employee onboarding in Czech Republic.
 
 ## Current Version
 
-**Contract Details:** v7
+**Contract Details:** v7 (consulting), v1 (TEA)
+
+## Hiring models
+
+A Czech employment is hired under one of two hiring models, and the employment's `eor_hiring_model` says which: `cze_consulting` or `cze_tea` (Temporary Employment Agency). Each model has its own contract details schema and its own version numbers.
+
+| Hiring model     | Versions | Current |
+| ---------------- | -------- | ------- |
+| `cze_consulting` | v1 to v7 | v7      |
+| `cze_tea`        | v1       | v1      |
+
+The versions listed under [Contract Details](#contract-details) below are the `cze_consulting` ones. A plain number in `jsonSchemaVersionByCountry` pins `cze_consulting`, so existing integrations keep working unchanged. To pin the TEA schema, pass an object with a version per model:
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      CZE: {
+        contract_details: { cze_consulting: 7, cze_tea: 1 },
+      },
+    },
+  }}
+/>
+```
+
+- A model you leave out gets version 1. It never gets another model's number, so a `cze_tea` employment is not asked for v7.
+- The model comes from the employment, so the contract details schema loads once the employment has loaded.
+
+See [Hiring models](../../../../../src/flows/Onboarding/README.md#hiring-models) in the Onboarding docs for how the option works across countries.
+
+### TEA v1 - Current
+
+**What changed:**
+
+- First version of the contract details schema for `cze_tea` employments. Render the fields the schema returns; they differ from the `cze_consulting` schema.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      CZE: {
+        contract_details: { cze_consulting: 7, cze_tea: 1 },
+      },
+    },
+  }}
+/>
+```
+
+---
 
 ## Contract Details
 
