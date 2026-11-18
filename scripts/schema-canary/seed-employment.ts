@@ -1,6 +1,7 @@
 import { ONBOARDING_JSON_SCHEMA_VERSION } from '@/example/src/flows/Onboarding/jsonSchemaVersions';
 import {
   deleteV1SandboxEmploymentsEmploymentId,
+  getV1EmploymentsEmploymentId,
   getV1CountriesCountryCodeForm,
   getV1CountriesCountryCodeHolidaysYear,
   postV1Employments,
@@ -8,6 +9,7 @@ import {
   postV2EmploymentsEmploymentIdEngagementAgreementDetails,
 } from '@/src/client';
 import { Client } from '@/src/client/client';
+import { EorHiringModel } from '@/src/client/types.gen';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { fillSchema, findSafeStartDate, HolidayDate } from '../fill-schema';
 
@@ -62,9 +64,13 @@ async function fetchSchema(
   return response.data?.data ?? null;
 }
 
-export type SeededEmployment = { employmentId: string; companyId: string };
+export type SeededEmployment = {
+  employmentId: string;
+  companyId: string;
+  hiringModel?: EorHiringModel | null;
+};
 
-/** Creates a sandbox employment for `country` up to contract_details and returns its employment and company ids. `basicInfoOverrides` replaces the generated basic information answers. */
+/** Creates a sandbox employment for `country` up to contract_details and returns its employment and company ids and its hiring model. `basicInfoOverrides` replaces the generated basic information answers. */
 export async function seedEmploymentForCountry(
   client: Client,
   country: string,
@@ -110,8 +116,20 @@ export async function seedEmploymentForCountry(
     );
   }
 
+  let hiringModel: EorHiringModel | null | undefined;
   try {
     await completePreContractSteps(client, country, employmentId);
+    const current = await getV1EmploymentsEmploymentId({
+      client,
+      headers: { Authorization: '' },
+      path: { employment_id: employmentId },
+    });
+    if (current.error) {
+      throw new Error(
+        `GET /v1/employments/${employmentId} -> ${JSON.stringify(current.error)}`,
+      );
+    }
+    hiringModel = current.data?.data?.employment?.eor_hiring_model;
   } catch (error) {
     try {
       await archiveEmployment(client, employmentId);
@@ -123,7 +141,7 @@ export async function seedEmploymentForCountry(
     throw error;
   }
 
-  return { employmentId, companyId };
+  return { employmentId, companyId, hiringModel };
 }
 
 async function completePreContractSteps(
