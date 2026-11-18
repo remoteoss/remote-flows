@@ -308,9 +308,10 @@ export const useOnboarding = ({
       return buildCurrentSteps(includeEngagementAgreementDetails).steps;
     }
     const warmed = warmedEngagementAgreementDetailsRef.current;
-    const cached = warmed
-      ? queryClient.getQueryData(warmed.queryKey)
-      : undefined;
+    const cached =
+      warmed && warmed.queryKey[1] === internalCountryCode
+        ? queryClient.getQueryData(warmed.queryKey)
+        : undefined;
     const cachedHasFields = Boolean(
       cached?.data?.data?.properties &&
       Object.keys(cached.data.data.properties).length,
@@ -321,6 +322,7 @@ export const useOnboarding = ({
     buildCurrentSteps,
     hasEngagementAgreementDetailsSchema,
     includeEngagementAgreementDetails,
+    internalCountryCode,
   ]);
 
   const { stepsArray } = useMemo(
