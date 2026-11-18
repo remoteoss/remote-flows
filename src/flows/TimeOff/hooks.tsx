@@ -163,6 +163,9 @@ export const useTimeOffRequestReview = ({
 /**
  * Headless hook powering the time-off flow.
  */
+const getSteps = () => STEPS;
+const getListSteps = () => LIST_STEPS;
+
 export const useTimeOff = ({
   timeOffId: initialTimeOffId,
 }: UseTimeOffOptions = {}) => {
@@ -173,7 +176,7 @@ export const useTimeOff = ({
     nextStep,
     previousStep,
     goToStep,
-  } = useStepState<TimeOffStepKeys, TimeOffRequestIdFormValues>(STEPS);
+  } = useStepState<TimeOffStepKeys, TimeOffRequestIdFormValues>(getSteps);
 
   const { form, handleValidation, onValuesChange } = useHeadlessForm({
     schema: requestIdSchema,
@@ -248,7 +251,7 @@ export const useTimeOff = ({
  */
 export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
   const { stepState, previousStep, goToStep } =
-    useStepState<TimeOffListStepKeys>(LIST_STEPS);
+    useStepState<TimeOffListStepKeys>(getListSteps);
   const [status, setStatus] = useState<TimeoffStatus>('requested');
   const [page, setPage] = useState<number>();
   const [timeOffId, setTimeOffId] = useState<string>();

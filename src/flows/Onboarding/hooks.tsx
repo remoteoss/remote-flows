@@ -288,7 +288,7 @@ export const useOnboarding = ({
     typeof engagementAgreementDetailsOptions
   > | null>(null);
 
-  const getLatestSteps = () => {
+  const getLatestSteps = useCallback(() => {
     const warmed = warmedEngagementAgreementDetailsRef.current;
     const cached = warmed
       ? queryClient.getQueryData(warmed.queryKey)
@@ -304,9 +304,15 @@ export const useOnboarding = ({
       useDynamicSteps,
       useEAPreview,
     }).steps;
-  };
+  }, [
+    queryClient,
+    skipSteps,
+    includeEngagementAgreementDetails,
+    useDynamicSteps,
+    useEAPreview,
+  ]);
 
-  const { steps, stepsArray } = useMemo(
+  const { stepsArray } = useMemo(
     () =>
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
@@ -339,7 +345,7 @@ export const useOnboarding = ({
     nextStep,
     goToStep,
     setStepValues,
-  } = useStepState(steps, onStepChange, getLatestSteps);
+  } = useStepState(getLatestSteps, onStepChange);
 
   const fieldsMetaRef = useRef<{
     select_country: NestedMeta;

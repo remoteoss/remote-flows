@@ -33,6 +33,9 @@ type useCreateCompanyProps = Omit<CreateCompanyFlowProps, 'render'>;
  * @param options - Flow options including jsfModify and jsonSchemaVersion
  * @returns CreateCompany bag with all flow state and methods
  */
+const getSteps = () =>
+  STEPS as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>;
+
 export const useCreateCompany = ({
   countryCode,
   options,
@@ -71,9 +74,7 @@ export const useCreateCompany = ({
     previousStep,
     nextStep,
     goToStep,
-  } = useStepState(
-    STEPS as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
-  );
+  } = useStepState(getSteps);
 
   const {
     companyBasicInformationForm,

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { FieldValues } from 'react-hook-form';
 
 export type Step<T extends string> = {
@@ -24,10 +24,10 @@ const getInitialStep = <T extends string>(steps: Record<T, Step<T>>) => {
 };
 
 export const useStepState = <T extends string, Fields = FieldValues>(
-  steps: Record<T, Step<T>>,
+  getSteps: () => Record<T, Step<T>>,
   onStepChange?: (step: Step<T>) => void,
-  getSteps?: () => Record<T, Step<T>>,
 ) => {
+  const steps = useMemo(getSteps, [getSteps]);
   const stepKeys = Object.keys(steps) as Array<keyof typeof steps>;
 
   if (stepKeys.length === 0) {
@@ -38,11 +38,9 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   // visibility against current data even when invoked from a callback that
   // closed over an earlier render — e.g. right after an async refetch flips a
   // step's visibility but before the component has re-rendered.
-  const stepsRef = useRef(steps);
-  stepsRef.current = steps;
   const getStepsRef = useRef(getSteps);
   getStepsRef.current = getSteps;
-  const resolveSteps = () => getStepsRef.current?.() ?? stepsRef.current;
+  const resolveSteps = () => getStepsRef.current();
 
   const [fieldValues, setFieldValues] = useState<Fields>({} as Fields);
   const fieldValuesRef = useRef(fieldValues);
