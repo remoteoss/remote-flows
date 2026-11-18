@@ -33,8 +33,6 @@ Click a country name to open its migration guide. Countries without a link are o
 
 **Up to date** is Yes when the SDK version is the same as, or newer than, the Remote platform version. Last Updated is `-` for countries that haven't been upgraded or documented yet.
 
-The rows below are for each country's default hiring model. A model with its own schema and version numbers is listed under [Hiring model schemas](#hiring-model-schemas).
-
 | Country                            | Code | SDK | Remote platform | Up to date | Last Updated  |
 | ---------------------------------- | ---- | --- | --------------- | ---------- | ------------- |
 | [Albania](./ALB.md)                | ALB  | v5  | v5              | Yes        | November 2026 |
@@ -129,14 +127,6 @@ The rows below are for each country's default hiring model. A model with its own
 | [Uruguay](./URY.md)                | URY  | v6  | v6              | Yes        | October 2026  |
 | [Vietnam](./VNM.md)                | VNM  | v7  | v7              | Yes        | October 2026  |
 | [Zimbabwe](./ZWE.md)               | ZWE  | v6  | v6              | Yes        | November 2026 |
-
-### Hiring model schemas
-
-Some countries serve a separate schema, with its own version numbers, for a hiring model other than the default one. Pin these with an object in `contract_details`, such as `{ cze_consulting: 7, cze_tea: 1 }`. See [Hiring models](../../../../../src/flows/Onboarding/README.md#hiring-models).
-
-| Country                                  | Hiring model | SDK | Remote platform | Up to date | Last Updated  |
-| ---------------------------------------- | ------------ | --- | --------------- | ---------- | ------------- |
-| [Czech Republic](./CZE.md#hiring-models) | `cze_tea`    | v1  | v1              | Yes        | November 2026 |
 
 ## How to Use
 
