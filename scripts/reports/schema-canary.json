@@ -10,21 +10,24 @@
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "ALB",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "ALB",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "ALB",
@@ -94,21 +97,24 @@
       "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "AUS",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "AUS",
       "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "AUS",
@@ -150,21 +156,24 @@
       "version": 9,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "BGD",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "BGD",
       "version": 9,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "BGD",
