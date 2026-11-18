@@ -17,6 +17,13 @@ export type CostCalculatorEstimateCsvResponse = {
 };
 
 /**
+ * RawFile
+ *
+ * The file's raw bytes, sent as the response body with the file's own media type.
+ */
+export type RawFile = Blob | File;
+
+/**
  * ListRecurringIncentivesResponse
  *
  * Response schema listing many recurring_incentives
@@ -808,6 +815,34 @@ export type PayItemProviderDataParams = {
 };
 
 /**
+ * EngagementAgreementDetailsCZE
+ */
+export type EngagementAgreementDetailsCze = {
+  arduous_work_premium_percentage?: number | null;
+  available_pto?: number | null;
+  has_bonus?: string | null;
+  has_commissions?: string | null;
+  has_signing_bonus?: string | null;
+  has_similar_roles?: string;
+  has_similar_work_conditions?: string | null;
+  max_annual_gross_salary?: number | null;
+  min_annual_gross_salary?: number | null;
+  night_work_premium_percentage?: number | null;
+  obstacle_to_work_premium_percentage?: number | null;
+  on_call_premium_percentage?: number | null;
+  overtime_premium_percentage?: number | null;
+  probation_period_months?: number | null;
+  provided_equipment?: Array<string> | null;
+  provided_training?: Array<string> | null;
+  public_holiday_work_premium_percentage?: number | null;
+  similar_role_job_title?: string | null;
+  similar_work_conditions_details?: string | null;
+  weekend_work_premium_percentage?: number | null;
+  work_hours_per_week?: number | null;
+  working_days?: Array<string> | null;
+};
+
+/**
  * UpdateEmploymentCustomFieldValueParams
  *
  * Schema for updating a custom field value.
@@ -1268,6 +1303,22 @@ export type Employment = {
     requires_work_confirmation?: boolean;
   } | null;
   employment_lifecycle_stage: EmploymentLifecycleStage;
+  /**
+   * EorHiringModel
+   *
+   * EOR hiring model the active contract is under. Null when it has none.
+   */
+  eor_hiring_model?:
+    | 'deu_solutions'
+    | 'deu_aug'
+    | 'deu_aug_de3'
+    | 'deu_solutions_legacy'
+    | 'cze_consulting'
+    | 'cze_tea'
+    | 'fra_wage_portage'
+    | 'fra_consulting'
+    | 'ita_apl'
+    | 'ita_consulting';
   /**
    * Administrative information. Its properties may vary depending on the country.
    */
@@ -2377,6 +2428,22 @@ export type EmploymentBasicResponse = {
    */
   created_at?: string;
   employment_lifecycle_stage?: EmploymentLifecycleStage;
+  /**
+   * EorHiringModel
+   *
+   * EOR hiring model the active contract is under. Null when it has none.
+   */
+  eor_hiring_model?:
+    | 'deu_solutions'
+    | 'deu_aug'
+    | 'deu_aug_de3'
+    | 'deu_solutions_legacy'
+    | 'cze_consulting'
+    | 'cze_tea'
+    | 'fra_wage_portage'
+    | 'fra_consulting'
+    | 'ita_apl'
+    | 'ita_consulting';
   /**
    * The employee's full name.
    */
@@ -5759,6 +5826,22 @@ export type WebhookTriggerEmploymentParams = {
 };
 
 /**
+ * TopUpHours
+ *
+ * The total of `top_up_time_trackings`: hours Remote pays on top of the hours logged on the timesheet. It covers every reason a top-up is written and is not worked time, so it is not included in `total_hours`.
+ */
+export type TopUpHours = {
+  /**
+   * The number of whole hours.
+   */
+  hours?: number;
+  /**
+   * The number of remaining minutes (0-59).
+   */
+  minutes?: number;
+};
+
+/**
  * ListCompanyLegalEntitiesResponse
  *
  * Response schema listing many legal_entities
@@ -7129,6 +7212,31 @@ export type ConvertCurrencyParams = {
    * The currency code to convert to
    */
   target_currency: string;
+};
+
+/**
+ * TopUpTimeTracking
+ *
+ * An entry Remote writes to pay hours the employee did not work, such as the guaranteed hours on their contract. It is never worked time and never carries a work interval: `total_hours` is the amount this entry pays, and `date` is the day the entry is filed under. A `guaranteed_hours` entry covers the whole timesheet week, so its amount is not one day's pay.
+ */
+export type TopUpTimeTracking = {
+  /**
+   * The day this entry is filed under. A `minimum_engagement` or `late_cancellation` entry is filed under the local day of the call-in, or of the shift the change was about, in the entry's timezone. A `guaranteed_hours` entry is filed under the last day of the timesheet week, or the last day in that week the contract guarantees hours; its `total_hours` covers the whole week, so it is not that day's pay.
+   */
+  date: string;
+  /**
+   * Free-text notes about this entry. Always present; both top-up writers set one.
+   */
+  notes: string | null;
+  /**
+   * Why Remote wrote the top-up. `guaranteed_hours`: the week's worked time is below the contract's guaranteed hours. `minimum_engagement`: a call-in is shorter than the policy's minimum paid time. `late_cancellation`: an employer cancelled, shortened or moved a shift inside the paid notice window, and the worker is paid the hours lost. Null only for an entry the system never writes.
+   */
+  reason: 'guaranteed_hours' | 'minimum_engagement' | 'late_cancellation';
+  total_hours: HoursAndMinutes;
+  /**
+   * Always `top_up`: the entry pays hours the employee did not work.
+   */
+  type: 'top_up';
 };
 
 /**
@@ -9517,42 +9625,64 @@ export type Slug = string;
  */
 export type EmploymentEngagementAgreementDetailsResponse = {
   data: {
-    /**
-     * EngagementAgreementDetailsDEU
-     */
-    details: {
-      allowances_details?: Array<string> | null;
-      available_pto?: number | null;
-      break_time_per_day?: number | null;
-      business_expenses?: string | null;
-      cba?: string | null;
-      cba_document?: Array<EngagementAgreementDetailsFile> | null;
-      covenants?: Array<string> | null;
-      has_allowances?: string | null;
-      has_bonus?: string | null;
-      has_business_expenses?: string | null;
-      has_business_presence?: string;
-      has_cba?: string | null;
-      has_commissions?: string | null;
-      has_covenants?: string | null;
-      has_illness_remuneration?: string | null;
-      has_overtime_compensation?: string | null;
-      has_pension_scheme?: string | null;
-      has_signing_bonus?: string | null;
-      has_similar_roles?: string;
-      has_similar_work_conditions?: string | null;
-      illness_remuneration_details?: string | null;
-      max_annual_gross_salary?: number | null;
-      min_annual_gross_salary?: number | null;
-      overtime_compensation_begins?: number | null;
-      overtime_compensation_type?: string | null;
-      overtime_pay_percentage?: number | null;
-      pension_scheme?: string | null;
-      similar_roles?: string | null;
-      similar_work_conditions_details?: string | null;
-      work_hours_per_week?: number | null;
-      working_days?: Array<string> | null;
-    };
+    details:
+      | {
+          allowances_details?: Array<string> | null;
+          available_pto?: number | null;
+          break_time_per_day?: number | null;
+          business_expenses?: string | null;
+          cba?: string | null;
+          cba_document?: Array<EngagementAgreementDetailsFile> | null;
+          covenants?: Array<string> | null;
+          has_allowances?: string | null;
+          has_bonus?: string | null;
+          has_business_expenses?: string | null;
+          has_business_presence?: string;
+          has_cba?: string | null;
+          has_commissions?: string | null;
+          has_covenants?: string | null;
+          has_illness_remuneration?: string | null;
+          has_overtime_compensation?: string | null;
+          has_pension_scheme?: string | null;
+          has_signing_bonus?: string | null;
+          has_similar_roles?: string;
+          has_similar_work_conditions?: string | null;
+          illness_remuneration_details?: string | null;
+          max_annual_gross_salary?: number | null;
+          min_annual_gross_salary?: number | null;
+          overtime_compensation_begins?: number | null;
+          overtime_compensation_type?: string | null;
+          overtime_pay_percentage?: number | null;
+          pension_scheme?: string | null;
+          similar_roles?: string | null;
+          similar_work_conditions_details?: string | null;
+          work_hours_per_week?: number | null;
+          working_days?: Array<string> | null;
+        }
+      | {
+          arduous_work_premium_percentage?: number | null;
+          available_pto?: number | null;
+          has_bonus?: string | null;
+          has_commissions?: string | null;
+          has_signing_bonus?: string | null;
+          has_similar_roles?: string;
+          has_similar_work_conditions?: string | null;
+          max_annual_gross_salary?: number | null;
+          min_annual_gross_salary?: number | null;
+          night_work_premium_percentage?: number | null;
+          obstacle_to_work_premium_percentage?: number | null;
+          on_call_premium_percentage?: number | null;
+          overtime_premium_percentage?: number | null;
+          probation_period_months?: number | null;
+          provided_equipment?: Array<string> | null;
+          provided_training?: Array<string> | null;
+          public_holiday_work_premium_percentage?: number | null;
+          similar_role_job_title?: string | null;
+          similar_work_conditions_details?: string | null;
+          weekend_work_premium_percentage?: number | null;
+          work_hours_per_week?: number | null;
+          working_days?: Array<string> | null;
+        };
     slug: string;
   };
 };
@@ -9868,11 +9998,44 @@ export type Timesheet = {
    */
   submitted_at: string | null;
   /**
-   * The individual time tracking entries that make up this timesheet.
+   * The entries recorded against this timesheet: regular hours, overtime, on-call and breaks that were logged, plus the time off and public holidays Remote writes. Do not add these up for worked time: breaks, time off and public holidays are in here too. Read `total_hours` instead. Top-ups are never among these entries: they come back in `top_up_time_trackings`.
    */
   time_trackings: Array<TimeTracking>;
   timeoff_hours?: HoursAndMinutes;
-  total_hours: HoursAndMinutes;
+  /**
+   * TopUpHours
+   *
+   * The total of `top_up_time_trackings`: hours Remote pays on top of the hours logged on the timesheet. It covers every reason a top-up is written and is not worked time, so it is not included in `total_hours`.
+   */
+  top_up_hours: {
+    /**
+     * The number of whole hours.
+     */
+    hours?: number;
+    /**
+     * The number of remaining minutes (0-59).
+     */
+    minutes?: number;
+  };
+  /**
+   * Entries Remote writes to pay hours the employee did not work, such as the guaranteed hours on their contract or the minimum paid time of a call-in. Filled when approval processing writes them, so re-read a timesheet that was just approved. A send back or reopen before payroll took them removes them, and approving again writes them afresh; a timesheet reopened after payroll already took its top-ups keeps them.
+   */
+  top_up_time_trackings: Array<TopUpTimeTracking>;
+  /**
+   * WorkedHours
+   *
+   * The worked time on this timesheet: the clocked time of the regular, overtime and on-call entries. Paid breaks, time off and top-ups are not included, so this is the number to use for worked hours.
+   */
+  total_hours: {
+    /**
+     * The number of whole hours.
+     */
+    hours?: number;
+    /**
+     * The number of remaining minutes (0-59).
+     */
+    minutes?: number;
+  };
   unpaid_break_hours: HoursAndMinutes;
   weekend_hours: HoursAndMinutes;
 };
@@ -10537,6 +10700,18 @@ export type ImportJobRowsResponse = {
         successful: number;
       };
       /**
+       * Country pay item uploads only: how many active legal entity pay items submitting the upload will overwrite, because it changes their country pay item's locked fields. An upper bound, counted when the file was last validated. `null` before validation, after a row is edited until the file is validated again, and when validation couldn't check the changes
+       */
+      locked_field_overwrite?: {
+        count: number;
+        /**
+         * Why `count` is 0 though the upload may change locked fields, so nothing is copied to legal entity pay items: `propagation_disabled` when copying from imports isn't turned on for this importer (checked first), `no_templates_update_permission` when the importer can't update country pay items
+         */
+        skipped_reason:
+          | 'propagation_disabled'
+          | 'no_templates_update_permission';
+      } | null;
+      /**
        * Distinct team members across the complete import job, counted once even when they are split across several table records. `needs_changes` and `ready_to_submit` are mutually exclusive; `successfully_assigned` and `failed_to_assign` are subsets of `ready_to_submit`. The counts describe the job as of `job_stage`: the same rows count as needing changes before submission and as failed to assign afterwards.
        */
       team_member_counts?: {
@@ -10661,6 +10836,34 @@ export type CreateEmploymentCustomFieldResponse = {
 export type Status = {
   label: string;
   state?: 'In Progress' | 'Not Yet Started' | 'Error' | 'Complete' | 'Warning';
+};
+
+/**
+ * EngagementAgreementDetailsParamsCZE
+ */
+export type EngagementAgreementDetailsParamsCze = {
+  arduous_work_premium_percentage?: number | null;
+  available_pto?: number | null;
+  has_bonus?: string | null;
+  has_commissions?: string | null;
+  has_signing_bonus?: string | null;
+  has_similar_roles?: string;
+  has_similar_work_conditions?: string | null;
+  max_annual_gross_salary?: number | null;
+  min_annual_gross_salary?: number | null;
+  night_work_premium_percentage?: number | null;
+  obstacle_to_work_premium_percentage?: number | null;
+  on_call_premium_percentage?: number | null;
+  overtime_premium_percentage?: number | null;
+  probation_period_months?: number | null;
+  provided_equipment?: Array<string> | null;
+  provided_training?: Array<string> | null;
+  public_holiday_work_premium_percentage?: number | null;
+  similar_role_job_title?: string | null;
+  similar_work_conditions_details?: string | null;
+  weekend_work_premium_percentage?: number | null;
+  work_hours_per_week?: number | null;
+  working_days?: Array<string> | null;
 };
 
 /**
@@ -11564,6 +11767,23 @@ export type ConflictResponse = {
    */
   message?: string;
 };
+
+/**
+ * EorHiringModel
+ *
+ * EOR hiring model the active contract is under. Null when it has none.
+ */
+export type EorHiringModel =
+  | 'deu_solutions'
+  | 'deu_aug'
+  | 'deu_aug_de3'
+  | 'deu_solutions_legacy'
+  | 'cze_consulting'
+  | 'cze_tea'
+  | 'fra_wage_portage'
+  | 'fra_consulting'
+  | 'ita_apl'
+  | 'ita_consulting';
 
 /**
  * ContractorEligibilityResponse
@@ -13350,6 +13570,22 @@ export type EmploymentBasicInformationParams = {
 };
 
 /**
+ * WorkedHours
+ *
+ * The worked time on this timesheet: the clocked time of the regular, overtime and on-call entries. Paid breaks, time off and top-ups are not included, so this is the number to use for worked hours.
+ */
+export type WorkedHours = {
+  /**
+   * The number of whole hours.
+   */
+  hours?: number;
+  /**
+   * The number of remaining minutes (0-59).
+   */
+  minutes?: number;
+};
+
+/**
  * ListContractorRatesResponse
  *
  * Response listing the rates configured for a contractor.
@@ -14705,52 +14941,75 @@ export type EmploymentCreateParams = {
  */
 export type EmploymentEngagementAgreementDetailsParams = {
   /**
-   * EngagementAgreementDetailsParamsDEU
-   *
    * Engagement agreement details params. As its properties may vary depending on the country,
    * you must query the [Show form schema](#tag/Countries/operation/get_v1_countries_country_code_form) endpoint
    * passing the country code and the `engagement_agreement_details` form name.
    *
    */
-  engagement_agreement_details: {
-    allowances_details?: Array<string> | null;
-    available_pto?: number | null;
-    break_time_per_day?: number | null;
-    business_expenses?: string | null;
-    cba?: string | null;
-    cba_document?: Array<EngagementAgreementDetailsFileParams> | null;
-    covenants?: Array<string> | null;
-    has_allowances?: string | null;
-    has_bonus?: string | null;
-    has_business_expenses?: string | null;
-    has_business_presence?: string;
-    has_cba?: string | null;
-    has_commissions?: string | null;
-    has_covenants?: string | null;
-    has_illness_remuneration?: string | null;
-    has_overtime_compensation?: string | null;
-    has_pension_scheme?: string | null;
-    has_signing_bonus?: string | null;
-    has_similar_roles?: string;
-    has_similar_work_conditions?: string | null;
-    illness_remuneration_details?: string | null;
-    max_annual_gross_salary?: number | null;
-    min_annual_gross_salary?: number | null;
-    overtime_compensation_begins?: number | null;
-    overtime_compensation_type?: string | null;
-    overtime_pay_percentage?: number | null;
-    pension_scheme?: string | null;
-    similar_roles?: string | null;
-    similar_work_conditions_details?: string | null;
-    work_hours_per_week?: number | null;
-    working_days?: Array<string> | null;
-  };
+  engagement_agreement_details:
+    | {
+        allowances_details?: Array<string> | null;
+        available_pto?: number | null;
+        break_time_per_day?: number | null;
+        business_expenses?: string | null;
+        cba?: string | null;
+        cba_document?: Array<EngagementAgreementDetailsFileParams> | null;
+        covenants?: Array<string> | null;
+        has_allowances?: string | null;
+        has_bonus?: string | null;
+        has_business_expenses?: string | null;
+        has_business_presence?: string;
+        has_cba?: string | null;
+        has_commissions?: string | null;
+        has_covenants?: string | null;
+        has_illness_remuneration?: string | null;
+        has_overtime_compensation?: string | null;
+        has_pension_scheme?: string | null;
+        has_signing_bonus?: string | null;
+        has_similar_roles?: string;
+        has_similar_work_conditions?: string | null;
+        illness_remuneration_details?: string | null;
+        max_annual_gross_salary?: number | null;
+        min_annual_gross_salary?: number | null;
+        overtime_compensation_begins?: number | null;
+        overtime_compensation_type?: string | null;
+        overtime_pay_percentage?: number | null;
+        pension_scheme?: string | null;
+        similar_roles?: string | null;
+        similar_work_conditions_details?: string | null;
+        work_hours_per_week?: number | null;
+        working_days?: Array<string> | null;
+      }
+    | {
+        arduous_work_premium_percentage?: number | null;
+        available_pto?: number | null;
+        has_bonus?: string | null;
+        has_commissions?: string | null;
+        has_signing_bonus?: string | null;
+        has_similar_roles?: string;
+        has_similar_work_conditions?: string | null;
+        max_annual_gross_salary?: number | null;
+        min_annual_gross_salary?: number | null;
+        night_work_premium_percentage?: number | null;
+        obstacle_to_work_premium_percentage?: number | null;
+        on_call_premium_percentage?: number | null;
+        overtime_premium_percentage?: number | null;
+        probation_period_months?: number | null;
+        provided_equipment?: Array<string> | null;
+        provided_training?: Array<string> | null;
+        public_holiday_work_premium_percentage?: number | null;
+        similar_role_job_title?: string | null;
+        similar_work_conditions_details?: string | null;
+        weekend_work_premium_percentage?: number | null;
+        work_hours_per_week?: number | null;
+        working_days?: Array<string> | null;
+      };
 };
 
 /**
  * TimeTracking
  *
- * A single time tracking entry within a timesheet, representing a block of work with clock-in/out times. Includes detailed breakdowns of hours by type (regular, overtime, night, weekend, holiday).
+ * A single time tracking entry within a timesheet, representing a block of time with clock-in/out times: work, a break, or time off. Includes detailed breakdowns of hours by type (regular, overtime, night, weekend, holiday). Top-ups are not logged time and come back in `top_up_time_trackings`, under their own schema.
  */
 export type TimeTracking = {
   clock_in: DateTimeIso8601;
@@ -14777,7 +15036,7 @@ export type TimeTracking = {
   timezone: Timezone;
   total_hours: HoursAndMinutes;
   /**
-   * The category of time being tracked (e.g., regular hours, overtime, on-call, break time).
+   * The category of time being tracked (e.g., regular hours, overtime, on-call, break time). `time_off` and `public_holiday` are system-generated, and cannot be set when creating a timesheet. `top_up` is system-generated too but never appears in this array: top-ups come back in `top_up_time_trackings`.
    */
   type:
     | 'regular_hours'
@@ -21053,7 +21312,7 @@ export type GetV1ResignationsOffboardingRequestIdResignationLetterResponses = {
   /**
    * Success
    */
-  200: GenericFile;
+  200: RawFile;
 };
 
 export type GetV1ResignationsOffboardingRequestIdResignationLetterResponse =
@@ -21414,7 +21673,7 @@ export type GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadResponses = {
   /**
    * Success
    */
-  200: GenericFile;
+  200: RawFile;
 };
 
 export type GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadResponse =
@@ -21567,7 +21826,7 @@ export type GetV1ExpensesExpenseIdReceiptResponses = {
   /**
    * Success
    */
-  200: GenericFile;
+  200: RawFile;
 };
 
 export type GetV1ExpensesExpenseIdReceiptResponse =
@@ -25814,7 +26073,7 @@ export type GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadResponses = {
   /**
    * Success
    */
-  200: GenericFile;
+  200: RawFile;
 };
 
 export type GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadResponse =
@@ -29097,7 +29356,7 @@ export type GetV1ExpensesExpenseIdReceiptsReceiptIdResponses = {
   /**
    * Success
    */
-  200: GenericFile;
+  200: RawFile;
 };
 
 export type GetV1ExpensesExpenseIdReceiptsReceiptIdResponse =
@@ -31420,7 +31679,7 @@ export type GetV1BillingDocumentsBillingDocumentIdPdfResponses = {
   /**
    * Success
    */
-  200: GenericFile;
+  200: RawFile;
 };
 
 export type GetV1BillingDocumentsBillingDocumentIdPdfResponse =
