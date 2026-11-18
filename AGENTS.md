@@ -18,14 +18,14 @@ pnpm run dev                # tsdown watch build (example/ picks it up, see belo
 pnpm run build              # production bundle (tsdown)
 pnpm run test               # vitest (jsdom). Single test: pnpm exec vitest run path/to/file.test.tsx
 pnpm run test:coverage      # coverage with thresholds from scripts/coverage-utils
-pnpm run type-check         # tsc --noEmit
+pnpm run type-check         # tsc --noEmit for the root and for packages/core (stricter: no DOM or Node types)
 pnpm run lint               # oxlint
 pnpm run format             # oxfmt
 pnpm run check-format       # oxfmt --check (CI gate)
 pnpm run check-exports      # @arethetypeswrong/cli — verifies the package.json exports map
 pnpm run size               # bundle analysis → out/bundle-analysis.json
 pnpm run size:check         # fails if .sizelimit.json thresholds are exceeded
-pnpm run openapi-ts         # regenerate src/client/* from production gateway OpenAPI
+pnpm run openapi-ts         # regenerate packages/core/src/client/* from production gateway OpenAPI
 pnpm run openapi-ts:local   # regenerate from local gateway (openapi-ts.config.local.ts)
 pnpm run ci                 # full local CI: build + check-format + check-exports + lint + type-check + test (not `pnpm ci`, which is pnpm's clean install)
 pnpm run ci:digest <pr>     # summary of a PR's failing CI checks (failure type, error lines, next step, every failing Playwright spec) - run it before reading raw job logs
@@ -69,13 +69,17 @@ flows/<FlowName>/
 
 Flows are exposed two ways: the prebuilt `<FlowNameFlow render={...}>` component, **and** the `useFlowName()` headless hook for fully custom UIs. Both surfaces must stay in sync.
 
+### Core package
+
+`packages/core` is a private workspace package (`@remoteoss/remote-flows-core`) with the framework-neutral logic: the form engine, value conversion, the invoice schedule schema and payload builders, the generated API client, the client factory and the options for API calls. The build bundles it into `@remoteoss/remote-flows`, so partners never install it, and it adds no entry points: the public ones are still the `exports` in `package.json`. Put new plain logic there, and anything using React, the DOM or the build environment in `src/`, passing environment-specific pieces into core as parameters. Lint and `packages/core/tsconfig.json` enforce the boundary. Many old files in `src/` are now thin re-exports of core. Read [core-package](.agents/rules/core-package.md) before adding code to either side, and `plans/angular-support.md` for why it exists.
+
 ### Multi-step state
 
 [src/flows/useStepState.ts](src/flows/useStepState.ts) is the shared step-state primitive used across multi-step flows (Onboarding, ContractorOnboarding, CreateCompany, Termination). It tracks `currentStep`, transitions, and per-step values. Consumers switch on `flowBag.stepState.currentStep.name`.
 
 ### Generated API client
 
-`src/client/` is **fully generated** by `@hey-api/openapi-ts` from [openapi-ts.config.ts](openapi-ts.config.ts) (production gateway) or `openapi-ts.config.local.ts` (local gateway). Never hand-edit `*.gen.ts`. After schema changes, run `pnpm run openapi-ts` and commit the regenerated files. Import types from `src/client/types.gen.ts` and SDK functions from `src/client/sdk.gen.ts`. `.oxlintrc.json` ignores `src/client/**/*.gen.ts` from lint.
+`packages/core/src/client/` is **fully generated** by `@hey-api/openapi-ts` from [openapi-ts.config.ts](openapi-ts.config.ts) (production gateway) or `openapi-ts.config.local.ts` (local gateway). Never hand-edit `*.gen.ts`. After schema changes, run `pnpm run openapi-ts` and commit the regenerated files. Import types from `@/src/client/types.gen` and SDK functions from `@/src/client/sdk.gen`; those files only re-export the generated ones from core. `.oxlintrc.json` ignores `packages/core/src/client/**/*.gen.ts` from lint.
 
 ### Forms
 
@@ -110,6 +114,7 @@ Path-scoped rules live in `.agents/rules/`. Claude Code loads each one when you 
 | [component-pattern](.agents/rules/component-pattern.md)                                                                                                | `src/components/**`                                                                                                                                                          |
 | [component-documentation](.agents/rules/component-documentation.md)                                                                                    | `src/types/remoteFlows.ts`, `src/index.tsx`, `docs/COMPONENT_CUSTOMIZATION.md`                                                                                               |
 | [testing](.agents/rules/testing.md)                                                                                                                    | `**/*.test.{ts,tsx}`, `src/tests/**`, `example/e2e/**`                                                                                                                       |
+| [core-package](.agents/rules/core-package.md)                                                                                                          | `packages/core/**`, `src/client/**`                                                                                                                                          |
 | [theming](.agents/rules/theming.md)                                                                                                                    | `src/styles/**`, `src/lib/applyTheme.ts`, `**/*.css`                                                                                                                         |
 | [partner-facing-ui](.agents/rules/partner-facing-ui.md)                                                                                                | `src/flows/**`, `example/src/**`                                                                                                                                             |
 | [package-exports](.agents/rules/package-exports.md)                                                                                                    | `package.json`, `tsdown.config.ts`, `.sizelimit.json`, `src/index.tsx`, `src/internals.ts`, `src/default-components.ts`, `src/styles.ts`, `.github/workflows/size-check.yml` |
@@ -135,7 +140,7 @@ Path-scoped rules live in `.agents/rules/`. Claude Code loads each one when you 
 ## Things that look broken but aren't
 
 - `dist/` is checked into the working tree during dev (it's gitignored, but `prepare` runs `build`); don't be alarmed by churn there.
-- `src/client/*.gen.ts` regenerates wholesale — diffs will be large after `pnpm run openapi-ts` runs.
+- `packages/core/src/client/*.gen.ts` regenerates wholesale — diffs will be large after `pnpm run openapi-ts` runs.
 - The error boundary's `useParentErrorBoundary` defaults to `true` in code but `false` in the README example; the README documents the recommended consumer config, not the default.
 
 ## Agent configuration

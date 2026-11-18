@@ -14,6 +14,7 @@ Review every change against the repo's shared guidance. It is the source of trut
 - [component-pattern](../.agents/rules/component-pattern.md): `src/components`
 - [component-documentation](../.agents/rules/component-documentation.md): `src/types/remoteFlows.ts`, `src/index.tsx`
 - [testing](../.agents/rules/testing.md): test files and `example/e2e`. Apply only its "Repo conventions" section, and ignore the parts addressed to whoever writes the tests, such as asking the user before adding another test.
+- [core-package](../.agents/rules/core-package.md): `packages/core`, `src/client`
 - [theming](../.agents/rules/theming.md): styles, CSS and theme files
 - [package-exports](../.agents/rules/package-exports.md): `package.json`, build config, entry files
 
@@ -106,7 +107,7 @@ Forms follow the form rule. Also check:
 OpenAPI-driven development - never manually write client code:
 
 - **Regenerate after schema changes** - Run `pnpm run openapi-ts` after API updates
-- **Use generated types and SDK** - Import from `src/client/types.gen.ts` and `src/client/sdk.gen.ts`
+- **Use generated types and SDK** - Import from `@/src/client/types.gen` and `@/src/client/sdk.gen` (they re-export the generated files in `packages/core/src/client/`)
 - **Environment config** - Use environment configs from `src/environments.ts`
 
 For wrapping the client in a query, follow the React Query rule: pick a `queryOptions` factory or a custom hook as it describes (see `src/common/api/countries.ts` and `src/common/api/identity.ts`).
@@ -150,7 +151,17 @@ The flow layout is in [AGENTS.md](../AGENTS.md). Key principles to check:
 - **Headless hook** - Expose `use[FlowName]()` hook for custom implementations
 - **Tests co-located** - All tests in flow's `tests/` directory
 
-### 10. Documentation
+### 10. Core Package Boundary
+
+`packages/core` is private and framework-neutral. See [core-package](../.agents/rules/core-package.md). Flag:
+
+- New logic added to a re-export file (`src/client/*.ts`, `src/lib/utils.ts`, `src/common/headlessForm.ts`, `src/components/form/utils.ts`) instead of core
+- Plain logic or data types added to `src/` that need no React or DOM and belong in core, or React, DOM or `process` use added to core
+- A new core dependency that is not also in the root `package.json` `dependencies`
+- A disable comment or a `tsconfig` change that weakens the core boundary
+- Hand edits to `packages/core/src/client/*.gen.ts`
+
+### 11. Documentation
 
 - **JSDoc for public APIs** - Public APIs get 1-3 lines of JSDoc written for the caller, with no internal wiring
 - **README updates** - Update main README when adding new flows or features
@@ -220,7 +231,7 @@ The flow layout is in [AGENTS.md](../AGENTS.md). Key principles to check:
 
 ### 9. Build and Release Issues
 
-- Uncommitted changes in generated files (`src/client/*.gen.ts`)
+- Uncommitted changes in generated files (`packages/core/src/client/*.gen.ts`)
 - Breaking changes without `BREAKING CHANGE:` in commit message
 - Version bump doesn't match change type (feat vs fix)
 - Peer dependency changes without testing in example app
