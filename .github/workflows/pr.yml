@@ -392,6 +392,56 @@ jobs:
           github-comment: true
           scope: ${{ secrets.VERCEL_ORG_ID }}
 
+  angular-changes:
+    name: Detect Angular App Changes
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      changed: ${{ steps.filter.outputs.changed }}
+    steps:
+      - name: Check changed paths
+        id: filter
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          files=$(gh api --paginate "repos/$REPOSITORY/pulls/$PR_NUMBER/files" --jq '.[].filename')
+          if grep -qE '^(apps/angular/|packages/core/|pnpm-lock\.yaml$|pnpm-workspace\.yaml$)' <<< "$files"; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy-angular:
+    name: Deploy Angular App Preview
+    runs-on: ubuntu-latest
+    needs: [angular-changes]
+    if: needs.angular-changes.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pull-requests: write
+    outputs:
+      preview-url: ${{ steps.vercel-angular.outputs.preview-url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Deploy angular app to vercel
+        id: vercel-angular
+        uses: amondnet/vercel-action@de09aeac2ace6599ec9b11ef87558759a496bac4 # v42.3.0
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_ANGULAR_PROJECT_ID }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-comment: true
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+
   seed-preview-links:
     name: Seed Preview Employments
     runs-on: ubuntu-latest

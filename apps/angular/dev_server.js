@@ -1,7 +1,7 @@
 const dotenv = require('dotenv');
 const fs = require('fs');
 const path = require('path');
-const app = require('./index.js');
+const app = require('./api/index.js');
 
 const envArg = process.argv.find((arg) => arg.startsWith('--env='));
 const envName = envArg?.split('=')[1];
@@ -11,7 +11,7 @@ if (!envName || !/^[\w-]+$/.test(envName)) {
   process.exit(1);
 }
 
-const envFile = path.resolve(__dirname, '../../..', `.env.${envName}`);
+const envFile = path.resolve(__dirname, '../..', `.env.${envName}`);
 
 if (!fs.existsSync(envFile)) {
   console.error(`${envFile} does not exist.`);
