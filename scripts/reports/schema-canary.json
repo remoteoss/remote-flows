@@ -535,7 +535,8 @@
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "PATCH /v1/employments/{id} -> \"Internal Server Error\""
     },
     {
       "country": "DNK",
@@ -1802,21 +1803,24 @@
       "version": 9,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "PHL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "PHL",
       "version": 9,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "PHL",
@@ -2544,7 +2548,8 @@
       "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "PATCH /v1/employments/{id} -> \"Internal Server Error\""
     },
     {
       "country": "VNM",
@@ -2572,7 +2577,8 @@
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "PATCH /v1/employments/{id} -> \"Internal Server Error\""
     },
     {
       "country": "ZWE",
