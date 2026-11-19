@@ -6,7 +6,7 @@
     "ng": "ng",
     "start": "ng serve",
     "start:zone": "ng serve -c zone",
-    "start:api": "node api/dev_server.js",
+    "start:api": "node dev_server.js",
     "build": "ng build -c zoneless",
     "build:zone": "ng build -c zone",
     "type-check": "tsc -p tsconfig.app.json --noEmit"
