@@ -70,22 +70,22 @@ function pathOf(control: AbstractControl): Path {
   return path;
 }
 
-function syncLocked(nodes: FieldNode[], group: FormGroup) {
+function syncLocked(nodes: FieldNode[], group: FormGroup, values: Values) {
   for (const node of nodes) {
     const control = group.controls[node.name];
     if (!control) {
       continue;
     }
     if (node.kind === 'fieldset' && control instanceof FormGroup) {
-      syncLocked(node.children, control);
+      syncLocked(node.children, control, values);
     } else if (node.kind === 'array' && node.array) {
       const { itemFields } = node.array;
       (control as FormArray).controls.forEach((row) =>
-        syncLocked(itemFields, row as FormGroup),
+        syncLocked(itemFields, row as FormGroup, values),
       );
     } else if (node.kind === 'control') {
       const locked = node.meta().disabled;
-      const lockedDefault = node.lockedDefault();
+      const lockedDefault = node.lockedDefault(values);
       if (lockedDefault !== undefined && control.value !== lockedDefault) {
         control.setValue(lockedDefault, { emitEvent: false });
       }
@@ -215,9 +215,10 @@ export function createFormStore({
       return { hasErrors: false };
     }
     const run = ++validationRun;
-    const errors = await current.engine.validate(current.group.getRawValue());
+    const rawValues = current.group.getRawValue();
+    const errors = await current.engine.validate(rawValues);
     if (run === validationRun && form() === current) {
-      syncLocked(current.engine.nodes, current.group);
+      syncLocked(current.engine.nodes, current.group, rawValues);
       applyErrors(current.group, errors);
       revision.update((count) => count + 1);
     }

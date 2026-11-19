@@ -19,23 +19,46 @@ type InvoiceScheduleOptions = {
   defaultValues?: Record<string, unknown>;
 };
 
+function rejectOnError<T extends { error?: unknown; response?: Response }>(
+  queryFn: () => Promise<T>,
+) {
+  return async () => {
+    const result = await queryFn();
+    if (result.error) {
+      throw new Error(
+        `Request failed with status ${result.response?.status ?? 'unknown'}`,
+      );
+    }
+    return result;
+  };
+}
+
 export function injectInvoiceSchedule({
   employmentId,
   defaultValues,
 }: InvoiceScheduleOptions) {
   const client = inject(REMOTE_CLIENT);
 
-  const employment = injectQuery(() => ({
-    ...employmentOptions(client, employmentId()),
-    enabled: Boolean(employmentId()),
-    select: selectEmployment,
-  }));
+  const employment = injectQuery(() => {
+    const options = employmentOptions(client, employmentId());
+    return {
+      ...options,
+      queryFn: rejectOnError(options.queryFn),
+      enabled: Boolean(employmentId()),
+      select: selectEmployment,
+    };
+  });
 
-  const currencies = injectQuery(() => ({
-    ...contractorCurrenciesOptions(client, employmentId()),
-    enabled: Boolean(employmentId()),
-    select: selectContractorCurrencyCodes,
-  }));
+  const currencies = injectQuery(() => {
+    const options = contractorCurrenciesOptions(client, employmentId());
+    return {
+      ...options,
+      queryFn: rejectOnError(options.queryFn),
+      retry: false as const,
+      enabled: Boolean(employmentId()),
+      select: selectContractorCurrencyCodes,
+    };
+  });
 
   const createSchedule = injectMutation(() =>
     createInvoiceScheduleMutation(client),

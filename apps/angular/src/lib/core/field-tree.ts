@@ -1,4 +1,7 @@
-import { getBlankRowValues } from '@remoteoss/remote-flows-core';
+import {
+  getBlankRowValues,
+  resolveFieldDynamicProperties,
+} from '@remoteoss/remote-flows-core';
 
 export type FieldOption = {
   value: string;
@@ -37,7 +40,7 @@ export type FieldNode = {
   kind: 'control' | 'statement' | 'fieldset' | 'array';
   isVisible: () => boolean;
   meta: () => FieldMeta;
-  lockedDefault: () => unknown;
+  lockedDefault: (values: Record<string, unknown>) => unknown;
   children: FieldNode[];
   array: ArrayConfig | null;
 };
@@ -92,44 +95,50 @@ function toMeta(
 }
 
 export function toFieldNodes(
-  fields: JsfField[],
+  getFields: () => JsfField[],
   inheritedProps: () => Record<string, unknown> = () => ({}),
 ): FieldNode[] {
-  return fields.flatMap((field): FieldNode[] => {
-    if (field.deprecated === true) {
+  return getFields().flatMap((initial): FieldNode[] => {
+    if (initial.deprecated === true) {
       return [];
     }
-    const isStatement = field.type === 'hidden' && Boolean(field.statement);
-    if (field.type === 'hidden' && !isStatement) {
+    const isStatement = initial.type === 'hidden' && Boolean(initial.statement);
+    if (initial.type === 'hidden' && !isStatement) {
       return [];
     }
 
+    const live = () =>
+      getFields().find((field) => field.name === initial.name) ?? initial;
+
     const node: FieldNode = {
-      name: field.name,
+      name: initial.name,
       kind: isStatement ? 'statement' : 'control',
-      isVisible: () => field.isVisible !== false,
-      meta: () => toMeta(field, isStatement, inheritedProps),
-      lockedDefault: () => (isLocked(field) ? field.default : undefined),
+      isVisible: () => live().isVisible !== false,
+      meta: () => toMeta(live(), isStatement, inheritedProps),
+      lockedDefault: (values) => {
+        const resolved = resolveFieldDynamicProperties(live(), values);
+        return isLocked(resolved) ? resolved.default : undefined;
+      },
       children: [],
       array: null,
     };
 
-    if (field.type === 'fieldset' && field.fields) {
+    if (initial.type === 'fieldset' && initial.fields) {
       node.kind = 'fieldset';
-      node.children = toFieldNodes(field.fields);
+      node.children = toFieldNodes(() => live().fields ?? []);
     }
 
-    if (field.type === 'group-array' && field.fields) {
+    if (initial.type === 'group-array' && initial.fields) {
       node.kind = 'array';
       node.array = {
-        minItems: field.minItems ?? 0,
-        maxItems: field.maxItems,
-        addFieldText: field.addFieldText ?? 'Add item',
+        minItems: initial.minItems ?? 0,
+        maxItems: initial.maxItems,
+        addFieldText: initial.addFieldText ?? 'Add item',
         itemFields: toFieldNodes(
-          field.fields,
-          () => field.additionalProps ?? {},
+          () => live().fields ?? [],
+          () => live().additionalProps ?? {},
         ),
-        blankRow: () => getBlankRowValues(field.fields ?? []),
+        blankRow: () => getBlankRowValues(live().fields ?? []),
       };
     }
 

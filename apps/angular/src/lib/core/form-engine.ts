@@ -31,7 +31,10 @@ export function createFormEngine(
 
   return {
     nodes: toFieldNodes(
-      form.fields as unknown as Parameters<typeof toFieldNodes>[0],
+      () =>
+        form.fields as unknown as ReturnType<
+          Parameters<typeof toFieldNodes>[0]
+        >,
     ),
     initialValues: (defaults) => getInitialValues(fields, defaults),
     validate: async (values) => {
