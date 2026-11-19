@@ -203,6 +203,7 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_ANGULAR_PROJECT_ID }}
           scope: ${{ secrets.VERCEL_ORG_ID }}
+          github-comment: false
 
   angular-e2e:
     name: Angular E2E Tests
@@ -433,4 +434,5 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_ANGULAR_PROJECT_ID }}
           scope: ${{ secrets.VERCEL_ORG_ID }}
+          github-comment: false
           vercel-args: '--prod'
