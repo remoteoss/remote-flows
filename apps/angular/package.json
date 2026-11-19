@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "start:zone": "ng serve -c zone",
+    "sync:core": "pnpm --filter @remoteoss/remote-flows-angular run sync:core",
+    "start": "pnpm run sync:core && ng serve",
+    "start:zone": "pnpm run sync:core && ng serve -c zone",
     "start:api": "node dev_server.js",
-    "build": "ng build -c zoneless",
-    "build:zone": "ng build -c zone",
-    "type-check": "tsc -p tsconfig.app.json --noEmit"
+    "build": "pnpm run sync:core && ng build -c zoneless",
+    "build:zone": "pnpm run sync:core && ng build -c zone",
+    "type-check": "pnpm run sync:core && tsc -p tsconfig.app.json --noEmit"
   },
   "dependencies": {
     "@angular/cdk": "20.2.14",

@@ -55,6 +55,7 @@ export type { ContractorInvoicePreview } from './domains/invoice-schedule/types'
 export { clearBase64Data, formatCurrency } from './format';
 export { createClient } from './createClient';
 export type { AuthResponse, CreateClientOptions } from './createClient';
+export type { Client } from './client/client';
 export {
   contractorCurrenciesOptions,
   selectContractorCurrencies,
