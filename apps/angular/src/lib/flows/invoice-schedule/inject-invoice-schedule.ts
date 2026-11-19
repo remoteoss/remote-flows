@@ -67,6 +67,10 @@ export function injectInvoiceSchedule({
   const createdScheduleId = signal<string | null>(null);
   const isValidating = signal(false);
 
+  const error = computed(
+    () => employment.error() ?? currencies.error() ?? null,
+  );
+
   const isLoading = computed(
     () =>
       !employmentId() ||
@@ -75,7 +79,7 @@ export function injectInvoiceSchedule({
   );
 
   async function onSubmit() {
-    if (isValidating() || createSchedule.isPending()) {
+    if (error() || !schema() || isValidating() || createSchedule.isPending()) {
       return;
     }
     createdScheduleId.set(null);
@@ -103,6 +107,7 @@ export function injectInvoiceSchedule({
     fields: store.fields,
     isContractorOfRecord,
     isLoading,
+    error,
     isSubmitting: computed(() => isValidating() || createSchedule.isPending()),
     createdScheduleId,
     onSubmit,

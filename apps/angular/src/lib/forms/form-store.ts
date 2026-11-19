@@ -70,6 +70,34 @@ function pathOf(control: AbstractControl): Path {
   return path;
 }
 
+function syncLocked(nodes: FieldNode[], group: FormGroup) {
+  for (const node of nodes) {
+    const control = group.controls[node.name];
+    if (!control) {
+      continue;
+    }
+    if (node.kind === 'fieldset' && control instanceof FormGroup) {
+      syncLocked(node.children, control);
+    } else if (node.kind === 'array' && node.array) {
+      const { itemFields } = node.array;
+      (control as FormArray).controls.forEach((row) =>
+        syncLocked(itemFields, row as FormGroup),
+      );
+    } else if (node.kind === 'control') {
+      const locked = node.meta().disabled;
+      const lockedDefault = node.lockedDefault();
+      if (lockedDefault !== undefined && control.value !== lockedDefault) {
+        control.setValue(lockedDefault, { emitEvent: false });
+      }
+      if (locked && control.enabled) {
+        control.disable({ emitEvent: false });
+      } else if (!locked && control.disabled) {
+        control.enable({ emitEvent: false });
+      }
+    }
+  }
+}
+
 function applyErrors(control: AbstractControl, errors: Values) {
   const message = getIn(errors, pathOf(control));
   if (control.parent) {
@@ -189,6 +217,7 @@ export function createFormStore({
     const run = ++validationRun;
     const errors = await current.engine.validate(current.group.getRawValue());
     if (run === validationRun && form() === current) {
+      syncLocked(current.engine.nodes, current.group);
       applyErrors(current.group, errors);
       revision.update((count) => count + 1);
     }

@@ -15,6 +15,10 @@ import { InvoiceScheduleFlow } from '@remoteoss/remote-flows-angular';
       >
         @if (flow.bag.isLoading()) {
           <mat-spinner diameter="32" />
+        } @else if (flow.bag.error(); as error) {
+          <p class="rf-statement" data-severity="error" role="alert">
+            Could not load the invoice schedule form: {{ error.message }}
+          </p>
         } @else {
           @if (flow.bag.isContractorOfRecord()) {
             <p class="rf-statement" data-severity="info">

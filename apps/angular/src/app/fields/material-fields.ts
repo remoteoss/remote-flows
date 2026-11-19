@@ -94,7 +94,11 @@ export class TextareaField extends FieldComponent {
           <mat-option value="">None</mat-option>
         }
         @for (option of meta().options; track option.value) {
-          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          <mat-option
+            [value]="option.value"
+            [disabled]="option.disabled === true"
+            >{{ option.label }}</mat-option
+          >
         }
       </mat-select>
       @if (meta().description; as description) {

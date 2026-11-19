@@ -1,6 +1,10 @@
 import { getBlankRowValues } from '@remoteoss/remote-flows-core';
 
-export type FieldOption = { value: string; label: string };
+export type FieldOption = {
+  value: string;
+  label: string;
+  disabled?: boolean;
+};
 
 export type FieldStatement = {
   title: string | null;
@@ -14,6 +18,7 @@ export type FieldMeta = {
   description: string | null;
   inputType: string;
   required: boolean;
+  disabled: boolean;
   options: FieldOption[];
   additionalProps: Record<string, unknown>;
   statement: FieldStatement | null;
@@ -32,6 +37,7 @@ export type FieldNode = {
   kind: 'control' | 'statement' | 'fieldset' | 'array';
   isVisible: () => boolean;
   meta: () => FieldMeta;
+  lockedDefault: () => unknown;
   children: FieldNode[];
   array: ArrayConfig | null;
 };
@@ -43,6 +49,9 @@ type JsfField = {
   label?: string;
   description?: string;
   required?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
+  default?: unknown;
   isVisible?: boolean;
   deprecated?: boolean;
   options?: FieldOption[];
@@ -55,10 +64,13 @@ type JsfField = {
   maxItems?: number;
 };
 
+const isLocked = (field: JsfField) =>
+  field.disabled === true || field.readOnly === true;
+
 function toMeta(
   field: JsfField,
   isStatement: boolean,
-  inheritedProps: Record<string, unknown>,
+  inheritedProps: () => Record<string, unknown>,
 ): FieldMeta {
   return {
     label: field.label ?? field.name,
@@ -66,8 +78,9 @@ function toMeta(
     description: field.description ?? null,
     inputType: isStatement ? 'statement' : field.inputType,
     required: field.required === true,
+    disabled: isLocked(field),
     options: field.options ?? [],
-    additionalProps: { ...inheritedProps, ...field.additionalProps },
+    additionalProps: { ...inheritedProps(), ...field.additionalProps },
     statement: field.statement
       ? {
           title: field.statement.title ?? null,
@@ -80,7 +93,7 @@ function toMeta(
 
 export function toFieldNodes(
   fields: JsfField[],
-  inheritedProps: Record<string, unknown> = {},
+  inheritedProps: () => Record<string, unknown> = () => ({}),
 ): FieldNode[] {
   return fields.flatMap((field): FieldNode[] => {
     if (field.deprecated === true) {
@@ -96,6 +109,7 @@ export function toFieldNodes(
       kind: isStatement ? 'statement' : 'control',
       isVisible: () => field.isVisible !== false,
       meta: () => toMeta(field, isStatement, inheritedProps),
+      lockedDefault: () => (isLocked(field) ? field.default : undefined),
       children: [],
       array: null,
     };
@@ -111,7 +125,10 @@ export function toFieldNodes(
         minItems: field.minItems ?? 0,
         maxItems: field.maxItems,
         addFieldText: field.addFieldText ?? 'Add item',
-        itemFields: toFieldNodes(field.fields, field.additionalProps),
+        itemFields: toFieldNodes(
+          field.fields,
+          () => field.additionalProps ?? {},
+        ),
         blankRow: () => getBlankRowValues(field.fields ?? []),
       };
     }
