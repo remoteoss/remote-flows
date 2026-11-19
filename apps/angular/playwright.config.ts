@@ -11,7 +11,8 @@ export default defineConfig({
     baseURL: process.env.BASE_URL || 'http://localhost:4200',
     trace: 'on-first-retry',
     extraHTTPHeaders: {
-      'x-vercel-protection-bypass': process.env.VERCEL_BYPASS_TOKEN || '',
+      'x-vercel-protection-bypass':
+        process.env.VERCEL_ANGULAR_BYPASS_TOKEN || '',
       'x-vercel-set-bypass-cookie': 'true',
     },
   },

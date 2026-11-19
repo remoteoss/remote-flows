@@ -484,7 +484,7 @@ jobs:
       - name: Run Playwright tests
         env:
           BASE_URL: ${{ needs.deploy-angular.outputs.preview-url }}
-          VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_ANGULAR_BYPASS_TOKEN }}
+          VERCEL_ANGULAR_BYPASS_TOKEN: ${{ secrets.VERCEL_ANGULAR_BYPASS_TOKEN }}
         working-directory: ./apps/angular
         run: pnpm exec playwright test
 
