@@ -9,7 +9,7 @@ paths:
 
 ## Philosophy: Core Holds What Every Framework Needs
 
-`packages/core` (`@remoteoss/remote-flows-core`) is a private workspace package. It holds the framework-neutral logic that the React package, and later an Angular package, both need: the form engine, value conversion, schemas and payload builders, the generated API client, and the options for API calls. The React package bundles it, so partners never install core and it adds no entry points: the public ones are the `exports` in `package.json`. See `plans/angular-support.md` for the plan and the status of the move.
+`packages/core` (`@remoteoss/remote-flows-core`) is an internal package. It holds the framework-neutral logic that the React package, and later an Angular package, both need: the form engine, value conversion, schemas and payload builders, the generated API client, and the options for API calls. The React package bundles it, so React partners never install core. It is also built (`pnpm run build:core`) and published so the Angular package can depend on it, with an alpha version and no stability promise: it can break in any release, and its exports are not public API. It adds no entry points to the React package: the public ones are the `exports` in `package.json`. Its own `exports` point at `src` for development and `publishConfig` swaps them for `dist` at publish, so publish it with `pnpm publish` (plain `npm publish` ignores that swap). See `plans/angular-support.md` for the plan and the status of the move.
 
 ## Where New Code Goes
 
