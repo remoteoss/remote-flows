@@ -11,9 +11,13 @@ const mockPostV1Employments = vi.fn();
 const mockPatchV1EmploymentsEmploymentId2 = vi.fn();
 const mockPutV1EmploymentsEmploymentIdBenefitOffers = vi.fn();
 const mockPostV1EmploymentsEmploymentIdContractEligibility = vi.fn();
+const mockGetV1EmploymentsEmploymentId = vi.fn();
 
 // Mock the client functions
-vi.mock('@remoteoss/remote-flows-core/client/sdk.gen', () => ({}));
+vi.mock('@remoteoss/remote-flows-core/client/sdk.gen', () => ({
+  getV1EmploymentsEmploymentId: (...args: $TSFixMe[]) =>
+    mockGetV1EmploymentsEmploymentId(...args),
+}));
 
 vi.mock('@/src/client', () => ({
   getV1CountriesCountryCodeForm: (...args: $TSFixMe[]) =>
@@ -40,6 +44,10 @@ describe('useOnboarding jsonSchemaVersion', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();
+
+    mockGetV1EmploymentsEmploymentId.mockRejectedValue(
+      new Error('employment not mocked'),
+    );
 
     // Mock successful responses
     mockGetV1CountriesCountryCodeForm.mockResolvedValue({
@@ -167,6 +175,14 @@ describe('useOnboarding jsonSchemaVersion', () => {
         },
       };
 
+      mockGetV1EmploymentsEmploymentId.mockResolvedValue({
+        data: {
+          data: {
+            employment: { id: 'test-employment-id', country: { code: 'DEU' } },
+          },
+        },
+      });
+
       const { result } = renderHook(
         () =>
           useOnboarding({
@@ -186,11 +202,8 @@ describe('useOnboarding jsonSchemaVersion', () => {
       // Navigate to contract details step
       result.current.goTo('contract_details');
 
-      const contractDetailsCall =
-        mockGetV1CountriesCountryCodeForm.mock.calls[1][0];
-
       await waitFor(() => {
-        expect(contractDetailsCall).toEqual({
+        expect(mockGetV1CountriesCountryCodeForm.mock.calls[1]?.[0]).toEqual({
           client: expect.any(Object),
           headers: {
             Authorization: ``,
