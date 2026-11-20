@@ -1,3 +1,4 @@
+import { employmentOptions } from '@remoteoss/remote-flows-core';
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
   Employment,
@@ -27,6 +28,9 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Client } from '@/src/client/client';
+import { useClient } from '@/src/context';
 import mergeWith from 'lodash.mergewith';
 import {
   useBasicInformationSchema,
@@ -35,6 +39,8 @@ import {
   useCompany,
   useContractDetailsSchema,
   useCountriesSchemaField,
+  EngagementAgreementDetailsError,
+  engagementAgreementDetailsOptions,
   useCreateEmployment,
   useEmploymentAgreementPreview,
   useEmploymentEngagementAgreementDetails,
@@ -206,11 +212,6 @@ export const useOnboarding = ({
   );
 
   const [
-    includeEngagementAgreementDetails,
-    setIncludeEngagementAgreementDetails,
-  ] = useState<boolean>(false);
-
-  const [
     includeEmploymentAgreementPreview,
     setIncludeEmploymentAgreementPreview,
   ] = useState<boolean>(false);
@@ -223,20 +224,112 @@ export const useOnboarding = ({
     includeEmploymentAgreementPreview,
   );
 
-  const { steps, stepsArray } = useMemo(
-    () =>
+  const {
+    data: employment,
+    isLoading: isLoadingEmployment,
+    refetch: refetchEmployment,
+  } = useEmploymentQuery({
+    employmentId: internalEmploymentId as string,
+    queryParams: { exclude_files: true },
+  });
+
+  const {
+    data: employmentEngagementAgreementDetails,
+    isLoading: isLoadingEmploymentEngagementAgreementDetails,
+  } = useEmploymentEngagementAgreementDetails(internalEmploymentId, {
+    enabled: Boolean(
+      !!internalEmploymentId && options?.features?.includes('dynamic_steps'),
+    ),
+  });
+
+  const engagementAgreementDetailsSavedValues = useMemo(
+    () => ({
+      ...onboardingInitialValues,
+      ...employmentEngagementAgreementDetails,
+    }),
+    [onboardingInitialValues, employmentEngagementAgreementDetails],
+  );
+
+  const engagementAgreementDetailsEmploymentId =
+    employment && employment.country?.code !== internalCountryCode
+      ? undefined
+      : internalEmploymentId;
+
+  const {
+    data: engagementAgreementDetailsSchema,
+    isLoading: isLoadingEngagementAgreementDetails,
+    handleValidation: handleEngagementAgreementDetailsValidation,
+    onValuesChange: onEngagementAgreementDetailsValuesChange,
+    parseFormValues: parseEngagementAgreementDetailsValues,
+  } = useEngagementAgreementDetailsSchema(
+    internalCountryCode as string,
+    engagementAgreementDetailsSavedValues,
+    {
+      jsfModify: options?.jsfModify,
+      queryOptions: {
+        enabled: Boolean(
+          !!internalCountryCode &&
+          !!engagementAgreementDetailsEmploymentId &&
+          !!employment &&
+          employment.requires_engagement_agreement_details !== false &&
+          options?.features?.includes('dynamic_steps'),
+        ),
+      },
+      jsonSchemaVersion: getEngagementAgreementDetailsSchemaVersion(options),
+      employmentId: engagementAgreementDetailsEmploymentId,
+    },
+  );
+
+  const { client } = useClient();
+  const queryClient = useQueryClient();
+
+  const includeEngagementAgreementDetails = Boolean(
+    engagementAgreementDetailsSchema?.fields &&
+    engagementAgreementDetailsSchema.fields.length > 0,
+  );
+
+  const warmedEngagementAgreementDetailsRef = useRef<ReturnType<
+    typeof engagementAgreementDetailsOptions
+  > | null>(null);
+
+  const hasEngagementAgreementDetailsSchema = Boolean(
+    engagementAgreementDetailsSchema,
+  );
+
+  const buildCurrentSteps = useCallback(
+    (includeEngagementAgreementDetails: boolean) =>
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeEngagementAgreementDetails,
         useDynamicSteps,
         useEAPreview,
       }),
-    [
-      includeEngagementAgreementDetails,
-      skipSteps,
-      useDynamicSteps,
-      useEAPreview,
-    ],
+    [skipSteps, useDynamicSteps, useEAPreview],
+  );
+
+  const getLatestSteps = useCallback(() => {
+    if (hasEngagementAgreementDetailsSchema) {
+      return buildCurrentSteps(includeEngagementAgreementDetails).steps;
+    }
+    const warmed = warmedEngagementAgreementDetailsRef.current;
+    const cached = warmed
+      ? queryClient.getQueryData(warmed.queryKey)
+      : undefined;
+    const cachedHasFields = Boolean(
+      cached?.data?.data?.properties &&
+      Object.keys(cached.data.data.properties).length,
+    );
+    return buildCurrentSteps(cachedHasFields).steps;
+  }, [
+    queryClient,
+    buildCurrentSteps,
+    hasEngagementAgreementDetailsSchema,
+    includeEngagementAgreementDetails,
+  ]);
+
+  const { stepsArray } = useMemo(
+    () => buildCurrentSteps(includeEngagementAgreementDetails),
+    [buildCurrentSteps, includeEngagementAgreementDetails],
   );
 
   const onStepChange = useCallback(
@@ -256,58 +349,7 @@ export const useOnboarding = ({
     nextStep,
     goToStep,
     setStepValues,
-  } = useStepState(steps, onStepChange);
-
-  const {
-    data: employmentEngagementAgreementDetails,
-    isLoading: isLoadingEmploymentEngagementAgreementDetails,
-  } = useEmploymentEngagementAgreementDetails(internalEmploymentId, {
-    enabled: Boolean(
-      !!internalEmploymentId && options?.features?.includes('dynamic_steps'),
-    ),
-  });
-
-  const engagementAgreementDetailsSavedValues = useMemo(
-    () => ({
-      ...onboardingInitialValues,
-      ...employmentEngagementAgreementDetails,
-    }),
-    [onboardingInitialValues, employmentEngagementAgreementDetails],
-  );
-
-  const {
-    data: engagementAgreementDetailsSchema,
-    isLoading: isLoadingEngagementAgreementDetails,
-    handleValidation: handleEngagementAgreementDetailsValidation,
-    onValuesChange: onEngagementAgreementDetailsValuesChange,
-    parseFormValues: parseEngagementAgreementDetailsValues,
-  } = useEngagementAgreementDetailsSchema(
-    internalCountryCode as string,
-    engagementAgreementDetailsSavedValues,
-    {
-      jsfModify: options?.jsfModify,
-      queryOptions: {
-        enabled: Boolean(
-          !!internalCountryCode && options?.features?.includes('dynamic_steps'),
-        ),
-      },
-      jsonSchemaVersion: getEngagementAgreementDetailsSchemaVersion(options),
-    },
-  );
-
-  // logic to include the engagement agreement details step based on the schema fields
-  useEffect(() => {
-    const hasFields = Boolean(
-      engagementAgreementDetailsSchema?.fields &&
-      engagementAgreementDetailsSchema.fields.length > 0,
-    );
-    if (hasFields !== includeEngagementAgreementDetails) {
-      setIncludeEngagementAgreementDetails(hasFields);
-    }
-  }, [
-    engagementAgreementDetailsSchema?.fields,
-    includeEngagementAgreementDetails,
-  ]);
+  } = useStepState(getLatestSteps, onStepChange);
 
   const fieldsMetaRef = useRef<{
     select_country: NestedMeta;
@@ -323,15 +365,6 @@ export const useOnboarding = ({
     benefits: {},
     engagement_agreement_details: {},
     employment_agreement_preview: {},
-  });
-
-  const {
-    data: employment,
-    isLoading: isLoadingEmployment,
-    refetch: refetchEmployment,
-  } = useEmploymentQuery({
-    employmentId: internalEmploymentId as string,
-    queryParams: { exclude_files: true },
   });
 
   // if the employment is loaded, country code has not been set yet
@@ -1040,6 +1073,48 @@ export const useOnboarding = ({
     return {};
   };
 
+  async function prefetchEngagementAgreementDetails(newEmploymentId: string) {
+    if (!useDynamicSteps || !internalCountryCode) {
+      return;
+    }
+    const queryOptions = engagementAgreementDetailsOptions(
+      client as Client,
+      internalCountryCode,
+      {
+        jsonSchemaVersion: getEngagementAgreementDetailsSchemaVersion(options),
+        employmentId: newEmploymentId,
+      },
+    );
+    warmedEngagementAgreementDetailsRef.current = null;
+    let requiresEngagementAgreementDetails = true;
+    try {
+      const createdEmployment = await queryClient.query(
+        employmentOptions(client as Client, newEmploymentId, {
+          exclude_files: true,
+        }),
+      );
+      requiresEngagementAgreementDetails =
+        createdEmployment.data?.data?.employment
+          ?.requires_engagement_agreement_details !== false;
+    } catch (error) {
+      console.warn('Error fetching the created employment:', error);
+    }
+    if (!requiresEngagementAgreementDetails) {
+      return;
+    }
+    warmedEngagementAgreementDetailsRef.current = queryOptions;
+    try {
+      await queryClient.query(queryOptions);
+    } catch (error) {
+      const isExpectedNotFound =
+        error instanceof EngagementAgreementDetailsError &&
+        error.status === 404;
+      if (!isExpectedNotFound) {
+        console.warn('Error prefetching engagement agreement details:', error);
+      }
+    }
+  }
+
   async function onSubmit(values: FieldValues) {
     // Prettify values for the current step
     const currentStepName = stepState.currentStep.name;
@@ -1089,6 +1164,7 @@ export const useOnboarding = ({
                   eligible_to_work_in_residing_country: 'citizen',
                   employer_or_work_restrictions: false,
                 });
+                await prefetchEngagementAgreementDetails(employmentId);
               }
 
               return response;

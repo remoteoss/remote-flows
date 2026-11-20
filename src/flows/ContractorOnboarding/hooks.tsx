@@ -237,6 +237,8 @@ export const useContractorOnboarding = ({
     ],
   );
 
+  const getSteps = useCallback(() => steps, [steps]);
+
   const {
     fieldValues,
     stepState,
@@ -245,7 +247,7 @@ export const useContractorOnboarding = ({
     nextStep,
     goToStep,
     setStepValues,
-  } = useStepState(steps);
+  } = useStepState(getSteps);
 
   useEffect(() => {
     if (pendingNavigationStep) {

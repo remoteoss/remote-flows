@@ -26,6 +26,9 @@ import {
 
 type useCreateCompanyProps = Omit<CreateCompanyFlowProps, 'render'>;
 
+const getSteps = () =>
+  STEPS as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>;
+
 /**
  * Main hook for the CreateCompany flow
  * Manages the two-step flow: company creation and address details
@@ -71,9 +74,7 @@ export const useCreateCompany = ({
     previousStep,
     nextStep,
     goToStep,
-  } = useStepState(
-    STEPS as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
-  );
+  } = useStepState(getSteps);
 
   const {
     companyBasicInformationForm,
