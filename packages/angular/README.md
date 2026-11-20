@@ -17,4 +17,4 @@ cd dist && npm pack     # the tarball partners get; always publish from dist/, n
 
 Publish with `npm publish --tag alpha` from `dist/` so a plain install never picks it up.
 
-Core is a dependency pinned to an exact version in `package.json`. When core is republished and the Angular package needs the change, bump that pin and reinstall; the demo app builds against the published core, not the local `packages/core`.
+Core is a dependency pinned to an exact version in `package.json`. The demo app resolves core from the local `packages/core` (a path alias in its `tsconfig.json`), like the React SDK, so it shows what is on `main`. Partners get the pinned published version, which can lag `main`. When the Angular package needs a core change, publish core, then bump that pin and reinstall.
