@@ -206,13 +206,15 @@ Shows the loaded request. It renders nothing while the request is loading or fai
 the first time, so render those states yourself (see [Loading and errors](#loading-and-errors)).
 A failed reload keeps the request shown, next to `timeOffRequestError`.
 
-By default it renders a list of the request's details: type, status, start date, end date and
-duration, plus the notes and the cancellation reason when the request has them.
+By default it renders a list of the request's details: type, status, who requested it, start
+date, end date and duration, plus the notes and the cancellation reason when the request has
+them. Who requested it shows once their name loads (see
+[Requests and authentication](#requests-and-authentication)).
 
-| Prop       | Type                                                                                                              | Description                                                                           |
-| ---------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `render`   | `({ timeOffRequest, details }: { timeOffRequest: TimeOffRequest; details: TimeOffRequestDetail[] }) => ReactNode` | Replaces the default details. `details` are the same details, labelled and formatted. |
-| `children` | `ReactNode`                                                                                                       | Rendered under the details, for example the Approve and Decline buttons.              |
+| Prop       | Type                                                                                                                                                     | Description                                                                                                                                       |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `render`   | `({ timeOffRequest, requesterName, details }: { timeOffRequest: TimeOffRequest; requesterName?: string; details: TimeOffRequestDetail[] }) => ReactNode` | Replaces the default details. `requesterName` is the requester's full name once it loads. `details` are the same details, labelled and formatted. |
+| `children` | `ReactNode`                                                                                                                                              | Rendered under the details, for example the Approve and Decline buttons.                                                                          |
 
 `ReviewStep` does not decide which actions fit the request. Render Approve and Decline only
 when `timeOffRequest.status` is `requested`, as in the example: that is the only status the API
@@ -402,9 +404,10 @@ keeps the current status and goes back to the first page. It takes no props.
 Lists the requests of the loaded page. It renders nothing until a page with requests is loaded:
 use `isLoadingTimeOffRequests`, `timeOffRequestsError` and `isEmpty` for those states.
 
-By default each row shows the request's type, status, dates and duration, then its actions:
-`ViewButton`, and for a `requested` request `DeclineButton` and `ApproveButton`. Each default
-action is labelled after its row ("Approve Paid time off, Requested, …") for screen readers.
+By default each row shows who requested it, once their name loads, then the request's type,
+status, dates and duration, then its actions: `ViewButton`, and for a `requested` request
+`DeclineButton` and `ApproveButton`. Each default action is labelled after its row ("Approve
+Ada Lovelace, Paid time off, Requested, …") for screen readers.
 **The default row actions send `declineReason: null` and `approverId: null`.** To send a reason
 or an approver, render your own actions with `renderActions`.
 
@@ -414,9 +417,9 @@ or an approver, render your own actions with `renderActions`.
 | `renderActions` | `(item: TimeOffListItem) => ReactNode` | Replaces the actions of each row. `ViewButton`, `ApproveButton` and `DeclineButton` rendered here act on that row's request.                                    |
 | `renderItem`    | `(item: TimeOffListItem) => ReactNode` | Replaces the whole list markup: only what it returns renders for each request, with no list or row element around it. The buttons act on that request here too. |
 
-`TimeOffListItem` is `{ timeOffRequest, details, listedDetails, canDecide }`: the request, all
-its details labelled and formatted, the ones a row shows by default, and whether it is
-`requested` and so can be approved or declined.
+`TimeOffListItem` is `{ timeOffRequest, requesterName, details, listedDetails, canDecide }`: the
+request, the requester's full name once it loads, all its details labelled and formatted, the
+ones a row shows by default, and whether it is `requested` and so can be approved or declined.
 
 With `managerUserId` the user ID you want to send as the approver:
 
@@ -483,6 +486,7 @@ alone you build your own UI from the bag. Every hook must be used inside `<Remot
 | `timeOffId`             | The ID stored when leaving the request ID step, or the one you supplied.                 |
 | `hasRequestId`          | Whether the request ID step holds a non-blank ID.                                        |
 | `timeOffRequest`        | The request under review, once loaded on the `review` step.                              |
+| `requesterName`         | The full name of who requested the request under review, once it loads.                  |
 | `isLoading`             | `true` on the first load of the request under review.                                    |
 | `timeOffRequestError`   | A `TimeOffRequestError`, or `null`.                                                      |
 | `refetchTimeOffRequest` | Loads the request under review again.                                                    |
@@ -494,8 +498,8 @@ alone you build your own UI from the bag. Every hook must be used inside `<Remot
 ### useTimeOffList
 
 `useTimeOffList({ pageSize? })` returns `timeOffListBag`. Its review keys (`timeOffRequest`,
-`isLoading`, `timeOffRequestError`, `refetchTimeOffRequest`, `approve`, `decline`) work as in
-`useTimeOff`, on the request picked from the list. The other keys:
+`requesterName`, `isLoading`, `timeOffRequestError`, `refetchTimeOffRequest`, `approve`,
+`decline`) work as in `useTimeOff`, on the request picked from the list. The other keys:
 
 | Key                                               | Description                                                                                                       |
 | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -536,16 +540,23 @@ Neither can approve or decline: decisions go through the flows or their bags.
 
 ## Requests and authentication
 
-| Request                                                           | Sent when                                                                                                                           | Scope (generated API docs)        |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| `GET /v1/timeoff/{id}`                                            | The flow reaches `review`, `RetryButton`, `useTimeOffRequest`                                                                       | `timeoff:read` or `timeoff:write` |
-| `GET /v1/timeoff`                                                 | The list flow or `useTimeOffRequests` mounts, the page or status changes, and again after a decision (refetch through invalidation) | `timeoff:read` or `timeoff:write` |
-| `POST /v1/timeoff/{timeoff_id}/approve` with `{ approver_id }`    | `ApproveButton`, `approve`, `approveTimeOffRequest`                                                                                 | `timeoff:write`                   |
-| `POST /v1/timeoff/{timeoff_id}/decline` with `{ decline_reason }` | `DeclineButton`, `decline`, `declineTimeOffRequest`                                                                                 | `timeoff:write`                   |
+| Request                                                           | Sent when                                                                                                                           | Scope (generated API docs)              |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `GET /v1/timeoff/{id}`                                            | The flow reaches `review`, `RetryButton`, `useTimeOffRequest`                                                                       | `timeoff:read` or `timeoff:write`       |
+| `GET /v1/timeoff`                                                 | The list flow or `useTimeOffRequests` mounts, the page or status changes, and again after a decision (refetch through invalidation) | `timeoff:read` or `timeoff:write`       |
+| `POST /v1/timeoff/{timeoff_id}/approve` with `{ approver_id }`    | `ApproveButton`, `approve`, `approveTimeOffRequest`                                                                                 | `timeoff:write`                         |
+| `POST /v1/timeoff/{timeoff_id}/decline` with `{ decline_reason }` | `DeclineButton`, `decline`, `declineTimeOffRequest`                                                                                 | `timeoff:write`                         |
+| `GET /v1/employments/{employment_id}`                             | A request is loaded for review, and once per employee on each listed page                                                           | `employment:read` or `employment:write` |
 
 The list sends only `status`, `page` (once the user changes page) and `page_size` (when you
 pass `pageSize`). According to the generated API docs, a token with only `timeoff:read` can load
 requests but not approve or decline them.
+
+The requester's name comes from the employment behind each request, as the time-off routes
+don't return it. Rows and the review render from the time-off data alone and the name fills in
+when it arrives. If the employment can't be loaded, for example with a token that lacks
+`employment:read`, the name is left out for that request and everything else works as before:
+no error is reported and the request is not retried.
 
 The requests carry the token your `auth` function returns, like every flow. The generated API
 docs accept two token types on these routes: a company-scoped access token (Authorization Code
@@ -598,6 +609,9 @@ the sandbox yet. Until it is, these points are expected but unconfirmed:
 - What `approver_id: null` does, and whether the API records the `approver_id` you send or the
   user behind the token.
 - Which requests a token can see. A request outside it is expected to answer `404`.
+- What `GET /v1/employments/{employment_id}` answers for a token without `employment:read`, and
+  whether every employment behind a listed request can be loaded with the same token. The SDK
+  leaves the name out whatever the failure.
 - The default and largest `page_size`, and whether a Customer API token works on the read routes,
   whose generated header description names only the company-scoped access token.
 - The `field_errors` codes a `422` carries.
