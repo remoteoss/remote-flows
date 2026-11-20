@@ -48,9 +48,9 @@ The page prints which one is running.
 
 ## Deploy
 
-The Vercel project is named `remote-flows-angular`. To recreate it, import the repo in Vercel as its own project, with `apps/angular` as the root directory and "Include source files outside of the Root Directory" turned on. Vercel then deploys every branch. `ignoreCommand` in `vercel.json` skips pushes that touch nothing under `apps/angular`, `packages/core` or the lockfile and workspace files.
+The Vercel project is named `remote-flows-angular`. To recreate it, import the repo in Vercel as its own project, with `apps/angular` as the root directory and "Include source files outside of the Root Directory" turned on.
 
-An empty commit is skipped by `ignoreCommand`. To rebuild without changing the app, use "Redeploy" in the Vercel dashboard. Environment variable changes only apply to new deployments.
+Vercel's own Git deployments are off (`github.enabled` in `vercel.json`). CI deploys the app instead: a preview on pull requests that touch it, and on `main` a preview, the Playwright specs, then the promotion to production. To rebuild without changing the app, re-run the workflow or use "Redeploy" in the Vercel dashboard. Environment variable changes only apply to new deployments.
 
 Set the same variables as the `.env.<name>` file of the environment you target (`VITE_CLIENT_ID`, `REMOTE_CLIENT_SECRET`, `VITE_REMOTE_GATEWAY`, `REMOTE_REFRESH_TOKEN`).
 

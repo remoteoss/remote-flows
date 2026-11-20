@@ -116,13 +116,15 @@ const useAutomatableContractAmendmentMutation = (options?: FlowOptions) => {
   });
 };
 
+const getSteps = () => STEPS;
+
 export const useContractAmendment = ({
   employmentId,
   countryCode,
   options,
 }: ContractAmendmentParams) => {
   const { fieldValues, setFieldValues, stepState, nextStep, previousStep } =
-    useStepState<keyof typeof STEPS>(STEPS);
+    useStepState<keyof typeof STEPS>(getSteps);
 
   const {
     data: employment,

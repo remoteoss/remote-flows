@@ -162,7 +162,7 @@ export const usePayrollEmployeeOnboarding = ({
   const federalTaxesVisible = isUSA && isPostEnrollment;
   const stateTaxesVisible = isUSA && !!jurisdiction && isPostEnrollment;
 
-  const steps = useMemo(
+  const getSteps = useCallback(
     () =>
       buildEmployeeSteps({
         hasBankSubstep,
@@ -180,7 +180,7 @@ export const usePayrollEmployeeOnboarding = ({
     setStepValues,
     fieldValues,
     setFieldValues,
-  } = useStepState<EmployeeStepKey>(steps, onStepChange);
+  } = useStepState<EmployeeStepKey>(getSteps, onStepChange);
 
   const currentStep = stepState.currentStep.name;
 

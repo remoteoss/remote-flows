@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import type { FieldValues } from 'react-hook-form';
 import {
   useGPOnboardingSteps,
@@ -88,7 +88,10 @@ export const usePayrollAdminOnboarding = ({
   // just the explicit countryCode prop.
   const skipCountry = !!internalCountryCode && !!initialEmploymentId;
 
-  const steps = useMemo(() => buildAdminSteps(skipCountry), [skipCountry]);
+  const getSteps = useCallback(
+    () => buildAdminSteps(skipCountry),
+    [skipCountry],
+  );
 
   const { updateErrorContext } = useErrorReporting({
     flow: 'payroll_admin_onboarding',
@@ -109,7 +112,7 @@ export const usePayrollAdminOnboarding = ({
     setStepValues,
     fieldValues,
     setFieldValues,
-  } = useStepState<AdminStepKey>(steps, onStepChange);
+  } = useStepState<AdminStepKey>(getSteps, onStepChange);
 
   const currentStep = stepState.currentStep.name;
 

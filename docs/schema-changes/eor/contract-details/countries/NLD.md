@@ -4,16 +4,41 @@ Schema versions for employee onboarding in the Netherlands.
 
 ## Current Version
 
-**Contract Details:** v7
+**Contract Details:** v8
 
 ## Contract Details
 
-### v7 - Current
+### v8 - Current
+
+**Type of change:** compliance, product
+
+**What changed:**
+
+- `notice_period` is required and applies to both employer and employee. It accepts whole months from 1 to 6. Missing or `null` values are rejected
+- Adds `notice_period_choice` (`"recommended"` or `"custom"`), required when a recommended notice period is available. With the one-month recommendation, send `"recommended"` with `notice_period: 1`, or `"custom"` with a whole-month `notice_period`. When the notice period is fixed by the contract length, the field is hidden and read-only
+- Existing notice-period values are kept. Stored contract details can come back with `notice_period_choice` filled in, but v7 does not accept that property on submission, so drop it before writing if you stay on v7
+- `sick_leave_pay_cap_70` and `sick_leave_pay_cap_100` change their radio presentation from `variant: "card-expandable"` to `expandable: true` with `separator: true`. Display only
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      NLD: { contract_details: 8 },
+    },
+  }}
+/>
+```
+
+---
+
+### v7
 
 **What changed:**
 
 - The `probation_length` field moves to a dedicated Netherlands probation period component. It renders and validates the same for existing consumers, so no action is required.
-- Once the seniority block is enabled for the Netherlands, `probation_length` is forced to a hidden `0` for employments with a recognized seniority date.
+- For employments with a recognized seniority date, `probation_length` is forced to a hidden `0`.
 
 **Migration:**
 
@@ -33,7 +58,7 @@ Schema versions for employee onboarding in the Netherlands.
 
 **What changed:**
 
-- `contract_duration_type` no longer offers `fixed_term`, and `contract_end_date` is rejected, when the employee has a recognized seniority date (`has_seniority_date: "yes"`). Only `indefinite` is valid then. Gated by the `eor_seniority_block` and `eor_seniority_block_v2_ftc` feature flags, and employments created before the cutoff date are unaffected. Remote Admins can still override the block.
+- `contract_duration_type` no longer offers `fixed_term`, and `contract_end_date` is rejected, when the employee has a recognized seniority date (`has_seniority_date: "yes"`). Only `indefinite` is valid then. Employments created before the cutoff date are unaffected. Remote Admins can still override the block.
 - `contract_duration_type` no longer pre-fills a default, so the user has to choose an option.
 - The `contract_end_date` nested-field reference under the Fixed Term option moves from `nested_field` to `nested_fields` (a list), like every other country on the shared contract duration component. Custom renderers that read it directly need to expect a list.
 
