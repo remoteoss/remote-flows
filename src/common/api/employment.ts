@@ -8,7 +8,10 @@ import { useClient } from '@/src/context';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { Client } from '@/src/client/client';
-import { employmentOptions } from '@remoteoss/remote-flows-core';
+import {
+  employmentOptions,
+  selectEmployment,
+} from '@remoteoss/remote-flows-core';
 
 /**
  * Hook to retrieve employment details for a specific employment ID.
@@ -34,7 +37,7 @@ export const useEmploymentQuery = ({
   return useQuery({
     ...employmentOptions(client as Client, employmentId, queryParams),
     enabled: !!employmentId && enabled,
-    select: ({ data }) => data?.data?.employment,
+    select: selectEmployment,
   });
 };
 
