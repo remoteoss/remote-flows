@@ -211,6 +211,10 @@ date, end date and duration, plus the notes and the cancellation reason when the
 them. Who requested it shows once their name loads (see
 [Requests and authentication](#requests-and-authentication)).
 
+Read `details` by `name`, not by position. The `requested_by` entry is only there once the name
+has loaded, so the entries after it move when it arrives, and a request without a name has one
+entry fewer. New detail names may be added later, so give a `switch` on `name` a default branch.
+
 | Prop       | Type                                                                                                                                                     | Description                                                                                                                                       |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `render`   | `({ timeOffRequest, requesterName, details }: { timeOffRequest: TimeOffRequest; requesterName?: string; details: TimeOffRequestDetail[] }) => ReactNode` | Replaces the default details. `requesterName` is the requester's full name once it loads. `details` are the same details, labelled and formatted. |
@@ -420,6 +424,10 @@ or an approver, render your own actions with `renderActions`.
 `TimeOffListItem` is `{ timeOffRequest, requesterName, details, listedDetails, canDecide }`: the
 request, the requester's full name once it loads, all its details labelled and formatted, the
 ones a row shows by default, and whether it is `requested` and so can be approved or declined.
+Read `details` and `listedDetails` by `name`, not by position: `requested_by` is their first
+entry once the name has loaded and absent before, so the others move when it arrives. The
+accessible names of the default row actions start with the requester's name for the same
+reason, so match them on the leave type or the dates rather than on the whole label.
 
 With `managerUserId` the user ID you want to send as the approver:
 
