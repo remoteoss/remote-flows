@@ -4,58 +4,11 @@ Schema versions for employee onboarding in Austria.
 
 ## Current Version
 
-**Contract Details:** v10
+**Contract Details:** v8
 
 ## Contract Details
 
-### v10 - Current
-
-**Type of change:** compliance
-
-**What changed:**
-
-- Adds the required `cba_review_ack` checkbox to the annual gross salary group. The employer confirms that the employee's collective bargaining agreement (CBA) level is subject to compliance review, which may require salary adjustments. Its only accepted value is `"acknowledged"`
-- Custom UIs must render the checkbox and send `"cba_review_ack": "acknowledged"` on every contract details submission against v10, including later saves of existing Austria contract details
-- Reads can return `cba_review_ack` whichever version you request. If you stay on v9, drop it from the payload before you write
-
-**Migration:**
-
-```tsx
-<OnboardingFlow
-  options={{
-    jsonSchemaVersionByCountry: {
-      AUT: { contract_details: 10 },
-    },
-  }}
-/>
-```
-
----
-
-### v9
-
-**Type of change:** compliance
-
-**What changed:**
-
-- The probation period is blocked for employments with a recognized seniority date, the same way fixed-term contracts already are: `probation_length` is locked to `0` and any other value is rejected, unless the request is made by a Remote Admin. This depends on a backend setting that is not enabled yet. No action required for most submissions
-- The `probation_length` conditions are rebuilt for the block. The field renders the same as before, including the warning when the probation period is waived
-
-**Migration:**
-
-```tsx
-<OnboardingFlow
-  options={{
-    jsonSchemaVersionByCountry: {
-      AUT: { contract_details: 9 },
-    },
-  }}
-/>
-```
-
----
-
-### v8
+### v8 - Current
 
 **What changed:**
 

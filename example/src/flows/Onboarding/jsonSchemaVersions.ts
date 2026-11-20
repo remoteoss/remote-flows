@@ -9,7 +9,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ARE: {
     // United Arab Emirates
-    contract_details: 7,
+    contract_details: 6,
   },
   ARG: {
     // Argentina
@@ -25,7 +25,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   AUT: {
     // Austria
-    contract_details: 10,
+    contract_details: 8,
   },
   BEL: {
     // Belgium
@@ -57,7 +57,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CHE: {
     // Switzerland
-    contract_details: 9,
+    contract_details: 8,
   },
   CHL: {
     // Chile
