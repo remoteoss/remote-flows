@@ -15,7 +15,6 @@ Schema versions for employee onboarding in El Salvador.
 **What changed:**
 
 - New `work_equipment` field (titled "Equipment provided"): a text area where the employer lists the work equipment and its quantity, quality and condition. It is required when `work_equipment_provided_by` is `"provided_by_client"`. Custom UIs must render it in that case and send it (up to 1000 characters); leave it out when `work_equipment_provided_by` is `"provided_by_employee"`.
-- To keep the previous shape when saving, pin v4.
 
 **Migration:**
 
