@@ -75,6 +75,7 @@ const formatDuration = (totalMinutes: number) => {
 
 export const getTimeOffRequestDetails = (
   timeOffRequest: TimeOffRequest,
+  requesterName?: string,
 ): TimeOffRequestDetail[] => [
   {
     name: 'leave_policy',
@@ -86,6 +87,15 @@ export const getTimeOffRequestDetails = (
     label: 'Status',
     value: STATUS_LABELS[timeOffRequest.status],
   },
+  ...(requesterName
+    ? [
+        {
+          name: 'requested_by' as const,
+          label: 'Requested by',
+          value: requesterName,
+        },
+      ]
+    : []),
   {
     name: 'start_date',
     label: 'Start date',
@@ -116,6 +126,7 @@ export const getTimeOffRequestDetails = (
 ];
 
 const LISTED_DETAILS: TimeOffRequestDetail['name'][] = [
+  'requested_by',
   'leave_policy',
   'status',
   'start_date',
@@ -125,14 +136,17 @@ const LISTED_DETAILS: TimeOffRequestDetail['name'][] = [
 
 export const getTimeOffListItems = (
   timeOffRequests: TimeOffRequest[],
+  requesterNames: Partial<Record<string, string>>,
 ): TimeOffListItem[] =>
   timeOffRequests.map((timeOffRequest) => {
-    const details = getTimeOffRequestDetails(timeOffRequest);
+    const requesterName = requesterNames[timeOffRequest.employment_id];
+    const details = getTimeOffRequestDetails(timeOffRequest, requesterName);
     return {
       timeOffRequest,
+      requesterName,
       details,
-      listedDetails: details.filter((detail) =>
-        LISTED_DETAILS.includes(detail.name),
+      listedDetails: LISTED_DETAILS.flatMap((name) =>
+        details.filter((detail) => detail.name === name),
       ),
       canDecide: timeOffRequest.status === 'requested',
     };

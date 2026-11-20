@@ -1,11 +1,13 @@
 import { useCallback, useMemo, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { TimeoffStatus } from '@/src/client';
+import { useEmploymentQuery } from '@/src/common/api/employment';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import {
   getTimeOffDecisionError,
   useApproveTimeOffRequest,
   useDeclineTimeOffRequest,
+  useGetRequesterNames,
   useGetTimeOffRequest,
   useGetTimeOffRequests,
 } from '@/src/flows/TimeOff/api';
@@ -111,6 +113,9 @@ export const useTimeOffRequestReview = ({
   const { timeOffRequest, isLoading, error, refetch } = useTimeOffRequest({
     timeOffId: isReviewing ? timeOffId : undefined,
   });
+  const { data: requester } = useEmploymentQuery({
+    employmentId: timeOffRequest?.employment_id ?? '',
+  });
   const { approveTimeOffRequest, declineTimeOffRequest, isSubmitting } =
     useTimeOffDecisions();
 
@@ -131,6 +136,11 @@ export const useTimeOffRequestReview = ({
      * The time-off request under review, loaded once the flow reaches the review step.
      */
     timeOffRequest,
+    /**
+     * The full name of the person who requested the time off under review. `undefined` until it
+     * loads, or when it can't be loaded, e.g. for a token without the `employment:read` scope.
+     */
+    requesterName: requester?.full_name,
     /**
      * Whether the time-off request under review is loading for the first time.
      */
@@ -268,9 +278,12 @@ export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
     error: timeOffRequestsError,
     refetch: refetchTimeOffRequests,
   } = useTimeOffRequests({ status, page, pageSize });
+  const requesterNames = useGetRequesterNames([
+    ...new Set(timeOffRequests.map(({ employment_id }) => employment_id)),
+  ]);
   const timeOffListItems = useMemo(
-    () => getTimeOffListItems(timeOffRequests),
-    [timeOffRequests],
+    () => getTimeOffListItems(timeOffRequests, requesterNames),
+    [timeOffRequests, requesterNames],
   );
 
   if (isEmpty && page && totalPages !== undefined && page > totalPages) {

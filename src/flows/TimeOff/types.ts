@@ -121,6 +121,7 @@ export type TimeOffRequestDetail = {
   name:
     | 'leave_policy'
     | 'status'
+    | 'requested_by'
     | 'start_date'
     | 'end_date'
     | 'duration'
@@ -137,6 +138,10 @@ export type TimeOffReviewStepProps = {
    */
   render?: (props: {
     timeOffRequest: TimeOffRequest;
+    /**
+     * The full name of the person who requested the time off, once their employment loads.
+     */
+    requesterName?: string;
     details: TimeOffRequestDetail[];
   }) => React.ReactNode;
   /**
@@ -151,11 +156,15 @@ export type TimeOffReviewStepProps = {
 export type TimeOffListItem = {
   timeOffRequest: TimeOffRequest;
   /**
+   * The full name of the person who requested the time off, once their employment loads.
+   */
+  requesterName?: string;
+  /**
    * Every detail of the request, labelled and formatted for display.
    */
   details: TimeOffRequestDetail[];
   /**
-   * The details a row of the list shows by default: type, status, dates and duration.
+   * The details a row of the list shows by default: requester, type, status, dates and duration.
    */
   listedDetails: TimeOffRequestDetail[];
   /**
