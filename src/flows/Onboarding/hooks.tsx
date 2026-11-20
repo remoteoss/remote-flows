@@ -1088,7 +1088,7 @@ export const useOnboarding = ({
     warmedEngagementAgreementDetailsRef.current = null;
     let requiresEngagementAgreementDetails = true;
     try {
-      const createdEmployment = await queryClient.fetchQuery(
+      const createdEmployment = await queryClient.query(
         employmentOptions(client as Client, newEmploymentId, {
           exclude_files: true,
         }),
