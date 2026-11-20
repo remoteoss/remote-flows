@@ -8,7 +8,7 @@
   "scripts": {
     "audit": "pnpm audit --audit-level=high",
     "build": "NODE_ENV=production tsdown --config-loader unrun",
-    "ci": "pnpm run build && pnpm run check-format && pnpm run check-exports && pnpm run check-core-exports && pnpm run lint && pnpm run type-check && pnpm run test",
+    "ci": "pnpm run build && pnpm run check-format && pnpm run check-exports && pnpm run check-core-exports && pnpm run check-core-package && pnpm run lint && pnpm run type-check && pnpm run test",
     "build:core": "pnpm --filter @remoteoss/remote-flows-core run build",
     "check-core-package": "pnpm run build:core && rm -rf out/core-pack && pnpm --filter @remoteoss/remote-flows-core pack --pack-destination $PWD/out/core-pack && attw out/core-pack/*.tgz --profile esm-only",
     "check-core-exports": "knip --workspace packages/core --include exports",
