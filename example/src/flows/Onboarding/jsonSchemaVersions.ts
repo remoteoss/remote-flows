@@ -9,7 +9,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ARE: {
     // United Arab Emirates
-    contract_details: 6,
+    contract_details: 7,
   },
   ARG: {
     // Argentina
@@ -25,7 +25,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   AUT: {
     // Austria
-    contract_details: 8,
+    contract_details: 10,
   },
   BEL: {
     // Belgium
@@ -57,7 +57,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CHE: {
     // Switzerland
-    contract_details: 8,
+    contract_details: 9,
   },
   CHL: {
     // Chile
@@ -237,7 +237,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   MYS: {
     // Malaysia
-    contract_details: 5,
+    contract_details: 6,
   },
   NGA: {
     // Nigeria
@@ -249,7 +249,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   NLD: {
     // Netherlands
-    contract_details: 7,
+    contract_details: 8,
   },
   NOR: {
     // Norway

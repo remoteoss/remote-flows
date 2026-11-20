@@ -4,11 +4,34 @@ Schema versions for employee onboarding in United Arab Emirates.
 
 ## Current Version
 
-**Contract Details:** v6
+**Contract Details:** v7
 
 ## Contract Details
 
-### v6 - Current
+### v7 - Current
+
+**Type of change:** compliance
+
+**What changed:**
+
+- The probation period is blocked for employments with a recognized seniority date, the same way fixed-term contracts already are: `has_probation_period` is locked to `"no"` and `probation_length` to `0`, and any other value is rejected, unless the request is made by a Remote Admin. This depends on a backend setting that is not enabled yet. No action required for most submissions
+- The `has_probation_period` conditions are rebuilt for the block. The field renders the same as before, including the warning when the probation period is waived
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      ARE: { contract_details: 7 },
+    },
+  }}
+/>
+```
+
+---
+
+### v6
 
 **Type of change:** compliance
 
