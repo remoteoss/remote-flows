@@ -11,7 +11,7 @@ Only the create invoice schedule flow is covered today. See `apps/angular` for a
 ## Build and pack
 
 ```bash
-pnpm run build          # syncs core into src/vendor, then runs ng-packagr into dist/
+pnpm run build          # runs ng-packagr into dist/
 cd dist && npm pack     # the tarball partners get; always publish from dist/, never from the package root
 ```
 

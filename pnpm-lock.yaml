@@ -419,9 +419,6 @@ importers:
       '@angular/platform-browser':
         specifier: 20.3.9
         version: 20.3.9(@angular/common@20.3.9(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))
-      '@remoteoss/remote-flows-core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@tanstack/angular-query-experimental':
         specifier: 5.107.1
         version: 5.107.1(@angular/common@20.3.9(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))(csstype@3.2.3)
@@ -462,15 +459,9 @@ importers:
 
   packages/angular:
     dependencies:
-      '@remoteoss/remote-json-schema-form-kit':
-        specifier: 1.2.5
-        version: 1.2.5
-      date-fns:
-        specifier: 3.6.0
-        version: 3.6.0
-      fast-deep-equal:
-        specifier: 3.1.3
-        version: 3.1.3
+      '@remoteoss/remote-flows-core':
+        specifier: 0.0.1-alpha.1
+        version: 0.0.1-alpha.1
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -490,9 +481,6 @@ importers:
       '@angular/forms':
         specifier: 20.3.9
         version: 20.3.9(@angular/common@20.3.9(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@20.3.9(@angular/common@20.3.9(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1)))(rxjs@7.8.2)
-      '@remoteoss/remote-flows-core':
-        specifier: workspace:*
-        version: link:../core
       '@tanstack/angular-query-experimental':
         specifier: 5.107.1
         version: 5.107.1(@angular/common@20.3.9(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))(csstype@3.2.3)
@@ -2812,6 +2800,9 @@ packages:
   '@remoteoss/json-schema-form@1.2.21':
     resolution: {integrity: sha512-TzgvKsKhLyJ3Zy7zH8YWNC/4Xoit3CH2jEIXmLEhdC8RZeozIm5lpDYesH/pZVycik0i7a/B+QfOz4YbA9J12A==}
     engines: {node: '>=18.14.0'}
+
+  '@remoteoss/remote-flows-core@0.0.1-alpha.1':
+    resolution: {integrity: sha512-SDCTqYv15VpMGjXmhvSRUbXqwbNEy/jxatphs9qzB3A00lmLFB1I5EbXugifZ8YFzuq9rtDcjThj+OKHrAWUGQ==}
 
   '@remoteoss/remote-json-schema-form-kit@1.2.5':
     resolution: {integrity: sha512-/Ccfo4l2IXTeaox1imauXgADe75CsnbwpFSgFFO6a/+Je72brVza2vU2wmh7fmLYmX6iwZCTFajHWK3YFuwJTA==}
@@ -8474,6 +8465,12 @@ snapshots:
   '@remoteoss/json-schema-form@1.2.21':
     dependencies:
       json-logic-js: 2.0.5
+
+  '@remoteoss/remote-flows-core@0.0.1-alpha.1':
+    dependencies:
+      '@remoteoss/remote-json-schema-form-kit': 1.2.5
+      date-fns: 3.6.0
+      fast-deep-equal: 3.1.3
 
   '@remoteoss/remote-json-schema-form-kit@1.2.5':
     dependencies:

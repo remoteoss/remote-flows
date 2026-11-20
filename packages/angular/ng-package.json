@@ -4,9 +4,5 @@
   "lib": {
     "entryFile": "src/index.ts"
   },
-  "allowedNonPeerDependencies": [
-    "@remoteoss/remote-json-schema-form-kit",
-    "date-fns",
-    "fast-deep-equal"
-  ]
+  "allowedNonPeerDependencies": ["@remoteoss/remote-flows-core"]
 }

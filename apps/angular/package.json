@@ -4,13 +4,12 @@
   "private": true,
   "scripts": {
     "ng": "ng",
-    "sync:core": "pnpm --filter @remoteoss/remote-flows-angular run sync:core",
-    "start": "pnpm run sync:core && ng serve",
-    "start:zone": "pnpm run sync:core && ng serve -c zone",
+    "start": "ng serve",
+    "start:zone": "ng serve -c zone",
     "start:api": "node dev_server.js",
-    "build": "pnpm run sync:core && ng build -c zoneless",
-    "build:zone": "pnpm run sync:core && ng build -c zone",
-    "type-check": "pnpm run sync:core && tsc -p tsconfig.app.json --noEmit"
+    "build": "ng build -c zoneless",
+    "build:zone": "ng build -c zone",
+    "type-check": "tsc -p tsconfig.app.json --noEmit"
   },
   "dependencies": {
     "@angular/cdk": "20.2.14",
@@ -20,7 +19,6 @@
     "@angular/forms": "20.3.9",
     "@angular/material": "20.2.14",
     "@angular/platform-browser": "20.3.9",
-    "@remoteoss/remote-flows-core": "workspace:*",
     "@tanstack/angular-query-experimental": "5.107.1",
     "axios": "1.20.0",
     "dotenv": "18.0.8",
