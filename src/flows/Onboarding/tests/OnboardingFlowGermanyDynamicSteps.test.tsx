@@ -658,6 +658,39 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
     expect(schemaRequestUrls).toEqual([]);
   });
 
+  it('should not warn when the schema of a newly created employment is a 404', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    server.use(
+      http.get('*/v1/countries/DEU/engagement_agreement_details*', () =>
+        HttpResponse.json(
+          { message: 'Engagement agreement details not found for country DEU' },
+          { status: 404 },
+        ),
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode='DEU'
+        skipSteps={['select_country']}
+        initialValues={{
+          ...employmentDefaultResponse.data.employment.basic_information,
+          mobile_number: `+49${phoneNumberMock}`,
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    screen.getByText(/Next Step/i).click();
+
+    await screen.findByText(/Step: Contract Details/i);
+    expect(warnSpy).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
   it('should go to the engagement agreement details step after creating the employment', async () => {
     render(
       <OnboardingFlow

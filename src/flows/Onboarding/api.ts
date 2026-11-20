@@ -749,7 +749,7 @@ export const engagementAgreementDetailsOptions = (
       });
 
       if (response.error || !response.data) {
-        throw new Error('Failed to fetch engagement agreement details');
+        throw new EngagementAgreementDetailsError(response.response?.status);
       }
 
       return response;
