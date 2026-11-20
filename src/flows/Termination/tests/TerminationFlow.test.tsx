@@ -678,6 +678,60 @@ describe('TerminationFlow', () => {
     });
   });
 
+  it.each([
+    { isWaived: true, shown: false },
+    { isWaived: false, shown: true },
+  ])(
+    'shows the offboarding service charge note only when the charge is not waived (waived: $isWaived)',
+    async ({ isWaived, shown }) => {
+      server.use(
+        http.get('*/v1/employments/*', () => {
+          return HttpResponse.json({
+            data: {
+              employment: {
+                ...employment.data.employment,
+                is_offboarding_service_charge_waived: isWaived,
+              },
+            },
+          });
+        }),
+      );
+      const currentDate = getYearMonthDate(new Date());
+
+      render(<TerminationFlow {...defaultProps} />, { wrapper: TestProviders });
+
+      await screen.findByText(/Step: Employee Communication/i);
+      await fillEmployeeCommunication();
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText(/Step: Termination Details/i);
+      await fillTerminationDetails({
+        proposedTerminationDate: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
+      });
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText(/Step: Paid Time Off/i);
+      await fillPTO({
+        agreePTO: 'no',
+        agrees_to_pto_amount_notes: 'whatever text',
+        timesheet_file: new File(['base64'], 'timesheet.pdf', {
+          type: 'application/pdf',
+        }),
+      });
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText(/Step: Additional Information/i);
+      await screen.findByRole('checkbox', {
+        name: /I agree to the procedures in this form/i,
+      });
+
+      expect(
+        screen.queryByText(/offboarding service charge \(Termination\)/i) !==
+          null,
+      ).toBe(shown);
+    },
+  );
+
   it("should trigger the 'onError' callback when the request fails", async () => {
     server.use(
       http.post('*/v1/offboardings', async () => {
