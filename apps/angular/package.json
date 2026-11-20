@@ -9,12 +9,16 @@
     "start:api": "node dev_server.js",
     "build": "ng build -c zoneless",
     "build:zone": "ng build -c zone",
-    "type-check": "tsc -p tsconfig.app.json --noEmit"
+    "type-check": "tsc -p tsconfig.app.json --noEmit",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@angular/cdk": "20.2.14",
     "@angular/common": "20.3.9",
     "@angular/compiler": "20.3.9",
     "@angular/core": "20.3.9",
+    "@angular/forms": "20.3.9",
+    "@angular/material": "20.2.14",
     "@angular/platform-browser": "20.3.9",
     "@remoteoss/remote-flows-core": "workspace:*",
     "@tanstack/angular-query-experimental": "5.107.1",
@@ -27,6 +31,7 @@
     "zone.js": "0.15.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
     "@angular/build": "20.3.9",
     "@angular/cli": "20.3.9",
     "@angular/compiler-cli": "20.3.9",

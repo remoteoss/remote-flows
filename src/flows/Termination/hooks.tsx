@@ -48,13 +48,15 @@ import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/Zen
 
 type TerminationHookProps = Omit<TerminationFlowProps, 'render'>;
 
+const getSteps = () => STEPS;
+
 export const useTermination = ({
   employmentId,
   options,
   initialValues: terminationInitialValues,
 }: TerminationHookProps) => {
   const { fieldValues, setFieldValues, stepState, previousStep, nextStep } =
-    useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
+    useStepState<keyof typeof STEPS, TerminationFormValues>(getSteps);
 
   const { data: employment, isLoading: isLoadingEmployment } =
     useEmploymentQuery({ employmentId, queryParams: { exclude_files: true } });
