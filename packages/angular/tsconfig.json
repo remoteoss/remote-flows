@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.lib.json",
+  "compilerOptions": {
+    "paths": {
+      "@remoteoss/remote-flows-core": ["../core/src/index.ts"],
+      "@remoteoss/remote-flows-core/*": ["../core/src/*"]
+    }
+  }
+}
