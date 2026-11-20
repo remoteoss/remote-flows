@@ -410,7 +410,7 @@ jobs:
           REPOSITORY: ${{ github.repository }}
         run: |
           files=$(gh api --paginate "repos/$REPOSITORY/pulls/$PR_NUMBER/files" --jq '.[].filename')
-          if grep -qE '^(apps/angular/|packages/core/|pnpm-lock\.yaml$|pnpm-workspace\.yaml$)' <<< "$files"; then
+          if grep -qE '^(apps/angular/|packages/angular/|packages/core/|pnpm-lock\.yaml$|pnpm-workspace\.yaml$)' <<< "$files"; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
