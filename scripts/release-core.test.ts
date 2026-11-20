@@ -1,5 +1,11 @@
 import { execFileSync } from 'child_process';
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'fs';
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'fs';
 import os from 'os';
 import path from 'path';
 import {
@@ -11,8 +17,11 @@ import {
 const git = (cwd: string, ...args: string[]) =>
   execFileSync('git', args, { cwd, stdio: 'ignore' });
 
+const repos: string[] = [];
+
 function createRepo() {
   const cwd = mkdtempSync(path.join(os.tmpdir(), 'release-core-'));
+  repos.push(cwd);
   mkdirSync(path.join(cwd, 'packages/core'), { recursive: true });
   writeFileSync(
     path.join(cwd, 'packages/core/package.json'),
@@ -33,8 +42,28 @@ const coreVersion = (cwd: string) =>
     .version;
 
 describe('release core bump', () => {
+  afterEach(() => {
+    repos.splice(0).forEach((cwd) => rmSync(cwd, { recursive: true }));
+  });
+
   it('finds no tag before the first release', () => {
     expect(getLastReleaseTag(createRepo())).toBeNull();
+  });
+
+  it('uses the newest tag when there are several', () => {
+    const cwd = createRepo();
+    git(cwd, 'tag', 'v1.70.0');
+    writeFileSync(path.join(cwd, 'packages/core/index.ts'), 'export {};\n');
+    git(cwd, 'add', '.');
+    git(cwd, 'commit', '-q', '-m', 'feat(core): new file');
+    git(cwd, 'tag', 'v1.71.0');
+
+    expect(getLastReleaseTag(cwd)).toBe('v1.71.0');
+    expect(bumpCoreIfChanged('1.72.0', cwd)).toBe(false);
+  });
+
+  it('fails loudly when git cannot compare against the tag', () => {
+    expect(() => hasCoreChangedSince('v9.9.9', createRepo())).toThrow();
   });
 
   it('bumps core on the first release when there is no tag', () => {

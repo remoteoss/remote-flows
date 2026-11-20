@@ -137,7 +137,7 @@ jobs:
         if: steps.version-check.outputs.changed == 'true' && steps.core-version.outputs.published == 'false'
         run: |
           pnpm run check-core-package
-          pnpm --filter @remoteoss/remote-flows-core publish --provenance --access public --no-git-checks --tag "${STEPS_CORE_VERSION_OUTPUTS_TAG}"
+          npm publish out/core-pack/*.tgz --provenance --access public --tag "${STEPS_CORE_VERSION_OUTPUTS_TAG}"
         env:
           STEPS_CORE_VERSION_OUTPUTS_TAG: ${{ steps.core-version.outputs.tag }}
 

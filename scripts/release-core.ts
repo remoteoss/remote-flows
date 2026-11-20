@@ -23,8 +23,11 @@ export function hasCoreChangedSince(tag: string, cwd = process.cwd()): boolean {
       stdio: 'ignore',
     });
     return false;
-  } catch {
-    return true;
+  } catch (error) {
+    if ((error as { status?: number }).status === 1) {
+      return true;
+    }
+    throw error;
   }
 }
 
