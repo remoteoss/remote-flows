@@ -16,3 +16,5 @@ cd dist && npm pack     # the tarball partners get; always publish from dist/, n
 ```
 
 Publish with `npm publish --tag alpha` from `dist/` so a plain install never picks it up.
+
+Core is a dependency pinned to an exact version in `package.json`. When core is republished and the Angular package needs the change, bump that pin and reinstall; the demo app builds against the published core, not the local `packages/core`.
