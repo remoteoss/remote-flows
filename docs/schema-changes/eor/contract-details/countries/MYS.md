@@ -4,11 +4,38 @@ Schema versions for employee onboarding in Malaysia.
 
 ## Current Version
 
-**Contract Details:** v5
+**Contract Details:** v6
 
 ## Contract Details
 
-### v5 - Current
+### v6 - Current
+
+**Type of change:** product
+
+**What changed:**
+
+- Adds four required `"yes"`/`"no"` questions: `third_party_work`, `non_solicitation_employees`, `non_solicitation_customers` and `non_interference_apply`
+- Answering `"yes"` to `third_party_work` requires `third_party_work_activities`, a non-empty string of up to 10,000 characters
+- Answering `"yes"` to a clause requires its duration, a whole number of months from 1 to 12: `non_solicitation_employees_number_of_months`, `non_solicitation_customer_number_of_months` or `non_interference_halt_period`
+- Non-compete is not offered in Malaysia
+- `available_pto` gets a reworded description: the legal minimum paid time off increases with the employee's tenure and differs for full-time and part-time employees. Copy only
+- Custom UIs must render the new questions and send them on every submission
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      MYS: { contract_details: 6 },
+    },
+  }}
+/>
+```
+
+---
+
+### v5
 
 **What changed:**
 
