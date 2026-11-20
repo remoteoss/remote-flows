@@ -83,13 +83,13 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Lebanon](./LBN.md)                | LBN  | v4  | v4              | Yes        | October 2026  |
 | [Lithuania](./LTU.md)              | LTU  | v6  | v6              | Yes        | October 2026  |
 | [Luxembourg](./LUX.md)             | LUX  | v5  | v5              | Yes        | October 2026  |
-| [Malaysia](./MYS.md)               | MYS  | v5  | v5              | Yes        | October 2026  |
+| [Malaysia](./MYS.md)               | MYS  | v6  | v6              | Yes        | November 2026 |
 | [Malta](./MLT.md)                  | MLT  | v5  | v5              | Yes        | October 2026  |
 | [Mauritius](./MUS.md)              | MUS  | v6  | v5              | Yes        | October 2026  |
 | [Mexico](./MEX.md)                 | MEX  | v9  | v9              | Yes        | October 2026  |
 | [Moldova](./MDA.md)                | MDA  | v6  | v6              | Yes        | November 2026 |
 | [Morocco](./MAR.md)                | MAR  | v8  | v8              | Yes        | October 2026  |
-| [Netherlands](./NLD.md)            | NLD  | v7  | v7              | Yes        | October 2026  |
+| [Netherlands](./NLD.md)            | NLD  | v8  | v8              | Yes        | November 2026 |
 | [New Zealand](./NZL.md)            | NZL  | v10 | v10             | Yes        | November 2026 |
 | [Nicaragua](./NIC.md)              | NIC  | v4  | v4              | Yes        | October 2026  |
 | [Nigeria](./NGA.md)                | NGA  | v5  | v5              | Yes        | October 2026  |
