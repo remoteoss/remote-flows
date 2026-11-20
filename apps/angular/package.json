@@ -9,7 +9,8 @@
     "start:api": "node dev_server.js",
     "build": "ng build -c zoneless",
     "build:zone": "ng build -c zone",
-    "type-check": "tsc -p tsconfig.app.json --noEmit"
+    "type-check": "tsc -p tsconfig.app.json --noEmit",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@angular/common": "20.3.9",
@@ -27,6 +28,7 @@
     "zone.js": "0.15.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
     "@angular/build": "20.3.9",
     "@angular/cli": "20.3.9",
     "@angular/compiler-cli": "20.3.9",

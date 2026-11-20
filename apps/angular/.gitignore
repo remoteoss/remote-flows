@@ -1,3 +1,5 @@
 .angular
 dist
 out-tsc
+playwright-report
+test-results
