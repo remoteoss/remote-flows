@@ -1,9 +1,11 @@
 import {
   queryOptions,
   useMutation,
+  useQueries,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import { employmentOptions } from '@remoteoss/remote-flows-core';
 import {
   DeclineTimeoffParams,
   getV1Timeoff,
@@ -127,6 +129,26 @@ export const useGetTimeOffRequests = (query: TimeOffRequestsQuery) => {
   return useQuery({
     ...timeOffRequestsOptions(client as Client, query),
     select: (data) => data.data ?? {},
+  });
+};
+
+/**
+ * The full names of the people behind these employments, keyed by employment ID, from one
+ * `GET /v1/employments/{employment_id}` per employment. An employment that fails to load has no name.
+ */
+export const useGetRequesterNames = (employmentIds: string[]) => {
+  const { client } = useClient();
+  return useQueries({
+    queries: employmentIds.map((employmentId) =>
+      employmentOptions(client as Client, employmentId),
+    ),
+    combine: (results) =>
+      Object.fromEntries(
+        results.flatMap(({ data }, index) => {
+          const fullName = data?.data?.data.employment?.full_name;
+          return fullName ? [[employmentIds[index], fullName] as const] : [];
+        }),
+      ),
   });
 };
 
