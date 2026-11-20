@@ -64,6 +64,7 @@
         "src/common/createHeadlessForm.tsx",
         "src/common/headlessForm.ts",
         "src/common/useHeadlessForm.ts",
+        "apps/angular/src/lib/core/form-engine.ts",
         "src/**/tests/**",
         "src/**/__tests__/**",
         "src/**/*.test.{ts,tsx}"
