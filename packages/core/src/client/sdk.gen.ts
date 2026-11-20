@@ -2300,6 +2300,14 @@ export const getV1EmployeeBankAccount = <ThrowOnError extends boolean = false>(
  *
  * Upserts the authenticated employee's bank account details.
  *
+ * For Global Payroll employees whose salary Remote pays out, a change to the bank details
+ * replaces the account with a new default account that the company admin must approve, as
+ * does sending a denied account's details again. Salary is held until the admin approves.
+ * Changing only the label, or sending exactly the same details again, keeps the account as
+ * it is. A change returns 422 while a payment is in progress, while the account is under
+ * compliance review, or when the account is used in a payment split. Deleted accounts are
+ * not listed.
+ *
  * This endpoint requires and returns country-specific data. The exact fields vary depending on which
  * country the authenticated employee's employment is in. Query the
  * [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint with `bank_account_details`
@@ -14284,6 +14292,10 @@ export const postV1Documents = <ThrowOnError extends boolean = false>(
  *
  * If there are validations errors, they are returned with a Conflict HTTP Status (409) and a descriptive message.
  * HTTP Status OK (200) is returned in case of success.
+ *
+ * A company restricted by Compliance also gets a 409: when it can't hire new employees, or when it is restricted
+ * from incentive pay and the employment's `contract_details` has a signing bonus. In the signing bonus case, the
+ * 409 is a resource error with the code `resource_restricted` for the employment.
  *
  * In case of the following error message:
  * `"Please reselect benefits - the previous selection is no longer available"`
