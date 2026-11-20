@@ -38,7 +38,7 @@ Schema versions for employee onboarding in the Netherlands.
 **What changed:**
 
 - The `probation_length` field moves to a dedicated Netherlands probation period component. It renders and validates the same for existing consumers, so no action is required.
-- Once the seniority block is enabled for the Netherlands, `probation_length` is forced to a hidden `0` for employments with a recognized seniority date.
+- For employments with a recognized seniority date, `probation_length` is forced to a hidden `0`.
 
 **Migration:**
 
@@ -58,7 +58,7 @@ Schema versions for employee onboarding in the Netherlands.
 
 **What changed:**
 
-- `contract_duration_type` no longer offers `fixed_term`, and `contract_end_date` is rejected, when the employee has a recognized seniority date (`has_seniority_date: "yes"`). Only `indefinite` is valid then. Gated by the `eor_seniority_block` and `eor_seniority_block_v2_ftc` feature flags, and employments created before the cutoff date are unaffected. Remote Admins can still override the block.
+- `contract_duration_type` no longer offers `fixed_term`, and `contract_end_date` is rejected, when the employee has a recognized seniority date (`has_seniority_date: "yes"`). Only `indefinite` is valid then. Employments created before the cutoff date are unaffected. Remote Admins can still override the block.
 - `contract_duration_type` no longer pre-fills a default, so the user has to choose an option.
 - The `contract_end_date` nested-field reference under the Fixed Term option moves from `nested_field` to `nested_fields` (a list), like every other country on the shared contract duration component. Custom renderers that read it directly need to expect a list.
 
