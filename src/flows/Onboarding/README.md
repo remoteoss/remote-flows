@@ -13,6 +13,7 @@ Welcome to the Onboarding flow docs
   - [OnboardingFlow](#onboardingflow)
     - [options.jsfModify properties](#optionsjsfmodify-properties)
     - [options.jsonSchemaVersionByCountry](#optionsjsonschemaversionbycountry)
+      - [Hiring models](#hiring-models)
     - [Example](#example)
   - [SelectCountryStep](#selectcountrystep)
   - [BasicInformationStep](#basicinformationstep)
@@ -512,7 +513,7 @@ The component accepts the following props:
 | `partnerExternalId` | string                                                                                                                                                                                                  | No       | A reference code for the employment record, private to your own integration                                                     |
 | `initialValues`     | Record<string, any>                                                                                                                                                                                     | No       | Initial values to pre-populate form fields. When editing an existing employment, server data takes precedence over these values |
 | `render`            | `({onboardingBag: ReturnType<typeof useOnboarding>, components: {SelectCountryStep, BasicInformationStep, ContractDetailsStep, BenefitsStep, SubmitButton, BackButton, OnboardingInvite, ReviewStep}})` | Yes      | render prop function with the params passed by the useOnboarding hook and the components available to use for this flow         |
-| `options`           | `{jsfModify: {basic_information?: JSFModify, contract_details?: JSFModify, benefits?: JSFModify}, jsonSchemaVersionByCountry:Record<CountryCode, {contract_details?: number}>}`                         | No       | See detailed explanation below                                                                                                  |
+| `options`           | `{jsfModify: {basic_information?: JSFModify, contract_details?: JSFModify, benefits?: JSFModify}, jsonSchemaVersionByCountry:Record<CountryCode, {contract_details?: ContractDetailsVersion}>}`         | No       | See detailed explanation below                                                                                                  |
 
 #### options.jsfModify properties
 
@@ -522,9 +523,11 @@ The `options.jsfModify` object accepts keys for each step (`basic_information`, 
 
 Specify which JSON schema versions to use for different steps by country. This allows you to opt-in to newer schema versions that may contain updated fields and validations.
 
+`contract_details` takes a `ContractDetailsVersion`: a number or `'latest'`, or an object that pins a version per hiring model, such as `{ cze_consulting: 7, cze_tea: 1 }` (see [Hiring models](#hiring-models)).
+
 **Supported countries and versions:**
 
-- `DEU` (Germany): `contract_details` schema, it only supports 1 and 2
+Each country's guide lists its contract details versions: [Contract details by country](../../../docs/schema-changes/eor/contract-details/countries/README.md).
 
 **Configuration:**
 
@@ -548,6 +551,28 @@ Specify which JSON schema versions to use for different steps by country. This a
 **Notes:**
 
 - If you specify an unsupported version, it defaults to version 1, you will have a warning in console
+
+##### Hiring models
+
+Some countries have more than one hiring model. The employment's `eor_hiring_model` says which one applies, and a model can have its own schema with its own version numbers. Pass an object to pin each model:
+
+```tsx
+<OnboardingFlow
+  companyId={companyId}
+  render={OnBoardingRender}
+  employmentId={employmentId}
+  options={{
+    jsonSchemaVersionByCountry: {
+      ESP: { contract_details: 1 },
+      CZE: { contract_details: { cze_consulting: 7, cze_tea: 1 } },
+    },
+  }}
+/>
+```
+
+- A number pins the country's default model, so every existing pin keeps working. Countries without hiring models, such as `ESP`, only take a number.
+- An object pins each model on its own. A model you leave out gets version 1, never another model's number.
+- The model comes from the employment, so for these countries the contract details schema loads once the employment has loaded.
 
 #### Example
 
