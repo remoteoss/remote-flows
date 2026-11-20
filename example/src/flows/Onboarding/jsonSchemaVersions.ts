@@ -237,7 +237,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   MYS: {
     // Malaysia
-    contract_details: 5,
+    contract_details: 6,
   },
   NGA: {
     // Nigeria
@@ -249,7 +249,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   NLD: {
     // Netherlands
-    contract_details: 7,
+    contract_details: 8,
   },
   NOR: {
     // Norway

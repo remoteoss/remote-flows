@@ -163,7 +163,7 @@ export const useEmploymentEngagementAgreementDetails = (
         },
       }).then((response) => {
         if (response.error || !response.data) {
-          throw new Error('Failed to fetch engagement agreement details');
+          throw new EngagementAgreementDetailsError(response.response?.status);
         }
         return response;
       });
@@ -707,36 +707,34 @@ export const useEmploymentOnboardingReservesStatus = (
   });
 };
 
-export const useEngagementAgreementDetailsSchema = (
-  countryCode: string,
-  initialValues: FieldValues | undefined,
-  options?: {
-    jsfModify?: OnboardingJsfModify;
-    queryOptions?: { enabled?: boolean };
-    jsonSchemaVersion?: number | 'latest';
-  },
-): Omit<HeadlessForm, 'form'> & {
-  data: JSONSchemaFormResultWithFieldsets | null;
-  isLoading: boolean;
-} => {
-  const { client } = useClient();
-  const jsonSchemaQueryParam = options?.jsonSchemaVersion
-    ? {
-        json_schema_version: options.jsonSchemaVersion,
-      }
-    : {};
+export class EngagementAgreementDetailsError extends Error {
+  status?: number;
 
-  const { data: schema, isLoading } = useQuery({
+  constructor(status?: number) {
+    super('Failed to fetch engagement agreement details');
+    this.status = status;
+  }
+}
+
+export const engagementAgreementDetailsOptions = (
+  client: Client,
+  countryCode: string,
+  params?: {
+    jsonSchemaVersion?: number | 'latest';
+    employmentId?: string;
+  },
+) =>
+  queryOptions({
     queryKey: [
       'engagement-agreement-details',
       countryCode,
-      options?.jsonSchemaVersion,
-    ],
+      params?.jsonSchemaVersion,
+      params?.employmentId,
+    ] as const,
     retry: false,
-    enabled: options?.queryOptions?.enabled ?? !!countryCode,
     queryFn: async () => {
       const response = await getV1CountriesCountryCodeForm({
-        client: client as Client,
+        client,
         headers: {
           Authorization: ``,
         },
@@ -744,15 +742,43 @@ export const useEngagementAgreementDetailsSchema = (
           country_code: countryCode,
           form: 'engagement_agreement_details',
         },
-        query: jsonSchemaQueryParam,
+        query: {
+          ...(params?.jsonSchemaVersion && {
+            json_schema_version: params.jsonSchemaVersion,
+          }),
+          ...(params?.employmentId && { employment_id: params.employmentId }),
+        },
       });
 
       if (response.error || !response.data) {
-        throw new Error('Failed to fetch engagement agreement details');
+        throw new EngagementAgreementDetailsError(response.response?.status);
       }
 
       return response;
     },
+  });
+
+export const useEngagementAgreementDetailsSchema = (
+  countryCode: string,
+  initialValues: FieldValues | undefined,
+  options?: {
+    jsfModify?: OnboardingJsfModify;
+    queryOptions?: { enabled?: boolean };
+    jsonSchemaVersion?: number | 'latest';
+    employmentId?: string;
+  },
+): Omit<HeadlessForm, 'form'> & {
+  data: JSONSchemaFormResultWithFieldsets | null;
+  isLoading: boolean;
+} => {
+  const { client } = useClient();
+
+  const { data: schema, isLoading } = useQuery({
+    ...engagementAgreementDetailsOptions(client as Client, countryCode, {
+      jsonSchemaVersion: options?.jsonSchemaVersion,
+      employmentId: options?.employmentId,
+    }),
+    enabled: options?.queryOptions?.enabled ?? !!countryCode,
     select: ({ data }) => data?.data || {},
   });
 

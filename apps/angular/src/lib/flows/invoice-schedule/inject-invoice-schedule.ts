@@ -1,0 +1,138 @@
+import { computed, inject, signal, Signal } from '@angular/core';
+import {
+  injectMutation,
+  injectQuery,
+} from '@tanstack/angular-query-experimental';
+import {
+  buildCreateInvoiceScheduleSchema,
+  contractorCurrenciesOptions,
+  createInvoiceScheduleMutation,
+  employmentOptions,
+  selectContractorCurrencyCodes,
+  selectEmployment,
+} from '@remoteoss/remote-flows-core';
+import { REMOTE_CLIENT } from '../../provide-remote-flows';
+import { createFormStore } from '../../forms/form-store';
+
+type InvoiceScheduleOptions = {
+  employmentId: Signal<string>;
+  defaultValues?: Record<string, unknown>;
+};
+
+function rejectOnError<T extends { error?: unknown; response?: Response }>(
+  queryFn: () => Promise<T>,
+) {
+  return async () => {
+    const result = await queryFn();
+    if (result.error) {
+      throw new Error(
+        `Request failed with status ${result.response?.status ?? 'unknown'}`,
+      );
+    }
+    return result;
+  };
+}
+
+export function injectInvoiceSchedule({
+  employmentId,
+  defaultValues,
+}: InvoiceScheduleOptions) {
+  const client = inject(REMOTE_CLIENT);
+
+  const employment = injectQuery(() => {
+    const options = employmentOptions(client, employmentId());
+    return {
+      ...options,
+      queryFn: rejectOnError(options.queryFn),
+      enabled: Boolean(employmentId()),
+      select: selectEmployment,
+    };
+  });
+
+  const currencies = injectQuery(() => {
+    const options = contractorCurrenciesOptions(client, employmentId());
+    return {
+      ...options,
+      queryFn: rejectOnError(options.queryFn),
+      retry: false as const,
+      enabled: Boolean(employmentId()),
+      select: selectContractorCurrencyCodes,
+    };
+  });
+
+  const createSchedule = injectMutation(() =>
+    createInvoiceScheduleMutation(client),
+  );
+
+  const isContractorOfRecord = computed(
+    () =>
+      (employment.data() as { contractor_type?: string } | undefined)
+        ?.contractor_type === 'cor',
+  );
+
+  const schema = computed(() => {
+    const codes = currencies.data();
+    if (!codes) {
+      return undefined;
+    }
+    return buildCreateInvoiceScheduleSchema({
+      currencies: codes,
+      isContractorOfRecord: isContractorOfRecord(),
+      includeFieldsets: false,
+    });
+  });
+
+  const store = createFormStore({
+    schema: schema as Signal<Record<string, unknown> | undefined>,
+    defaultValues,
+  });
+
+  const createdScheduleId = signal<string | null>(null);
+  const isValidating = signal(false);
+
+  const error = computed(
+    () => employment.error() ?? currencies.error() ?? null,
+  );
+
+  const isLoading = computed(
+    () =>
+      !employmentId() ||
+      employment.isPending() ||
+      (currencies.isPending() && !schema()),
+  );
+
+  async function onSubmit() {
+    if (error() || !schema() || isValidating() || createSchedule.isPending()) {
+      return;
+    }
+    createdScheduleId.set(null);
+    isValidating.set(true);
+    try {
+      const { hasErrors } = await store.submit();
+      if (hasErrors) {
+        return;
+      }
+      const values = await store.parse();
+      const response = await createSchedule.mutateAsync({
+        employmentId: employmentId(),
+        values,
+      });
+      const id = response.data?.data?.successes?.[0]?.id;
+      if (id) {
+        createdScheduleId.set(id);
+      }
+    } finally {
+      isValidating.set(false);
+    }
+  }
+
+  return {
+    fields: store.fields,
+    isContractorOfRecord,
+    isLoading,
+    error,
+    isSubmitting: computed(() => isValidating() || createSchedule.isPending()),
+    createdScheduleId,
+    onSubmit,
+  };
+}
