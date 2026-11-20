@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { sharedProviders } from './providers';
+import { sharedProviders } from './shared-providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [

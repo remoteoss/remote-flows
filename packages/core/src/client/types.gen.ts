@@ -1433,6 +1433,10 @@ export type Employment = {
    */
   manager?: string;
   /**
+   * Whether this employment takes engagement agreement details. It depends on the country and the hiring model of the active contract. When false, saving engagement agreement details for this employment returns a 404.
+   */
+  requires_engagement_agreement_details?: boolean;
+  /**
    * The email address the employee uses to log in to the Remote platform.
    */
   login_email: string;
@@ -3500,10 +3504,10 @@ export type ImportJobRow = {
         name: string;
         roles?: Array<{
           user_type:
+            | 'contractor'
+            | 'admin'
             | 'employer'
             | 'employee'
-            | 'admin'
-            | 'contractor'
             | 'freelancer';
         }>;
         slug: string;
@@ -4501,17 +4505,17 @@ export type AccountsAssignedRoles = Array<{
   data_scope?:
     | 'all'
     | 'employment_entities'
-    | 'employment_countries'
-    | 'onboarding_reports'
-    | 'direct_reports'
-    | 'direct_and_indirect_reports'
-    | 'assigned_billing_legal_entities'
-    | 'employment_departments'
-    | 'employment_company_structure_nodes'
-    | 'secondary_reports'
     | 'external'
     | 'internal'
-    | 'rps';
+    | 'rps'
+    | 'secondary_reports'
+    | 'direct_reports'
+    | 'assigned_billing_legal_entities'
+    | 'employment_countries'
+    | 'direct_and_indirect_reports'
+    | 'employment_departments'
+    | 'employment_company_structure_nodes'
+    | 'onboarding_reports';
   name: string;
   slug: string;
   type?: 'default' | 'custom' | 'template' | 'owner';
@@ -5060,6 +5064,10 @@ export type ImportJobRows = {
  */
 export type BulkEmploymentImportJob = {
   /**
+   * Identifies the columns of the job's current file: its headers, in order. It changes when a file with other columns is uploaded.
+   */
+  column_data_hash?: string | null;
+  /**
    * ImportJobColumnMapping
    *
    * The column mapping for the import job. For times when imported data columns do not match the schema fields and
@@ -5095,9 +5103,30 @@ export type BulkEmploymentImportJob = {
       sample_data?: string | null;
     }>;
     /**
+     * The names of file columns last mapped to fields this import doesn't have. Unless mapped again, they are not imported.
+     */
+    unavailable_columns?: Array<string>;
+    /**
      * The number of columns that have not been mapped
      */
     unmapped_column_count: number;
+    /**
+     * The file columns not mapped to any field
+     */
+    unmapped_columns?: Array<{
+      /**
+       * The index of the data column in the file
+       */
+      index: number;
+      /**
+       * The name of the data column
+       */
+      name: string;
+      /**
+       * A sample data value from the data column
+       */
+      sample_data?: string | null;
+    }>;
     /**
      * The number of required schema field paths that have not been mapped
      */
@@ -6565,9 +6594,30 @@ export type ImportJobColumnMapping = {
     sample_data?: string | null;
   }>;
   /**
+   * The names of file columns last mapped to fields this import doesn't have. Unless mapped again, they are not imported.
+   */
+  unavailable_columns?: Array<string>;
+  /**
    * The number of columns that have not been mapped
    */
   unmapped_column_count: number;
+  /**
+   * The file columns not mapped to any field
+   */
+  unmapped_columns?: Array<{
+    /**
+     * The index of the data column in the file
+     */
+    index: number;
+    /**
+     * The name of the data column
+     */
+    name: string;
+    /**
+     * A sample data value from the data column
+     */
+    sample_data?: string | null;
+  }>;
   /**
    * The number of required schema field paths that have not been mapped
    */
@@ -7415,7 +7465,8 @@ export type ResourceErrorResponse = {
       | 'resource_invalid_state'
       | 'resource_not_eligible'
       | 'resource_not_found'
-      | 'resource_not_supported_for_country';
+      | 'resource_not_supported_for_country'
+      | 'resource_restricted';
     /**
      * A human-readable message explaining the error and how to resolve it.
      */
@@ -8387,6 +8438,15 @@ export type ResponseTimeoffType =
 
 /**
  * ValidationError
+ *
+ * A request that fails this operation's schema gets errors keyed by the field's path joined
+ * with `/`, never nested, each a list of messages, and no `message`
+ * (`{"errors": {"params/reason": ["Missing field"]}}`,
+ * `{"errors": {"params/reason": ["Invalid string. Got: integer"]}}`). A request the handler
+ * refuses is usually keyed by field and nested for embedded fields
+ * (`{"errors": {"address": {"city": ["can't be blank"]}}}`); it may carry a `message`, and
+ * some endpoints key `errors` by their own ids instead.
+ *
  */
 export type ValidationError = {
   errors: {
@@ -9001,6 +9061,15 @@ export type UpdateIncentiveParams = CommonIncentiveParams & {
    */
   type?: string;
 };
+
+/**
+ * ConflictOrResourceErrorResponse
+ *
+ * Returned when the request conflicts with the current state of a resource (HTTP 409): either a plain message, or a structured error whose `message` object carries a machine-readable `code`.
+ */
+export type ConflictOrResourceErrorResponse =
+  | ConflictResponse
+  | ResourceErrorResponse;
 
 /**
  * ContractorInvoiceSequence
@@ -26956,7 +27025,7 @@ export type PostV1EmploymentsEmploymentIdInviteErrors = {
   /**
    * Conflict
    */
-  409: ConflictResponse;
+  409: ConflictOrResourceErrorResponse;
   /**
    * Unprocessable Entity
    */
@@ -31337,7 +31406,12 @@ export type PutV2EmploymentsEmploymentIdAdministrativeDetailsData = {
      */
     employment_id: string;
   };
-  query?: never;
+  query?: {
+    /**
+     * Version of the administrative_details form schema
+     */
+    administrative_details_json_schema_version?: number | 'latest';
+  };
   url: '/v2/employments/{employment_id}/administrative-details';
 };
 

@@ -186,6 +186,81 @@ jobs:
           github-comment: true
           scope: ${{ secrets.VERCEL_ORG_ID }}
 
+  deploy-angular:
+    name: Deploy Angular App Preview
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      preview-url: ${{ steps.vercel-angular.outputs.preview-url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Deploy angular app to vercel
+        id: vercel-angular
+        uses: amondnet/vercel-action@de09aeac2ace6599ec9b11ef87558759a496bac4 # v42.3.0
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_ANGULAR_PROJECT_ID }}
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+          github-comment: false
+
+  angular-e2e:
+    name: Angular E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [deploy-angular]
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Use Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.15.0'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(node -p "require('./apps/angular/package.json').devDependencies['@playwright/test']")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+
+      - name: Install Playwright browsers
+        working-directory: ./apps/angular
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        env:
+          BASE_URL: ${{ needs.deploy-angular.outputs.preview-url }}
+          VERCEL_ANGULAR_BYPASS_TOKEN: ${{ secrets.VERCEL_ANGULAR_BYPASS_TOKEN }}
+        working-directory: ./apps/angular
+        run: pnpm exec playwright test
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: ${{ !cancelled() }}
+        with:
+          name: angular-playwright-report
+          path: apps/angular/playwright-report/
+          retention-days: 30
+
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
@@ -343,3 +418,24 @@ jobs:
           vercel-args: '--prod'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-comment: true
+
+  deploy-angular-production:
+    name: Deploy Angular App to Production
+    needs: [lint-and-format, build-and-exports, tests, angular-e2e]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Promote angular app to production
+        uses: amondnet/vercel-action@de09aeac2ace6599ec9b11ef87558759a496bac4 # v42.3.0
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_ANGULAR_PROJECT_ID }}
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+          github-comment: false
+          vercel-args: '--prod'

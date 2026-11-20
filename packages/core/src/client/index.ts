@@ -414,6 +414,7 @@ export type {
   CompanyWithTokensResponse,
   Compensation,
   CompleteOnboarding,
+  ConflictOrResourceErrorResponse,
   ConflictResponse,
   ContractAmendment,
   ContractAmendmentAutomatableResponse,

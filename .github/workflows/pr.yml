@@ -445,6 +445,59 @@ jobs:
           github-comment: true
           scope: ${{ secrets.VERCEL_ORG_ID }}
 
+  angular-e2e:
+    name: Angular E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [deploy-angular]
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Use Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.15.0'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(node -p "require('./apps/angular/package.json').devDependencies['@playwright/test']")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+
+      - name: Install Playwright browsers
+        working-directory: ./apps/angular
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        env:
+          BASE_URL: ${{ needs.deploy-angular.outputs.preview-url }}
+          VERCEL_ANGULAR_BYPASS_TOKEN: ${{ secrets.VERCEL_ANGULAR_BYPASS_TOKEN }}
+        working-directory: ./apps/angular
+        run: pnpm exec playwright test
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: ${{ !cancelled() }}
+        with:
+          name: angular-playwright-report
+          path: apps/angular/playwright-report/
+          retention-days: 30
+
   seed-preview-links:
     name: Seed Preview Employments
     runs-on: ubuntu-latest
