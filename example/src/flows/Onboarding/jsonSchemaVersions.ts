@@ -305,7 +305,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   SLV: {
     // El Salvador
-    contract_details: 4,
+    contract_details: 5,
   },
   SRB: {
     // Serbia

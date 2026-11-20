@@ -4,11 +4,34 @@ Schema versions for employee onboarding in El Salvador.
 
 ## Current Version
 
-**Contract Details:** v4
+**Contract Details:** v5
 
 ## Contract Details
 
-### v4 - Current
+### v5 - Current
+
+**Type of change:** compliance
+
+**What changed:**
+
+- New `work_equipment` field (titled "Equipment provided"): a text area where the employer lists the work equipment and its quantity, quality and condition. It is required when `work_equipment_provided_by` is `"provided_by_client"`. Custom UIs must render it in that case and send it (up to 1000 characters); leave it out when `work_equipment_provided_by` is `"provided_by_employee"`.
+- To keep the previous shape when saving, pin v4.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      SLV: { contract_details: 5 },
+    },
+  }}
+/>
+```
+
+---
+
+### v4
 
 **Type of change:** compliance
 
