@@ -1,3 +1,4 @@
+import { employmentOptions } from '@remoteoss/remote-flows-core';
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
   Employment,
@@ -269,6 +270,8 @@ export const useOnboarding = ({
         enabled: Boolean(
           !!internalCountryCode &&
           !!engagementAgreementDetailsEmploymentId &&
+          !!employment &&
+          employment.requires_engagement_agreement_details !== false &&
           options?.features?.includes('dynamic_steps'),
         ),
       },
@@ -1082,6 +1085,23 @@ export const useOnboarding = ({
         employmentId: newEmploymentId,
       },
     );
+    warmedEngagementAgreementDetailsRef.current = null;
+    let requiresEngagementAgreementDetails = true;
+    try {
+      const createdEmployment = await queryClient.fetchQuery(
+        employmentOptions(client as Client, newEmploymentId, {
+          exclude_files: true,
+        }),
+      );
+      requiresEngagementAgreementDetails =
+        createdEmployment.data?.data?.employment
+          ?.requires_engagement_agreement_details !== false;
+    } catch (error) {
+      console.warn('Error fetching the created employment:', error);
+    }
+    if (!requiresEngagementAgreementDetails) {
+      return;
+    }
     warmedEngagementAgreementDetailsRef.current = queryOptions;
     try {
       await queryClient.query(queryOptions);
