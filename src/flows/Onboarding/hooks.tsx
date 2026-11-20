@@ -288,6 +288,11 @@ export const useOnboarding = ({
     engagementAgreementDetailsSchema.fields.length > 0,
   );
 
+  const [
+    isPrefetchingEngagementAgreementDetails,
+    setIsPrefetchingEngagementAgreementDetails,
+  ] = useState(false);
+
   const warmedEngagementAgreementDetailsRef = useRef<ReturnType<
     typeof engagementAgreementDetailsOptions
   > | null>(null);
@@ -1086,32 +1091,37 @@ export const useOnboarding = ({
       },
     );
     warmedEngagementAgreementDetailsRef.current = null;
-    let requiresEngagementAgreementDetails = true;
+    setIsPrefetchingEngagementAgreementDetails(true);
     try {
-      const createdEmployment = await queryClient.query(
-        employmentOptions(client as Client, newEmploymentId, {
-          exclude_files: true,
-        }),
-      );
-      requiresEngagementAgreementDetails =
-        createdEmployment.data?.data?.employment
-          ?.requires_engagement_agreement_details !== false;
-    } catch (error) {
-      console.warn('Error fetching the created employment:', error);
-    }
-    if (!requiresEngagementAgreementDetails) {
-      return;
-    }
-    warmedEngagementAgreementDetailsRef.current = queryOptions;
-    try {
-      await queryClient.query(queryOptions);
-    } catch (error) {
-      const isExpectedNotFound =
-        error instanceof EngagementAgreementDetailsError &&
-        error.status === 404;
-      if (!isExpectedNotFound) {
-        console.warn('Error prefetching engagement agreement details:', error);
+      let requiresEngagementAgreementDetails = true;
+      try {
+        const createdEmployment = await queryClient.query(
+          employmentOptions(client as Client, newEmploymentId, {
+            exclude_files: true,
+          }),
+        );
+        requiresEngagementAgreementDetails =
+          createdEmployment.data?.data?.employment
+            ?.requires_engagement_agreement_details !== false;
+      } catch (error) {
+        console.warn('Error fetching the created employment:', error);
       }
+      if (!requiresEngagementAgreementDetails) {
+        return;
+      }
+      warmedEngagementAgreementDetailsRef.current = queryOptions;
+      try {
+        await queryClient.query(queryOptions);
+      } catch (error) {
+        const isExpectedNotFound =
+          error instanceof EngagementAgreementDetailsError &&
+          error.status === 404;
+        if (!isExpectedNotFound) {
+          throw error;
+        }
+      }
+    } finally {
+      setIsPrefetchingEngagementAgreementDetails(false);
     }
   }
 
@@ -1185,6 +1195,7 @@ export const useOnboarding = ({
           });
           if (!response.error) {
             await refetchEmployment();
+            await prefetchEngagementAgreementDetails(internalEmploymentId);
           }
           return response;
         }
@@ -1382,6 +1393,7 @@ export const useOnboarding = ({
      * Loading state indicating if the onboarding mutation is in progress
      */
     isSubmitting:
+      isPrefetchingEngagementAgreementDetails ||
       createEmploymentMutation.isPending ||
       updateEmploymentMutation.isPending ||
       updateBenefitsOffersMutation.isPending ||

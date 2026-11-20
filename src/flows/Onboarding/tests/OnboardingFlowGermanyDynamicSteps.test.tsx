@@ -33,6 +33,7 @@ import { PrettifiedValuesRenderer } from '@/src/tests/components/PrettifiedValue
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
+const submittingHistory: boolean[] = [];
 
 const phoneNumberMock = '1701234567';
 
@@ -47,6 +48,8 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
       OnboardingInvite,
       SelectCountryStep,
     } = components;
+
+    submittingHistory.push(onboardingBag.isSubmitting);
 
     if (onboardingBag.isLoading) {
       return <div data-testid='spinner'>Loading...</div>;
@@ -806,6 +809,89 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
 
     (await screen.findByText(/Next Step/i)).click();
 
+    await screen.findByText(/Step: Engagement Agreement Details/i);
+  });
+
+  it('should stay on basic information when the engagement agreement schema fails to load, and recover on retry', async () => {
+    let failSchema = true;
+    server.use(
+      http.get('*/v1/countries/DEU/engagement_agreement_details*', () =>
+        failSchema
+          ? HttpResponse.json({ message: 'boom' }, { status: 500 })
+          : HttpResponse.json(engagementAgreementDetailsSchemaV1Germany),
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode='DEU'
+        skipSteps={['select_country']}
+        initialValues={{
+          ...employmentDefaultResponse.data.employment.basic_information,
+          mobile_number: `+49${phoneNumberMock}`,
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    screen.getByText(/Next Step/i).click();
+
+    await waitFor(() => expect(mockOnError).toHaveBeenCalled());
+    expect(screen.getByText(/Step: Basic Information/i)).toBeInTheDocument();
+
+    failSchema = false;
+    screen.getByText(/Next Step/i).click();
+
+    await screen.findByText(/Step: Engagement Agreement Details/i);
+  });
+
+  it('should keep isSubmitting true while the engagement agreement schema is being prefetched', async () => {
+    let schemaRequested = false;
+    let eligibilityDone = false;
+    let releaseSchema: () => void = () => {};
+    const schemaGate = new Promise<void>((resolve) => {
+      releaseSchema = resolve;
+    });
+    server.use(
+      http.post('*/v1/employments/*/contract-eligibility', () => {
+        eligibilityDone = true;
+        return HttpResponse.json({ data: { status: 'ok' } });
+      }),
+      http.get('*/v1/countries/DEU/engagement_agreement_details*', async () => {
+        schemaRequested = true;
+        await schemaGate;
+        return HttpResponse.json(engagementAgreementDetailsSchemaV1Germany);
+      }),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode='DEU'
+        skipSteps={['select_country']}
+        initialValues={{
+          ...employmentDefaultResponse.data.employment.basic_information,
+          mobile_number: `+49${phoneNumberMock}`,
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    submittingHistory.length = 0;
+    screen.getByText(/Next Step/i).click();
+
+    await waitFor(() => expect(schemaRequested && eligibilityDone).toBe(true));
+    await waitFor(() => expect(submittingHistory).toContain(true));
+    expect(
+      submittingHistory.slice(submittingHistory.indexOf(true)),
+    ).not.toContain(false);
+
+    releaseSchema();
     await screen.findByText(/Step: Engagement Agreement Details/i);
   });
 });
