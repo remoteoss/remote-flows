@@ -19,6 +19,7 @@
     "@angular/forms": "20.3.9",
     "@angular/material": "20.2.14",
     "@angular/platform-browser": "20.3.9",
+    "@remoteoss/remote-flows-core": "workspace:*",
     "@tanstack/angular-query-experimental": "5.107.1",
     "axios": "1.20.0",
     "dotenv": "18.0.8",
