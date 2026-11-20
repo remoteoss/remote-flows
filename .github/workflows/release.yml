@@ -112,6 +112,35 @@ jobs:
         env:
           STEPS_VERSION_CHECK_OUTPUTS_VERSION: ${{ steps.version-check.outputs.version }}
 
+      - name: Check if core version is published
+        if: steps.version-check.outputs.changed == 'true'
+        id: core-version
+        run: |
+          CORE_VERSION=$(node -p "require('./packages/core/package.json').version")
+          echo "version=$CORE_VERSION" >> $GITHUB_OUTPUT
+
+          if npm view "@remoteoss/remote-flows-core@$CORE_VERSION" version >/dev/null 2>&1; then
+            echo "published=true" >> $GITHUB_OUTPUT
+            echo "Core $CORE_VERSION is already on npm"
+            exit 0
+          fi
+          echo "published=false" >> $GITHUB_OUTPUT
+
+          LATEST_CORE=$(npm view @remoteoss/remote-flows-core dist-tags.latest 2>/dev/null || echo "")
+          if [ -n "$LATEST_CORE" ] && [ "$(printf '%s\n' "$CORE_VERSION" "$LATEST_CORE" | sort -V | head -n1)" = "$CORE_VERSION" ]; then
+            echo "tag=legacy" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish core to npm
+        if: steps.version-check.outputs.changed == 'true' && steps.core-version.outputs.published == 'false'
+        run: |
+          pnpm run check-core-package
+          pnpm --filter @remoteoss/remote-flows-core publish --provenance --access public --no-git-checks --tag "${STEPS_CORE_VERSION_OUTPUTS_TAG}"
+        env:
+          STEPS_CORE_VERSION_OUTPUTS_TAG: ${{ steps.core-version.outputs.tag }}
+
       - name: Publish to npm
         if: steps.version-check.outputs.changed == 'true'
         run: |
@@ -141,30 +170,3 @@ jobs:
         if: steps.version-check.outputs.changed == 'false'
         run: |
           echo "No version change detected. Skipping release."
-
-      - name: Check if core version is published
-        id: core-version
-        run: |
-          CORE_VERSION=$(node -p "require('./packages/core/package.json').version")
-          echo "version=$CORE_VERSION" >> $GITHUB_OUTPUT
-
-          if npm view "@remoteoss/remote-flows-core@$CORE_VERSION" version >/dev/null 2>&1; then
-            echo "published=true" >> $GITHUB_OUTPUT
-            echo "Core $CORE_VERSION is already on npm"
-          else
-            echo "published=false" >> $GITHUB_OUTPUT
-            echo "Core $CORE_VERSION is not on npm yet"
-          fi
-
-          case "$CORE_VERSION" in
-            *-*) PRERELEASE=${CORE_VERSION#*-}; echo "tag=${PRERELEASE%%.*}" >> $GITHUB_OUTPUT ;;
-            *) echo "tag=latest" >> $GITHUB_OUTPUT ;;
-          esac
-
-      - name: Publish core to npm
-        if: steps.core-version.outputs.published == 'false'
-        run: |
-          pnpm run check-core-package
-          pnpm --filter @remoteoss/remote-flows-core publish --provenance --access public --no-git-checks --tag "${STEPS_CORE_VERSION_OUTPUTS_TAG}"
-        env:
-          STEPS_CORE_VERSION_OUTPUTS_TAG: ${{ steps.core-version.outputs.tag }}
