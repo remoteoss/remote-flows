@@ -4,20 +4,20 @@ import { getTimeOffRequestDetails } from '@/src/flows/TimeOff/utils';
 
 export function ReviewStep({ render, children }: TimeOffReviewStepProps) {
   const { timeOffBag } = useTimeOffReviewContext();
-  const { timeOffRequest } = timeOffBag;
+  const { timeOffRequest, requesterName } = timeOffBag;
 
   if (!timeOffRequest) {
     return null;
   }
 
-  const details = getTimeOffRequestDetails(timeOffRequest);
+  const details = getTimeOffRequestDetails(timeOffRequest, requesterName);
 
   return (
     <div
       className={`RemoteFlows__ReviewStep RemoteFlows__ReviewStep--${timeOffRequest.status}`}
     >
       {render ? (
-        render({ timeOffRequest, details })
+        render({ timeOffRequest, requesterName, details })
       ) : (
         <dl className='RemoteFlows__ReviewStep__Details'>
           {details.map((detail) => (

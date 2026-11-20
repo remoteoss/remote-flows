@@ -82,6 +82,27 @@ function mockTimeOffRequest(
   return requestedIds;
 }
 
+function mockRequester(response: () => Response) {
+  const requestedEmploymentIds: string[] = [];
+  server.use(
+    http.get('*/v1/employments/:id', ({ params }) => {
+      requestedEmploymentIds.push(params.id as string);
+      return response();
+    }),
+  );
+  return requestedEmploymentIds;
+}
+
+const requesterResponse = () =>
+  HttpResponse.json({
+    data: {
+      employment: {
+        id: timeOffRequestResponse.data.timeoff.employment_id,
+        full_name: 'Ada Lovelace',
+      },
+    },
+  });
+
 function renderApproval(
   approveButtonProps: Partial<TimeOffApproveButtonProps> = {},
 ) {
@@ -332,12 +353,45 @@ describe('TimeOffFlow', () => {
     },
   );
 
+  it('shows who requested the request under review', async () => {
+    mockTimeOffRequest();
+    const requestedEmploymentIds = mockRequester(requesterResponse);
+    renderFlow('timeoff-123');
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+
+    expect(await screen.findByText('Ada Lovelace')).toBeInTheDocument();
+    expect(screen.getByText('Requested by')).toBeInTheDocument();
+    expect(requestedEmploymentIds).toEqual([
+      timeOffRequestResponse.data.timeoff.employment_id,
+    ]);
+  });
+
+  it('still reviews and decides on the request when its requester fails to load', async () => {
+    mockTimeOffRequest();
+    const requestedEmploymentIds = mockRequester(() =>
+      HttpResponse.json({ message: 'Forbidden' }, { status: 403 }),
+    );
+    renderApproval();
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+
+    expect(await screen.findByText('Paid time off')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(requestedEmploymentIds).toHaveLength(1);
+    });
+    expect(screen.queryByText('Requested by')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Approve' })).toBeEnabled();
+  });
+
   it('lets the consumer render the request details', async () => {
     mockTimeOffRequest();
+    mockRequester(requesterResponse);
     renderFlow('timeoff-123', {
-      render: ({ timeOffRequest, details }) => (
+      render: ({ timeOffRequest, requesterName, details }) => (
         <ul>
           <li>{timeOffRequest.timezone}</li>
+          <li>Requester: {requesterName}</li>
           {details.map((detail) => (
             <li key={detail.name}>
               {detail.name}: {detail.value}
@@ -351,6 +405,10 @@ describe('TimeOffFlow', () => {
 
     expect(await screen.findByText('Europe/Madrid')).toBeInTheDocument();
     expect(screen.getByText('status: Requested')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Requester: Ada Lovelace'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('requested_by: Ada Lovelace')).toBeInTheDocument();
     expect(screen.queryByText('Status')).not.toBeInTheDocument();
   });
 
