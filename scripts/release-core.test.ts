@@ -62,6 +62,16 @@ describe('release core bump', () => {
     expect(bumpCoreIfChanged('1.72.0', cwd)).toBe(false);
   });
 
+  it('uses the highest version tag, not the nearest one, once a hotfix tag is merged in', () => {
+    const cwd = createRepo();
+    git(cwd, 'tag', 'v1.72.0');
+    writeFileSync(path.join(cwd, 'package.json'), '{"hotfix":true}\n');
+    git(cwd, 'commit', '-q', '-am', 'fix: hotfix');
+    git(cwd, 'tag', 'v1.71.2');
+
+    expect(getLastReleaseTag(cwd)).toBe('v1.72.0');
+  });
+
   it('fails loudly when git cannot compare against the tag', () => {
     expect(() => hasCoreChangedSince('v9.9.9', createRepo())).toThrow();
   });

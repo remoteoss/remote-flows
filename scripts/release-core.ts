@@ -5,15 +5,15 @@ import path from 'path';
 const CORE_DIR = 'packages/core';
 
 export function getLastReleaseTag(cwd = process.cwd()): string | null {
-  try {
-    return execFileSync(
-      'git',
-      ['describe', '--tags', '--abbrev=0', '--match', 'v*'],
-      { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
-    ).trim();
-  } catch {
-    return null;
-  }
+  const tags = execFileSync(
+    'git',
+    ['tag', '--merged', 'HEAD', '--list', 'v*', '--sort=-v:refname'],
+    { cwd, encoding: 'utf8' },
+  )
+    .trim()
+    .split('\n')
+    .filter(Boolean);
+  return tags[0] ?? null;
 }
 
 export function hasCoreChangedSince(tag: string, cwd = process.cwd()): boolean {
