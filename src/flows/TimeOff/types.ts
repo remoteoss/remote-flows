@@ -1,6 +1,7 @@
 import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import {
   DeclineTimeoffParams,
+  Employment,
   NullableApproverId,
   Timeoff,
   TimeoffErrorResponse,
@@ -115,20 +116,64 @@ export type TimeOffDeclineOptions = {
 };
 
 /**
- * One detail of a time-off request, labelled and formatted for display.
+ * One detail of a time-off request, labelled and formatted for display. Read details by `name`:
+ * which ones a request has depends on its status and data, and new names can be added.
  */
 export type TimeOffRequestDetail = {
   name:
-    | 'leave_policy'
     | 'status'
-    | 'requested_by'
+    | 'team_member'
+    | 'decline_reason'
+    | 'cancelled_on'
+    | 'leave_policy'
     | 'start_date'
     | 'end_date'
     | 'duration'
     | 'notes'
-    | 'cancel_reason';
+    | 'requested_on'
+    | 'last_edited_on'
+    | 'created_by'
+    | 'edit_reason'
+    | 'approved_by'
+    | 'approved_on'
+    | 'cancel_reason'
+    | 'cancel_decline_reason';
   label: string;
   value: string;
+};
+
+export type TimeOffTeamMember = Pick<Employment, 'full_name' | 'type'>;
+
+export type CompanyManagerNames = Partial<Record<string, string>>;
+
+/**
+ * Who entered a time-off request: a company manager (`Employer`), or the team member themselves
+ * (`Employee`, or `Contractor` on a contractor employment).
+ */
+export type TimeOffCreator = {
+  name: string;
+  role: 'Employer' | 'Employee' | 'Contractor';
+};
+
+/**
+ * The names behind a time-off request. Each one is `undefined` until the data it comes from
+ * loads, and stays so when it can't be loaded, e.g. for a token without the scope to read it.
+ */
+export type TimeOffRequestPeople = {
+  /**
+   * The full name of the team member the time off is for, from their employment.
+   */
+  teamMemberName?: string;
+  /**
+   * Who entered the request, from its `created_by_id`. `undefined` when no creator is recorded,
+   * e.g. for automatic time off or time off entered by Remote.
+   */
+  createdBy?: TimeOffCreator;
+  /**
+   * The name of the company manager who approved the request, for an `approved` or `taken`
+   * request whose `approver_id` is one of the company managers.
+   */
+  approverName?: string;
 };
 
 export type TimeOffReviewStepProps = {
@@ -136,14 +181,12 @@ export type TimeOffReviewStepProps = {
    * Replaces the default rendering of the loaded request's details. Nothing renders until the
    * request is loaded: use `timeOffBag.isLoading` and `timeOffBag.timeOffRequestError` for the other states.
    */
-  render?: (props: {
-    timeOffRequest: TimeOffRequest;
-    /**
-     * The full name of the person who requested the time off, once their employment loads.
-     */
-    requesterName?: string;
-    details: TimeOffRequestDetail[];
-  }) => React.ReactNode;
+  render?: (
+    props: TimeOffRequestPeople & {
+      timeOffRequest: TimeOffRequest;
+      details: TimeOffRequestDetail[];
+    },
+  ) => React.ReactNode;
   /**
    * Rendered under the loaded request's details, e.g. actions on the request.
    */
@@ -153,18 +196,14 @@ export type TimeOffReviewStepProps = {
 /**
  * One listed time-off request, with what a row of the list shows.
  */
-export type TimeOffListItem = {
+export type TimeOffListItem = TimeOffRequestPeople & {
   timeOffRequest: TimeOffRequest;
-  /**
-   * The full name of the person who requested the time off, once their employment loads.
-   */
-  requesterName?: string;
   /**
    * Every detail of the request, labelled and formatted for display.
    */
   details: TimeOffRequestDetail[];
   /**
-   * The details a row of the list shows by default: requester, type, status, dates and duration.
+   * The details a row of the list shows by default: team member, type, status, dates and duration.
    */
   listedDetails: TimeOffRequestDetail[];
   /**

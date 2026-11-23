@@ -24,7 +24,9 @@ export function ListStep({
     timeOffBag: {
       ...timeOffListBag,
       timeOffRequest: item.timeOffRequest,
-      requesterName: item.requesterName,
+      teamMemberName: item.teamMemberName,
+      createdBy: item.createdBy,
+      approverName: item.approverName,
       approve: ({ approverId }: TimeOffApproveOptions) =>
         timeOffListBag.approveTimeOffRequest({
           timeOffId: item.timeOffRequest.id,
