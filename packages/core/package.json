@@ -1,7 +1,12 @@
 {
   "name": "@remoteoss/remote-flows-core",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1-alpha.1",
+  "description": "Internal framework-neutral logic shared by the Remote Flows React and Angular packages. Not a public API: it can break in any release.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remoteoss/remote-flows.git",
+    "directory": "packages/core"
+  },
   "type": "module",
   "sideEffects": false,
   "main": "./src/index.ts",
@@ -13,6 +18,25 @@
     "./client/client.gen": "./src/client/client.gen.ts",
     "./client/sdk.gen": "./src/client/sdk.gen.ts",
     "./client/types.gen": "./src/client/types.gen.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": "./dist/index.js",
+      "./client": "./dist/client/index.js",
+      "./client/client": "./dist/client/client/index.js",
+      "./client/client.gen": "./dist/client/client.gen.js",
+      "./client/sdk.gen": "./dist/client/sdk.gen.js",
+      "./client/types.gen": "./dist/client/types.gen.js"
+    }
   },
   "dependencies": {
     "fast-deep-equal": "3.1.3",
