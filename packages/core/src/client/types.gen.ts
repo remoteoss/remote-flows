@@ -14816,11 +14816,23 @@ export type Timeoff = {
    */
   automatic?: boolean;
   /**
-   * The reason provided when the time off was cancelled. Null if not cancelled.
+   * The most recent reason given for cancelling this time off or requesting its cancellation. A declined cancellation request does not clear it. Null or absent when no reason was given or nothing was cancelled.
    */
   cancel_reason?: string | null;
   cancelled_at?: NullableDateTime;
+  /**
+   * The unique identifier (UUID) of the user who entered the time off: the employee or contractor themselves, or a manager of the company (the `user_id` of `GET /v1/company-managers`; a manager who has since left the company keeps their id here but is no longer listed there). Null or absent when Remote staff entered it, for automatic time offs such as public holidays, for time offs entered by Remote's automated processes, and when no creator was recorded.
+   */
+  created_by_id?: string | null;
+  /**
+   * The most recent reason given for declining this time off or a request to cancel it. A later edit, approval or cancellation does not clear it. Null or absent when no reason was given or nothing was declined.
+   */
+  decline_reason?: string | null;
   document?: File;
+  /**
+   * The reason given with the most recent edit of this time off, by a person or by one of Remote's own processes. Null or absent when never edited.
+   */
+  edit_reason?: string | null;
   /**
    * The unique identifier (UUID) of the employment this time off belongs to.
    */
@@ -14833,6 +14845,10 @@ export type Timeoff = {
    * The unique identifier (UUID) of the time off record.
    */
   id: string;
+  /**
+   * When the time off was requested or entered, as a UTC date-time.
+   */
+  inserted_at?: string;
   leave_policy: LeavePolicy;
   /**
    * Identifier of the leave policy this time off was booked against. For employments on the leave-type model this is the leave type's UUID, the same value `GET /leave-policies/details/{employment_id}` returns and `POST /timeoff` accepts. Otherwise it is the UUID of the custom company leave policy variant, and is null for standard leave types.
@@ -14874,6 +14890,10 @@ export type Timeoff = {
    * The total number of minutes taken off across all `timeoff_days`. Always equals the sum of the per-day `minutes` values.
    */
   total_minutes: number;
+  /**
+   * When the time off was last changed, as a UTC date-time, at or after `inserted_at`.
+   */
+  updated_at?: string;
 };
 
 /**
