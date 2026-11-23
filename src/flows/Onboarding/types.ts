@@ -3,6 +3,7 @@ import {
   EmploymentEngagementAgreementDetailsParams,
   Employment as EmploymentResponse,
 } from '@/src/client';
+import { EorHiringModel } from '@/src/client/types.gen';
 import { BasicInformationStep } from '@/src/flows/Onboarding/components/BasicInformationStep';
 import { OnboardingBack } from '@/src/flows/Onboarding/components/OnboardingBack';
 import { OnboardingInvite } from '@/src/flows/Onboarding/components/OnboardingInvite';
@@ -81,11 +82,13 @@ type CountryJsonSchemaVersion = {
    */
   employment_basic_information?: number;
   /**
-   * The json schema version to use for the contract details step by country.
-   * This is used to override the json schema version for the contract details step by country.
-   * The default value is 1.
+   * The contract details json schema version for this country. A number pins the country's default hiring model;
+   * an object such as `{ cze_consulting: 7, cze_tea: 1 }` pins each hiring model separately. Unpinned models use version 1.
    */
-  contract_details?: number | 'latest';
+  contract_details?:
+    | number
+    | 'latest'
+    | Partial<Record<EorHiringModel, number | 'latest'>>;
 };
 
 export type OnboardingJsfModify = {

@@ -61,6 +61,9 @@ jobs:
       - name: Check exports
         run: pnpm run check-exports
 
+      - name: Check core package
+        run: pnpm run check-core-package
+
   tests:
     name: Unit Tests
     runs-on: ubuntu-latest

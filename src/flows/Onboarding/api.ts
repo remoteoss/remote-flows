@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import { Client } from '@/src/client/client';
+import { EorHiringModel } from '@/src/client/types.gen';
 import {
   ConvertCurrencyParams,
   CreateContractEligibilityParams,
@@ -492,13 +493,14 @@ export const useCreateEmployment = (
 export const useUpdateEmployment = (
   countryCode: string,
   options?: OnboardingFlowProps['options'],
+  hiringModel?: EorHiringModel | null,
 ) => {
   const { client } = useClient();
   const jsonSchemaQueryParams = {
     employment_basic_information_json_schema_version:
       getBasicInformationSchemaVersion(options),
     contract_details_json_schema_version:
-      getContractDetailsSchemaVersion(options, countryCode) || 1,
+      getContractDetailsSchemaVersion(options, countryCode, hiringModel) || 1,
   };
 
   return useMutation({

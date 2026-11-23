@@ -1,434 +1,392 @@
-import { QueryClient } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { delay, http, HttpResponse } from 'msw';
+import { mockBenefitOffersSchema } from '@/src/common/api/fixtures/employments';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
-import { $TSFixMe } from '@/src/types/remoteFlows';
-import { TestProviders } from '@/src/tests/testHelpers';
+import {
+  employmentCreatedResponse,
+  employmentDefaultResponse,
+  employmentUpdatedResponse,
+} from '@/src/flows/Onboarding/tests/fixtures';
+import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
+import { server } from '@/src/tests/server';
+import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
-// Mock the API calls to track the query parameters
-const mockGetV1CountriesCountryCodeForm = vi.fn();
-const mockGetV1EmploymentsEmploymentIdBenefitOffersSchema = vi.fn();
-const mockPostV1Employments = vi.fn();
-const mockPatchV1EmploymentsEmploymentId2 = vi.fn();
-const mockPutV1EmploymentsEmploymentIdBenefitOffers = vi.fn();
-const mockPostV1EmploymentsEmploymentIdContractEligibility = vi.fn();
-
-// Mock the client functions
-vi.mock('@remoteoss/remote-flows-core/client/sdk.gen', () => ({}));
-
-vi.mock('@/src/client', () => ({
-  getV1CountriesCountryCodeForm: (...args: $TSFixMe[]) =>
-    mockGetV1CountriesCountryCodeForm(...args),
-  getV1EmploymentsEmploymentIdBenefitOffersSchema: (...args: $TSFixMe[]) =>
-    mockGetV1EmploymentsEmploymentIdBenefitOffersSchema(...args),
-  postV1Employments: (...args: $TSFixMe[]) => mockPostV1Employments(...args),
-  patchV1EmploymentsEmploymentId2: (...args: $TSFixMe[]) =>
-    mockPatchV1EmploymentsEmploymentId2(...args),
-  putV1EmploymentsEmploymentIdBenefitOffers: (...args: $TSFixMe[]) =>
-    mockPutV1EmploymentsEmploymentIdBenefitOffers(...args),
-  postV1EmploymentsEmploymentIdContractEligibility: (...args: $TSFixMe[]) =>
-    mockPostV1EmploymentsEmploymentIdContractEligibility(...args),
-}));
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { retry: false },
-    mutations: { retry: false },
+const countrySchema = {
+  data: {
+    properties: {
+      name: {
+        type: 'string',
+        title: 'Name',
+        'x-jsf-presentation': { inputType: 'text' },
+      },
+      email: {
+        type: 'string',
+        title: 'Email',
+        'x-jsf-presentation': { inputType: 'email' },
+      },
+    },
   },
-});
+};
+
+const recorded = {
+  schema: [] as URL[],
+  benefitsSchema: [] as URL[],
+  update: [] as URL[],
+  create: [] as URL[],
+};
+
+const queryOf = (url: URL) => Object.fromEntries(url.searchParams);
+
+const schemaRequests = (form: string) =>
+  recorded.schema.filter((url) => url.pathname.endsWith(`/${form}`));
+
+const renderOnboarding = (
+  props: Partial<Parameters<typeof useOnboarding>[0]> & {
+    options?: OnboardingFlowProps['options'];
+  },
+) =>
+  renderHook(
+    () =>
+      useOnboarding({
+        companyId: 'test-company-id',
+        skipSteps: ['select_country'],
+        ...props,
+      }),
+    { wrapper: TestProviders },
+  );
 
 describe('useOnboarding jsonSchemaVersion', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     queryClient.clear();
+    recorded.schema.length = 0;
+    recorded.benefitsSchema.length = 0;
+    recorded.update.length = 0;
+    recorded.create.length = 0;
 
-    // Mock successful responses
-    mockGetV1CountriesCountryCodeForm.mockResolvedValue({
-      data: {
-        data: {
-          properties: {
-            name: {
-              type: 'string',
-              title: 'Name',
-              'x-jsf-presentation': { inputType: 'text' },
-            },
-            email: {
-              type: 'string',
-              title: 'Email',
-              'x-jsf-presentation': { inputType: 'email' },
-            },
-          },
+    server.use(
+      http.get('*/v1/countries/:countryCode/:form', ({ request }) => {
+        recorded.schema.push(new URL(request.url));
+        return HttpResponse.json(countrySchema);
+      }),
+      http.get(
+        '*/v1/employments/:employmentId/benefit-offers/schema',
+        ({ request }) => {
+          recorded.benefitsSchema.push(new URL(request.url));
+          return HttpResponse.json(mockBenefitOffersSchema);
         },
-      },
-    });
-
-    mockGetV1EmploymentsEmploymentIdBenefitOffersSchema.mockResolvedValue({
-      data: {
-        data: {
-          schema: {
-            properties: {
-              benefit1: { type: 'string', title: 'Benefit 1' },
-            },
-          },
-        },
-      },
-    });
-
-    mockPostV1Employments.mockResolvedValue({
-      data: { data: { employment: { id: 'test-employment-id' } } },
-    });
-
-    mockPatchV1EmploymentsEmploymentId2.mockResolvedValue({
-      data: { data: { employment: { id: 'test-employment-id' } } },
-    });
-
-    mockPutV1EmploymentsEmploymentIdBenefitOffers.mockResolvedValue({
-      data: { data: { success: true } },
-    });
-
-    mockPostV1EmploymentsEmploymentIdContractEligibility.mockResolvedValue({
-      data: { data: { status: 'ok' } },
-    });
+      ),
+      http.patch('*/v1/employments/:employmentId', ({ request }) => {
+        recorded.update.push(new URL(request.url));
+        return HttpResponse.json(employmentUpdatedResponse);
+      }),
+      http.post('*/v1/employments', ({ request }) => {
+        recorded.create.push(new URL(request.url));
+        return HttpResponse.json(employmentCreatedResponse);
+      }),
+    );
   });
 
-  describe('useJSONSchemaForm calls', () => {
+  describe('schema requests', () => {
     it('should pass jsonSchemaVersion 1 to basic information form as default', async () => {
-      const { result } = renderHook(
-        () =>
-          useOnboarding({
-            companyId: 'test-company-id',
-            countryCode: 'PRT',
-            employmentId: 'test-employment-id',
-            skipSteps: ['select_country'],
-          }),
-        { wrapper: TestProviders },
-      );
+      const { result } = renderOnboarding({
+        countryCode: 'PRT',
+        employmentId: 'test-employment-id',
+      });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
       });
 
       await waitFor(() => {
-        expect(mockGetV1CountriesCountryCodeForm).toHaveBeenCalled();
+        expect(schemaRequests('employment_basic_information')).toHaveLength(1);
       });
 
-      const call = mockGetV1CountriesCountryCodeForm.mock.calls[0][0];
+      const [request] = schemaRequests('employment_basic_information');
 
-      expect(call.path).toEqual({
-        country_code: 'PRT',
-        form: 'employment_basic_information',
-      });
-
-      expect(call.query).toEqual({
-        skip_benefits: true,
-        json_schema_version: 1,
+      expect(request.pathname).toBe(
+        '/v1/countries/PRT/employment_basic_information',
+      );
+      expect(queryOf(request)).toEqual({
+        skip_benefits: 'true',
+        json_schema_version: '1',
       });
     });
 
     it('should pass jsonSchemaVersion 1 to contract details form as default', async () => {
-      const { result } = renderHook(
-        () =>
-          useOnboarding({
-            companyId: 'test-company-id',
-            countryCode: 'PRT',
-            employmentId: 'test-employment-id',
-            skipSteps: ['select_country'],
-          }),
-        { wrapper: TestProviders },
-      );
+      const { result } = renderOnboarding({
+        countryCode: 'PRT',
+        employmentId: 'test-employment-id',
+      });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
       });
 
       await waitFor(() => {
-        expect(mockGetV1CountriesCountryCodeForm).toHaveBeenCalled();
+        expect(schemaRequests('contract_details')).toHaveLength(1);
       });
 
-      const call = mockGetV1CountriesCountryCodeForm.mock.calls[1][0];
+      const [request] = schemaRequests('contract_details');
 
-      expect(call.path).toEqual({
-        country_code: 'PRT',
-        form: 'contract_details',
-      });
-
-      expect(call.query).toEqual({
-        skip_benefits: true,
+      expect(request.pathname).toBe('/v1/countries/PRT/contract_details');
+      expect(queryOf(request)).toEqual({
+        skip_benefits: 'true',
         employment_id: 'test-employment-id',
-        json_schema_version: 1,
+        json_schema_version: '1',
       });
     });
 
     it('should pass jsonSchemaVersionByCountry to contract details form', async () => {
-      const options = {
-        jsonSchemaVersionByCountry: {
-          DEU: {
-            contract_details: 2,
-          },
+      const { result } = renderOnboarding({
+        countryCode: 'DEU',
+        employmentId: 'test-employment-id',
+        options: {
+          jsonSchemaVersionByCountry: { DEU: { contract_details: 2 } },
         },
-      };
-
-      const { result } = renderHook(
-        () =>
-          useOnboarding({
-            companyId: 'test-company-id',
-            countryCode: 'DEU',
-            employmentId: 'test-employment-id',
-            skipSteps: ['select_country'],
-            options,
-          }),
-        { wrapper: TestProviders },
-      );
+      });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      // Navigate to contract details step
-      result.current.goTo('contract_details');
-
-      const contractDetailsCall =
-        mockGetV1CountriesCountryCodeForm.mock.calls[1][0];
+      act(() => {
+        result.current.goTo('contract_details');
+      });
 
       await waitFor(() => {
-        expect(contractDetailsCall).toEqual({
-          client: expect.any(Object),
-          headers: {
-            Authorization: ``,
-          },
-          path: {
-            country_code: 'DEU',
-            form: 'contract_details',
-          },
-          query: {
-            skip_benefits: true,
-            employment_id: 'test-employment-id',
-            json_schema_version: 2,
-          },
-        });
+        expect(schemaRequests('contract_details')).toHaveLength(1);
+      });
+
+      const [request] = schemaRequests('contract_details');
+
+      expect(request.pathname).toBe('/v1/countries/DEU/contract_details');
+      expect(queryOf(request)).toEqual({
+        skip_benefits: 'true',
+        employment_id: 'test-employment-id',
+        json_schema_version: '2',
       });
     });
 
     it('should pass custom jsonSchemaVersion to basic information form', async () => {
-      const options = {
-        jsonSchemaVersion: {
-          employment_basic_information: 2,
-        },
-      };
-      const { result } = renderHook(
-        () =>
-          useOnboarding({
-            companyId: 'test-company-id',
-            countryCode: 'PRT',
-            employmentId: 'test-employment-id',
-            skipSteps: ['select_country'],
-            options,
-          }),
-        { wrapper: TestProviders },
-      );
+      const { result } = renderOnboarding({
+        countryCode: 'PRT',
+        employmentId: 'test-employment-id',
+        options: { jsonSchemaVersion: { employment_basic_information: 2 } },
+      });
+
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
       });
+
       await waitFor(() => {
-        expect(mockGetV1CountriesCountryCodeForm).toHaveBeenCalled();
+        expect(schemaRequests('employment_basic_information')).toHaveLength(1);
       });
-      const call = mockGetV1CountriesCountryCodeForm.mock.calls[0][0];
-      expect(call.path).toEqual({
-        country_code: 'PRT',
-        form: 'employment_basic_information',
-      });
-      expect(call.query).toEqual({
-        skip_benefits: true,
-        json_schema_version: 2,
+
+      const [request] = schemaRequests('employment_basic_information');
+
+      expect(request.pathname).toBe(
+        '/v1/countries/PRT/employment_basic_information',
+      );
+      expect(queryOf(request)).toEqual({
+        skip_benefits: 'true',
+        json_schema_version: '2',
       });
     });
 
-    it('should pass custom benefit_offers_form_schema version to getShowSchema', async () => {
-      const options = {
-        jsonSchemaVersion: {
-          benefit_offers_form_schema: 2,
-        },
-      };
-      const { result } = renderHook(
-        () =>
-          useOnboarding({
-            companyId: 'test-company-id',
-            countryCode: 'PRT',
-            employmentId: 'test-employment-id',
-            skipSteps: ['select_country'],
-            options,
-          }),
-        { wrapper: TestProviders },
-      );
+    it('should pass custom benefit_offers_form_schema version to the benefit offers schema', async () => {
+      const { result } = renderOnboarding({
+        countryCode: 'PRT',
+        employmentId: 'test-employment-id',
+        options: { jsonSchemaVersion: { benefit_offers_form_schema: 2 } },
+      });
+
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
       });
-      // Navigate to benefits step
+
       act(() => {
         result.current.goTo('benefits');
       });
+
       await waitFor(() => {
-        expect(
-          mockGetV1EmploymentsEmploymentIdBenefitOffersSchema,
-        ).toHaveBeenCalled();
+        expect(recorded.benefitsSchema).toHaveLength(1);
       });
-      const call =
-        mockGetV1EmploymentsEmploymentIdBenefitOffersSchema.mock.calls[0][0];
-      expect(call.query).toEqual({
-        json_schema_version: 2,
+
+      expect(queryOf(recorded.benefitsSchema[0])).toEqual({
+        json_schema_version: '2',
       });
     });
   });
 
-  describe('useUpdateEmployment calls', () => {
-    it('should call patchUpdateEmployment2 with default contract_details_json_schema_version when submitting contract_details', async () => {
-      const { result } = renderHook(
-        () =>
-          useOnboarding({
-            employmentId: 'existing-employment-id',
-            companyId: 'test-company-id',
-            countryCode: 'DEU',
-            skipSteps: ['select_country'],
-          }),
-        { wrapper: TestProviders },
-      );
+  describe('contract details version per hiring model', () => {
+    const options = {
+      jsonSchemaVersionByCountry: {
+        CZE: { contract_details: { cze_consulting: 7, cze_tea: 1 } },
+      },
+    };
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      // Navigate to contract_details step
-      act(() => {
-        result.current.goTo('contract_details');
-      });
-
-      // Submit contract_details form
-      await act(async () => {
-        await result.current.onSubmit({
-          // minimal contract details data
-          job_title: 'Engineer',
-          start_date: '2024-01-01',
-        });
-      });
-
-      await waitFor(() => {
-        expect(mockPatchV1EmploymentsEmploymentId2).toHaveBeenCalled();
-      });
-
-      const call = mockPatchV1EmploymentsEmploymentId2.mock.calls[0][0];
-
-      expect(call.query).toEqual({
-        skip_benefits: true,
-        employment_basic_information_json_schema_version: 1,
-        contract_details_json_schema_version: 1,
-      });
-    });
-
-    it('should call patchUpdateEmployment2 with custom contract_details_json_schema_version when submitting contract_details', async () => {
-      const { result } = renderHook(
-        () =>
-          useOnboarding({
-            employmentId: 'existing-employment-id',
-            companyId: 'test-company-id',
-            countryCode: 'DEU',
-            skipSteps: ['select_country'],
-            options: {
-              jsonSchemaVersionByCountry: {
-                DEU: {
-                  contract_details: 2,
+    it.each([
+      { hiringModel: 'cze_tea', version: '1' },
+      { hiringModel: 'cze_consulting', version: '7' },
+      { hiringModel: null, version: '7' },
+    ])(
+      'requests the contract details schema once, with version $version, for the $hiringModel employment',
+      async ({ hiringModel, version }) => {
+        server.use(
+          http.get('*/v1/employments/:employmentId', async ({ params }) => {
+            await delay(50);
+            return HttpResponse.json({
+              ...employmentDefaultResponse,
+              data: {
+                ...employmentDefaultResponse.data,
+                employment: {
+                  ...employmentDefaultResponse.data.employment,
+                  id: String(params.employmentId),
+                  eor_hiring_model: hiringModel,
+                  country: {
+                    ...employmentDefaultResponse.data.employment.country,
+                    code: 'CZE',
+                    name: 'Czech Republic',
+                  },
                 },
               },
-            },
+            });
           }),
-        { wrapper: TestProviders },
-      );
+        );
+
+        const { result } = renderOnboarding({
+          countryCode: 'CZE',
+          employmentId: 'test-employment-id',
+          options,
+        });
+
+        await waitFor(() => {
+          expect(result.current.isLoading).toBe(false);
+        });
+
+        await waitFor(() => {
+          expect(schemaRequests('contract_details')).toHaveLength(1);
+        });
+
+        expect(queryOf(schemaRequests('contract_details')[0])).toEqual({
+          skip_benefits: 'true',
+          employment_id: 'test-employment-id',
+          json_schema_version: version,
+        });
+      },
+    );
+  });
+
+  describe('update employment request', () => {
+    it('should send the default contract_details_json_schema_version when submitting contract_details', async () => {
+      const { result } = renderOnboarding({
+        employmentId: 'existing-employment-id',
+        countryCode: 'DEU',
+      });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      // Navigate to contract_details step
       act(() => {
         result.current.goTo('contract_details');
       });
 
-      // Submit contract_details form
       await act(async () => {
         await result.current.onSubmit({
-          // minimal contract details data
           job_title: 'Engineer',
           start_date: '2024-01-01',
         });
       });
 
       await waitFor(() => {
-        expect(mockPatchV1EmploymentsEmploymentId2).toHaveBeenCalled();
+        expect(recorded.update).toHaveLength(1);
       });
 
-      const call = mockPatchV1EmploymentsEmploymentId2.mock.calls[0][0];
-
-      expect(call.query).toEqual({
-        skip_benefits: true,
-        employment_basic_information_json_schema_version: 1,
-        contract_details_json_schema_version: 2,
+      expect(queryOf(recorded.update[0])).toEqual({
+        skip_benefits: 'true',
+        employment_basic_information_json_schema_version: '1',
+        contract_details_json_schema_version: '1',
       });
     });
 
-    it('should call patchUpdateEmployment2 with custom employment_basic_information_json_schema_version when submitting basic_information', async () => {
-      const { result } = renderHook(
-        () =>
-          useOnboarding({
-            employmentId: 'existing-employment-id',
-            companyId: 'test-company-id',
-            countryCode: 'ARG',
-            skipSteps: ['select_country'],
-            options: {
-              jsonSchemaVersion: {
-                employment_basic_information: 3, // ← Test this!
-              },
-            },
-          }),
-        { wrapper: TestProviders },
-      );
+    it('should send the custom contract_details_json_schema_version when submitting contract_details', async () => {
+      const { result } = renderOnboarding({
+        employmentId: 'existing-employment-id',
+        countryCode: 'DEU',
+        options: {
+          jsonSchemaVersionByCountry: { DEU: { contract_details: 2 } },
+        },
+      });
+
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
       });
-      // Submit basic_information form (first step)
+
+      act(() => {
+        result.current.goTo('contract_details');
+      });
+
+      await act(async () => {
+        await result.current.onSubmit({
+          job_title: 'Engineer',
+          start_date: '2024-01-01',
+        });
+      });
+
+      await waitFor(() => {
+        expect(recorded.update).toHaveLength(1);
+      });
+
+      expect(queryOf(recorded.update[0])).toEqual({
+        skip_benefits: 'true',
+        employment_basic_information_json_schema_version: '1',
+        contract_details_json_schema_version: '2',
+      });
+    });
+
+    it('should send the custom employment_basic_information_json_schema_version when submitting basic_information', async () => {
+      const { result } = renderOnboarding({
+        employmentId: 'existing-employment-id',
+        countryCode: 'PRT',
+        options: { jsonSchemaVersion: { employment_basic_information: 3 } },
+      });
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      act(() => {
+        result.current.goTo('basic_information');
+      });
+
       await act(async () => {
         await result.current.onSubmit({
           name: 'John Doe',
           email: 'john@example.com',
         });
       });
+
       await waitFor(() => {
-        expect(mockPatchV1EmploymentsEmploymentId2).toHaveBeenCalled();
+        expect(recorded.update).toHaveLength(1);
       });
-      const call = mockPatchV1EmploymentsEmploymentId2.mock.calls[0][0];
-      expect(call.query).toEqual({
-        skip_benefits: true,
-        employment_basic_information_json_schema_version: 3, // ← Assert this
-        contract_details_json_schema_version: 1, // default
+
+      expect(queryOf(recorded.update[0])).toEqual({
+        skip_benefits: 'true',
+        employment_basic_information_json_schema_version: '3',
+        contract_details_json_schema_version: '1',
       });
     });
   });
 
-  describe('useCreateEmployment calls', () => {
-    it('should call postCreateEmployment2 with default json_schema_version when creating new employment', async () => {
-      const { result } = renderHook(
-        () =>
-          useOnboarding({
-            // No employmentId = create new
-            companyId: 'test-company-id',
-            countryCode: 'PRT',
-            skipSteps: ['select_country'],
-          }),
-        { wrapper: TestProviders },
-      );
+  describe('create employment request', () => {
+    it('should send the default json_schema_version when creating a new employment', async () => {
+      const { result } = renderOnboarding({ countryCode: 'PRT' });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      // Submit basic_information to create employment
       await act(async () => {
         await result.current.onSubmit({
           name: 'John Doe',
@@ -437,31 +395,17 @@ describe('useOnboarding jsonSchemaVersion', () => {
       });
 
       await waitFor(() => {
-        expect(mockPostV1Employments).toHaveBeenCalled();
+        expect(recorded.create).toHaveLength(1);
       });
 
-      const call = mockPostV1Employments.mock.calls[0][0];
-
-      expect(call.query).toEqual({
-        json_schema_version: 1,
-      });
+      expect(queryOf(recorded.create[0])).toEqual({ json_schema_version: '1' });
     });
 
-    it('should call postCreateEmployment2 with custom employment_basic_information_json_schema_version', async () => {
-      const { result } = renderHook(
-        () =>
-          useOnboarding({
-            companyId: 'test-company-id',
-            countryCode: 'ARG',
-            skipSteps: ['select_country'],
-            options: {
-              jsonSchemaVersion: {
-                employment_basic_information: 3,
-              },
-            },
-          }),
-        { wrapper: TestProviders },
-      );
+    it('should send the custom employment_basic_information_json_schema_version when creating a new employment', async () => {
+      const { result } = renderOnboarding({
+        countryCode: 'ARG',
+        options: { jsonSchemaVersion: { employment_basic_information: 3 } },
+      });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -475,14 +419,10 @@ describe('useOnboarding jsonSchemaVersion', () => {
       });
 
       await waitFor(() => {
-        expect(mockPostV1Employments).toHaveBeenCalled();
+        expect(recorded.create).toHaveLength(1);
       });
 
-      const call = mockPostV1Employments.mock.calls[0][0];
-
-      expect(call.query).toEqual({
-        json_schema_version: 3,
-      });
+      expect(queryOf(recorded.create[0])).toEqual({ json_schema_version: '3' });
     });
   });
 });

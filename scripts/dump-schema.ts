@@ -71,11 +71,15 @@ const client = createEnvClient(gatewayUrl, fetchAccessToken);
 let employmentId: string | undefined;
 try {
   if (form === 'contract_details') {
-    ({ employmentId } = await seedEmploymentForCountry(
+    let hiringModel: string | null | undefined;
+    ({ employmentId, hiringModel } = await seedEmploymentForCountry(
       client,
       country,
       parseBasicInfoOverrides(args['basic-info']),
     ));
+    if (hiringModel) {
+      console.log(`Employment hiring model: ${hiringModel}`);
+    }
   }
   const response = await getV1CountriesCountryCodeForm({
     client,

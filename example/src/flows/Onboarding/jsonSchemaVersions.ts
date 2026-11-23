@@ -81,7 +81,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CZE: {
     // Czech Republic
-    contract_details: 7,
+    contract_details: { cze_consulting: 7, cze_tea: 1 },
   },
   DEU: {
     // Germany
@@ -305,7 +305,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   SLV: {
     // El Salvador
-    contract_details: 4,
+    contract_details: 5,
   },
   SRB: {
     // Serbia
