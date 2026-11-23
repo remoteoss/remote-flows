@@ -12,7 +12,7 @@ export const BASIC_INFO_VERSIONS: VersionOption[] = [
 ];
 
 // AI generated from tiger
-// Last updated: 2026-11-16
+// Last updated: 2026-11-23
 export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   ALB: [
     { value: 1, label: 'v1' },
@@ -63,6 +63,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 7, label: 'v7' },
     { value: 8, label: 'v8' },
     { value: 9, label: 'v9' },
+    { value: 10, label: 'v10' },
   ],
   BEL: [
     { value: 1, label: 'v1' },
