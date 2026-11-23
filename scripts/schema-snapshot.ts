@@ -31,7 +31,12 @@ import {
 } from './schema-snapshot/behaviour';
 import { mapWithConcurrency } from './map-with-concurrency';
 import { assertServedVersion } from './schema-snapshot/served-version';
-import { resolvePinnedVersion } from './schema-canary/pinned-versions';
+import {
+  baselineModel,
+  expectedBaselines,
+  resolvePinnedVersion,
+  uncoveredHiringModels,
+} from './schema-canary/pinned-versions';
 import {
   archiveEmployment,
   seedEmploymentForCountry,
@@ -76,6 +81,8 @@ if (!Number.isInteger(CONCURRENCY) || CONCURRENCY < 1) {
 
 type CountryResult = {
   country: string;
+  model?: string;
+  uncovered?: string[];
   version: number;
   status:
     | 'unchanged'
@@ -91,9 +98,13 @@ type CountryResult = {
 
 const writtenFiles: string[] = [];
 
-function readBaseline(country: string, version: number): SchemaFingerprint {
+function readBaseline(
+  country: string,
+  version: number,
+  model?: string,
+): SchemaFingerprint {
   return JSON.parse(
-    readFileSync(baselinePath(BASELINE_DIR, country, version), 'utf8'),
+    readFileSync(baselinePath(BASELINE_DIR, country, version, model), 'utf8'),
   ) as SchemaFingerprint;
 }
 
@@ -101,9 +112,10 @@ function writeBaseline(
   country: string,
   version: number,
   fingerprint: SchemaFingerprint,
+  model?: string,
 ) {
   mkdirSync(BASELINE_DIR, { recursive: true });
-  const file = baselinePath(BASELINE_DIR, country, version);
+  const file = baselinePath(BASELINE_DIR, country, version, model);
   writeFileSync(file, `${JSON.stringify(fingerprint, null, 2)}\n`);
   writtenFiles.push(file);
 }
@@ -137,10 +149,19 @@ async function checkCountry(
   client: Client,
   country: string,
 ): Promise<CountryResult> {
-  const version = resolvePinnedVersion(country, DEFAULT_VERSION);
+  let version = resolvePinnedVersion(country, DEFAULT_VERSION);
+  let model: string | undefined;
+  let uncovered: string[] = [];
   let employmentId: string | undefined;
   try {
-    ({ employmentId } = await seedEmploymentForCountry(client, country));
+    let hiringModel;
+    ({ employmentId, hiringModel } = await seedEmploymentForCountry(
+      client,
+      country,
+    ));
+    version = resolvePinnedVersion(country, DEFAULT_VERSION, hiringModel);
+    model = baselineModel(country, hiringModel);
+    uncovered = uncoveredHiringModels(country, hiringModel);
     const schema = await fetchPinnedSchema(
       client,
       country,
@@ -151,43 +172,46 @@ async function checkCountry(
       schema,
       CONTRACT_DETAILS_STRATEGY,
     );
+    const base = { country, model, uncovered, version };
 
     if (UPDATE) {
-      writeBaseline(country, version, fingerprint);
-      return { country, version, status: 'updated', changes: [] };
+      writeBaseline(country, version, fingerprint, model);
+      return { ...base, status: 'updated', changes: [] };
     }
-    if (!baselineExists(BASELINE_DIR, country, version)) {
+    if (!baselineExists(BASELINE_DIR, country, version, model)) {
       if (!CREATE_MISSING) {
-        return { country, version, status: 'no-baseline', changes: [] };
+        return { ...base, status: 'no-baseline', changes: [] };
       }
       const previousVersion = previousBaselineVersion(
         BASELINE_DIR,
         country,
         version,
+        model,
       );
       const changes =
         previousVersion === undefined
           ? []
           : diffFingerprints(
-              readBaseline(country, previousVersion),
+              readBaseline(country, previousVersion, model),
               fingerprint,
             );
-      writeBaseline(country, version, fingerprint);
-      return { country, version, status: 'created', changes, previousVersion };
+      writeBaseline(country, version, fingerprint, model);
+      return { ...base, status: 'created', changes, previousVersion };
     }
     const changes = diffFingerprints(
-      readBaseline(country, version),
+      readBaseline(country, version, model),
       fingerprint,
     );
     return {
-      country,
-      version,
+      ...base,
       status: changes.length > 0 ? 'changed' : 'unchanged',
       changes,
     };
   } catch (error) {
     return {
       country,
+      model,
+      uncovered,
       version,
       status: 'error',
       changes: [],
@@ -227,7 +251,7 @@ function describeCreated(result: CountryResult): string {
 function formatReport(results: CountryResult[]): string {
   const lines: string[] = [];
   for (const result of results) {
-    const heading = `### ${result.country} (pinned v${result.version})`;
+    const heading = `### ${result.country}${result.model ? ` ${result.model}` : ''} (pinned v${result.version})`;
     if (result.status === 'changed') {
       lines.push(heading, formatChanges(result.changes), '');
     } else if (result.status === 'created') {
@@ -274,10 +298,9 @@ async function main() {
     .filter(
       (code) =>
         !CREATE_MISSING ||
-        !baselineExists(
-          BASELINE_DIR,
-          code,
-          resolvePinnedVersion(code, DEFAULT_VERSION),
+        expectedBaselines(code, DEFAULT_VERSION).some(
+          ({ model, version }) =>
+            !baselineExists(BASELINE_DIR, code, version, model),
         ),
     );
   if (countries.length === 0) {
@@ -302,13 +325,23 @@ async function main() {
   const count = (status: CountryResult['status']) =>
     results.filter((result) => result.status === status).length;
   const summary = `${count('unchanged')} unchanged, ${count('changed')} changed, ${count('updated')} updated, ${count('created')} created, ${count('no-baseline')} without baseline, ${count('error')} errors (${results.length} countries)`;
+  const uncoveredNote = results
+    .filter((result) => result.uncovered && result.uncovered.length > 0)
+    .map(
+      (result) =>
+        `${result.country}: not checked for ${result.uncovered?.join(', ')} (the seeded employment got ${result.model ?? 'the default model'}, and the backend picks the model)`,
+    )
+    .join('\n');
   console.log(report || 'No differences from the committed baselines.');
   console.log(`\n${summary}`);
+  if (uncoveredNote) {
+    console.warn(`\nHiring models this run did not cover:\n${uncoveredNote}`);
+  }
 
   if (process.env.GITHUB_STEP_SUMMARY) {
     appendFileSync(
       process.env.GITHUB_STEP_SUMMARY,
-      `## Contract details schema snapshots\n\n${summary}\n\n${report}\n`,
+      `## Contract details schema snapshots\n\n${summary}\n\n${report}\n${uncoveredNote ? `\n### Hiring models not covered\n\n${uncoveredNote}\n` : ''}`,
     );
   }
   const failing = results.filter(
