@@ -58,7 +58,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Dominican Republic](./DOM.md)     | DOM  | v7  | v7              | Yes        | November 2026 |
 | [Ecuador](./ECU.md)                | ECU  | v7  | v7              | Yes        | November 2026 |
 | [Egypt](./EGY.md)                  | EGY  | v6  | v6              | Yes        | October 2026  |
-| [El Salvador](./SLV.md)            | SLV  | v4  | v4              | Yes        | October 2026  |
+| [El Salvador](./SLV.md)            | SLV  | v5  | v5              | Yes        | November 2026 |
 | [Estonia](./EST.md)                | EST  | v5  | v5              | Yes        | October 2026  |
 | [Finland](./FIN.md)                | FIN  | v5  | v5              | Yes        | October 2026  |
 | France                             | FRA  | v1  | v1              | Yes        | -             |
