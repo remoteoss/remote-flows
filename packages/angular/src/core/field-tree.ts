@@ -22,6 +22,7 @@ export type FieldMeta = {
   inputType: string;
   required: boolean;
   disabled: boolean;
+  minDate: string | null;
   options: FieldOption[];
   additionalProps: Record<string, unknown>;
   statement: FieldStatement | null;
@@ -54,6 +55,7 @@ type JsfField = {
   required?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
+  minDate?: string;
   default?: unknown;
   isVisible?: boolean;
   deprecated?: boolean;
@@ -82,6 +84,7 @@ function toMeta(
     inputType: isStatement ? 'statement' : field.inputType,
     required: field.required === true,
     disabled: isLocked(field),
+    minDate: field.minDate ?? null,
     options: field.options ?? [],
     additionalProps: { ...inheritedProps(), ...field.additionalProps },
     statement: field.statement

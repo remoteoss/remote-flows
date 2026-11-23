@@ -7,7 +7,7 @@ import {
 } from '@testing-library/react';
 
 import userEvent from '@testing-library/user-event';
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
@@ -19,7 +19,12 @@ import {
   employmentUpdatedResponse,
   employmentDefaultResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
-import { fillRadio, queryClient, TestProviders } from '@/src/tests/testHelpers';
+import {
+  fillRadio,
+  fillSelect,
+  queryClient,
+  TestProviders,
+} from '@/src/tests/testHelpers';
 import { generateUniqueEmploymentId } from '@/src/flows/Onboarding/tests/helpers';
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
 import { mockBaseResponse } from '@/src/common/api/fixtures/base';
@@ -488,5 +493,319 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
         working_days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
       },
     });
+  });
+
+  it('should ask for the engagement agreement details schema of the employment', async () => {
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+    const schemaRequestUrls: string[] = [];
+
+    server.use(
+      http.get(
+        '*/v1/countries/DEU/engagement_agreement_details*',
+        ({ request }) => {
+          schemaRequestUrls.push(request.url);
+          return HttpResponse.json(engagementAgreementDetailsSchemaV1Germany);
+        },
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={uniqueEmploymentId}
+        skipSteps={['select_country']}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    expect(schemaRequestUrls).toHaveLength(1);
+    expect(
+      new URL(schemaRequestUrls[0]).searchParams.get('employment_id'),
+    ).toBe(uniqueEmploymentId);
+  });
+
+  it('should skip the engagement agreement details step when the employment does not take them', async () => {
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+
+    server.use(
+      http.get(
+        '*/v1/countries/DEU/engagement_agreement_details*',
+        ({ request }) => {
+          if (new URL(request.url).searchParams.has('employment_id')) {
+            return HttpResponse.json(
+              {
+                message:
+                  'Engagement agreement details not found for country DEU',
+              },
+              { status: 404 },
+            );
+          }
+          return HttpResponse.json(engagementAgreementDetailsSchemaV1Germany);
+        },
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={uniqueEmploymentId}
+        skipSteps={['select_country']}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    screen.getByText(/Next Step/i).click();
+
+    await screen.findByText(/Step: Contract Details/i);
+    expect(
+      screen.queryByText(/Step: Engagement Agreement Details/i),
+    ).not.toBeInTheDocument();
+  });
+
+  const mockEmploymentWithoutEngagementAgreementDetails = () => {
+    server.use(
+      http.get('*/v1/employments/:id', ({ params }) =>
+        HttpResponse.json({
+          ...employmentDefaultResponse,
+          data: {
+            ...employmentDefaultResponse.data,
+            employment: {
+              ...employmentDefaultResponse.data.employment,
+              id: params.id,
+              country: {
+                code: 'DEU',
+                name: 'Germany',
+                alpha_2_code: 'DE',
+                supported_json_schemas: ['employment_basic_information'],
+              },
+              basic_information: {
+                ...employmentDefaultResponse.data.employment.basic_information,
+                mobile_number: `+49${phoneNumberMock}`,
+              },
+              requires_engagement_agreement_details: false,
+            },
+          },
+        }),
+      ),
+    );
+  };
+
+  it('should not request the engagement agreement schema when the employment does not require it', async () => {
+    const schemaRequestUrls: string[] = [];
+    mockEmploymentWithoutEngagementAgreementDetails();
+    server.use(
+      http.get(
+        '*/v1/countries/DEU/engagement_agreement_details*',
+        ({ request }) => {
+          schemaRequestUrls.push(request.url);
+          return HttpResponse.json(engagementAgreementDetailsSchemaV1Germany);
+        },
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={generateUniqueEmploymentId()}
+        skipSteps={['select_country']}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    screen.getByText(/Next Step/i).click();
+
+    await screen.findByText(/Step: Contract Details/i);
+    expect(schemaRequestUrls).toEqual([]);
+  });
+
+  it('should not request the engagement agreement schema after creating an employment that does not require it', async () => {
+    const schemaRequestUrls: string[] = [];
+    mockEmploymentWithoutEngagementAgreementDetails();
+    server.use(
+      http.get(
+        '*/v1/countries/DEU/engagement_agreement_details*',
+        ({ request }) => {
+          schemaRequestUrls.push(request.url);
+          return HttpResponse.json(engagementAgreementDetailsSchemaV1Germany);
+        },
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode='DEU'
+        skipSteps={['select_country']}
+        initialValues={{
+          ...employmentDefaultResponse.data.employment.basic_information,
+          mobile_number: `+49${phoneNumberMock}`,
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    screen.getByText(/Next Step/i).click();
+
+    await screen.findByText(/Step: Contract Details/i);
+    expect(schemaRequestUrls).toEqual([]);
+  });
+
+  it('should not warn when the schema of a newly created employment is a 404', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    server.use(
+      http.get('*/v1/countries/DEU/engagement_agreement_details*', () =>
+        HttpResponse.json(
+          { message: 'Engagement agreement details not found for country DEU' },
+          { status: 404 },
+        ),
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode='DEU'
+        skipSteps={['select_country']}
+        initialValues={{
+          ...employmentDefaultResponse.data.employment.basic_information,
+          mobile_number: `+49${phoneNumberMock}`,
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    screen.getByText(/Next Step/i).click();
+
+    await screen.findByText(/Step: Contract Details/i);
+    expect(warnSpy).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
+  it('should go to the engagement agreement details step after creating the employment', async () => {
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode='DEU'
+        skipSteps={['select_country']}
+        initialValues={{
+          ...employmentDefaultResponse.data.employment.basic_information,
+          mobile_number: `+49${phoneNumberMock}`,
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    screen.getByText(/Next Step/i).click();
+
+    await screen.findByText(/Step: Engagement Agreement Details/i);
+  });
+
+  it('should go to the engagement agreement details step when the schema loads before the eligibility call finishes', async () => {
+    server.use(
+      http.post('*/v1/employments/*/contract-eligibility', async () => {
+        await delay(200);
+        return HttpResponse.json({ data: { status: 'ok' } });
+      }),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode='DEU'
+        skipSteps={['select_country']}
+        initialValues={{
+          ...employmentDefaultResponse.data.employment.basic_information,
+          mobile_number: `+49${phoneNumberMock}`,
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    screen.getByText(/Next Step/i).click();
+
+    await screen.findByText(/Step: Engagement Agreement Details/i);
+  });
+
+  it('should not request the engagement agreement schema until the employment matches the new country', async () => {
+    const portugalSchemaRequests: string[] = [];
+
+    server.use(
+      http.get('*/v1/countries/PRT/employment_basic_information*', () =>
+        HttpResponse.json(basicInformationSchemaV3Germany),
+      ),
+      http.get(
+        '*/v1/countries/PRT/engagement_agreement_details*',
+        ({ request }) => {
+          portugalSchemaRequests.push(request.url);
+          return HttpResponse.json(engagementAgreementDetailsSchemaV1Germany);
+        },
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={generateUniqueEmploymentId()}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Select Country/i);
+
+    await fillSelect('Country', 'PRT');
+    screen.getByText(/Continue/i).click();
+    await screen.findByText(/Step: Basic Information/i);
+
+    expect(portugalSchemaRequests).toEqual([]);
+  });
+
+  it('should go to the engagement agreement details step after changing the country of an existing employment', async () => {
+    server.use(
+      http.get('*/v1/countries/PRT/employment_basic_information*', () =>
+        HttpResponse.json(basicInformationSchemaV3Germany),
+      ),
+      http.get('*/v1/countries/PRT/engagement_agreement_details*', () =>
+        HttpResponse.json(engagementAgreementDetailsSchemaV1Germany),
+      ),
+      http.get('*/v1/countries/PRT/contract_details*', () =>
+        HttpResponse.json(contractDetailsSchemaV1Germany),
+      ),
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={generateUniqueEmploymentId()}
+        initialValues={{
+          ...employmentDefaultResponse.data.employment.basic_information,
+          mobile_number: `+49${phoneNumberMock}`,
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Select Country/i);
+
+    await fillSelect('Country', 'PRT');
+    screen.getByText(/Continue/i).click();
+    await screen.findByText(/Step: Basic Information/i);
+
+    (await screen.findByText(/Next Step/i)).click();
+
+    await screen.findByText(/Step: Engagement Agreement Details/i);
   });
 });

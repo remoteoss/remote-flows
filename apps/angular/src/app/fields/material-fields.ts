@@ -22,6 +22,7 @@ import {
         [type]="htmlType()"
         [attr.inputmode]="inputMode()"
         [attr.aria-required]="meta().required"
+        [attr.min]="minDate()"
         [formControl]="formControl()"
       />
       @if (currency(); as code) {
@@ -42,6 +43,9 @@ export class InputField extends FieldComponent {
   );
   protected readonly htmlType = computed(() =>
     this.meta().inputType === 'date' ? 'date' : 'text',
+  );
+  protected readonly minDate = computed(() =>
+    this.meta().inputType === 'date' ? this.meta().minDate : null,
   );
   protected readonly inputMode = computed(() =>
     ['money', 'number'].includes(this.meta().inputType) ? 'decimal' : null,
@@ -123,9 +127,10 @@ let radioCount = 0;
   imports: [ReactiveFormsModule, MatRadioModule],
   template: `
     <div class="rf-radio">
-      <div class="rf-radio__label" [id]="labelId">{{ meta().label }}</div>
+      <div class="rf-radio__label" [id]="labelId">{{ label() }}</div>
       <mat-radio-group
         [attr.aria-labelledby]="labelId"
+        [attr.aria-required]="meta().required"
         [formControl]="formControl()"
         (change)="formControl().markAsTouched()"
       >
@@ -143,6 +148,9 @@ let radioCount = 0;
 })
 export class RadioField extends FieldComponent {
   protected readonly labelId = `rf-radio-label-${radioCount++}`;
+  protected readonly label = computed(
+    () => this.meta().label + (this.meta().required ? ' *' : ''),
+  );
 }
 
 @Component({

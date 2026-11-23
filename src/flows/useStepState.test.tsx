@@ -10,12 +10,12 @@ describe('useStepState', () => {
 
   it('should throw error when no steps are provided', () => {
     expect(() => {
-      renderHook(() => useStepState({}));
+      renderHook(() => useStepState(() => ({})));
     }).toThrow('No steps provided to useStepState');
   });
 
   it('should initialize with first step', () => {
-    const { result } = renderHook(() => useStepState(mockSteps));
+    const { result } = renderHook(() => useStepState(() => mockSteps));
 
     expect(result.current.stepState.currentStep).toEqual(mockSteps.step1);
     expect(result.current.stepState.totalSteps).toBe(3);
@@ -29,13 +29,15 @@ describe('useStepState', () => {
       step2: { index: 1, name: 'step2', visible: true },
       step3: { index: 2, name: 'step3', visible: true },
     };
-    const { result } = renderHook(() => useStepState(mockSteps));
+    const { result } = renderHook(() => useStepState(() => mockSteps));
     expect(result.current.stepState.currentStep).toEqual(mockSteps.step2);
   });
 
   it('should move to next step and store values', () => {
     const onStepChange = vi.fn();
-    const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
+    const { result } = renderHook(() =>
+      useStepState(() => mockSteps, onStepChange),
+    );
 
     act(() => {
       result.current.setFieldValues({ name: 'John' });
@@ -58,7 +60,7 @@ describe('useStepState', () => {
       step2: { index: 1, name: 'step2', visible: false },
       step3: { index: 2, name: 'step3', visible: true },
     };
-    const { result } = renderHook(() => useStepState(mockSteps));
+    const { result } = renderHook(() => useStepState(() => mockSteps));
     act(() => {
       result.current.nextStep();
     });
@@ -67,7 +69,9 @@ describe('useStepState', () => {
 
   it('should move back to previous step', () => {
     const onStepChange = vi.fn();
-    const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
+    const { result } = renderHook(() =>
+      useStepState(() => mockSteps, onStepChange),
+    );
 
     // Move to step 2
     act(() => {
@@ -90,7 +94,7 @@ describe('useStepState', () => {
       step2: { index: 1, name: 'step2', visible: false },
       step3: { index: 2, name: 'step3', visible: true },
     };
-    const { result } = renderHook(() => useStepState(mockSteps));
+    const { result } = renderHook(() => useStepState(() => mockSteps));
     act(() => {
       result.current.goToStep('step3');
     });
@@ -102,7 +106,7 @@ describe('useStepState', () => {
   });
 
   it('should not move next if at last step', () => {
-    const { result } = renderHook(() => useStepState(mockSteps));
+    const { result } = renderHook(() => useStepState(() => mockSteps));
 
     // Move to step 3
     act(() => {
@@ -121,7 +125,7 @@ describe('useStepState', () => {
   });
 
   it('should not move back if at first step', () => {
-    const { result } = renderHook(() => useStepState(mockSteps));
+    const { result } = renderHook(() => useStepState(() => mockSteps));
 
     act(() => {
       result.current.previousStep();
@@ -131,7 +135,7 @@ describe('useStepState', () => {
   });
 
   it('should accumulate values from all steps', () => {
-    const { result } = renderHook(() => useStepState(mockSteps));
+    const { result } = renderHook(() => useStepState(() => mockSteps));
 
     // Step 1
     act(() => {
@@ -168,7 +172,7 @@ describe('useStepState', () => {
   });
 
   it('should maintain field values when moving between steps', () => {
-    const { result } = renderHook(() => useStepState(mockSteps));
+    const { result } = renderHook(() => useStepState(() => mockSteps));
 
     // Set values for step 1
     act(() => {
@@ -208,7 +212,7 @@ describe('useStepState', () => {
   });
 
   it('should go to a step if its desired', () => {
-    const { result } = renderHook(() => useStepState(mockSteps));
+    const { result } = renderHook(() => useStepState(() => mockSteps));
 
     // Try to go to step2 before it's filled
     act(() => {
@@ -217,8 +221,30 @@ describe('useStepState', () => {
     expect(result.current.stepState.currentStep).toEqual(mockSteps.step2);
   });
 
+  it('should resolve the next step from getSteps instead of the steps from the last render', () => {
+    const hiddenSteps = {
+      step1: { index: 0, name: 'step1', visible: true },
+      step2: { index: 1, name: 'step2', visible: false },
+      step3: { index: 2, name: 'step3', visible: true },
+    };
+    const latestSteps = {
+      ...hiddenSteps,
+      step2: { index: 1, name: 'step2', visible: true },
+    };
+    let currentSteps = hiddenSteps;
+    const getSteps = () => currentSteps;
+    const { result } = renderHook(() => useStepState(getSteps));
+    currentSteps = latestSteps;
+
+    act(() => {
+      result.current.nextStep();
+    });
+
+    expect(result.current.stepState.currentStep).toEqual(latestSteps.step2);
+  });
+
   it('should set all step values at once with setStepValues', () => {
-    const { result } = renderHook(() => useStepState(mockSteps));
+    const { result } = renderHook(() => useStepState(() => mockSteps));
 
     const allStepValues = {
       step1: { name: 'John', email: 'john@example.com' },
@@ -235,7 +261,7 @@ describe('useStepState', () => {
   });
 
   it('should allow navigation to any step after setting values with setStepValues', () => {
-    const { result } = renderHook(() => useStepState(mockSteps));
+    const { result } = renderHook(() => useStepState(() => mockSteps));
 
     const allStepValues = {
       step1: { name: 'John' },
@@ -266,7 +292,9 @@ describe('useStepState', () => {
 
   it('should emit onStepChange when going to a step', () => {
     const onStepChange = vi.fn();
-    const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
+    const { result } = renderHook(() =>
+      useStepState(() => mockSteps, onStepChange),
+    );
 
     // Pre-populate all step values
     act(() => {
@@ -290,7 +318,9 @@ describe('useStepState', () => {
 
   it('should emit the first step onMount', () => {
     const onStepChange = vi.fn();
-    const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
+    const { result } = renderHook(() =>
+      useStepState(() => mockSteps, onStepChange),
+    );
 
     expect(onStepChange).toHaveBeenCalledWith(mockSteps.step1);
     expect(onStepChange).toHaveBeenCalledTimes(1);
@@ -305,7 +335,9 @@ describe('useStepState', () => {
       step3: { index: 2, name: 'step3', visible: true },
     };
 
-    const { result } = renderHook(() => useStepState(mockSteps, onStepChange));
+    const { result } = renderHook(() =>
+      useStepState(() => mockSteps, onStepChange),
+    );
 
     expect(onStepChange).toHaveBeenCalledWith(mockSteps.step2);
     expect(onStepChange).toHaveBeenCalledTimes(1);

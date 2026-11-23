@@ -161,7 +161,7 @@
       }
     },
     {
-      "files": ["example/e2e/**"],
+      "files": ["example/e2e/**", "apps/angular/e2e/**"],
       "rules": {
         "no-restricted-properties": [
           "error",

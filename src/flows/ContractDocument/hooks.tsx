@@ -52,6 +52,8 @@ import { NestedMeta } from '@/src/types/remoteFlows';
  * contract preview screens of contractor onboarding, mountable on their own for the
  * contractor named by `employmentId`.
  */
+const getSteps = () => STEPS;
+
 export const useContractDocument = ({
   employmentId,
   options,
@@ -64,7 +66,7 @@ export const useContractDocument = ({
     nextStep,
     previousStep,
     goToStep,
-  } = useStepState<ContractDocumentStepKeys>(STEPS);
+  } = useStepState<ContractDocumentStepKeys>(getSteps);
   const [createdContractDocumentId, setCreatedContractDocumentId] = useState<
     string | undefined
   >(undefined);
