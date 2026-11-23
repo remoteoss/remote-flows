@@ -651,7 +651,7 @@
     },
     {
       "country": "SLV",
-      "version": 4,
+      "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
@@ -665,7 +665,7 @@
     },
     {
       "country": "SLV",
-      "version": 4,
+      "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
