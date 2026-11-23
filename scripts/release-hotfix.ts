@@ -3,7 +3,6 @@
 import { execSync } from 'child_process';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { createInterface } from 'readline';
-import { bumpCoreIfChanged } from './release-core';
 
 async function getChangeDescription(): Promise<string> {
   const rl = createInterface({
@@ -90,12 +89,6 @@ async function main(): Promise<void> {
   // Update package.json
   packageJson.version = newVersion;
   writeFileSync('package.json', JSON.stringify(packageJson, null, 2) + '\n');
-
-  await bumpCoreIfChanged(
-    'patch',
-    (question) =>
-      new Promise<string>((resolve) => rl.question(question, resolve)),
-  );
 
   // Generate changelog entry
   const changelogEntry = `## ${newVersion}

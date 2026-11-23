@@ -127,7 +127,9 @@ jobs:
           echo "published=false" >> $GITHUB_OUTPUT
 
           LATEST_CORE=$(npm view @remoteoss/remote-flows-core dist-tags.latest 2>/dev/null || echo "")
-          if [ -n "$LATEST_CORE" ] && [ "$(printf '%s\n' "$CORE_VERSION" "$LATEST_CORE" | sort -V | head -n1)" = "$CORE_VERSION" ]; then
+          if [[ "$CORE_VERSION" == *-* ]]; then
+            echo "tag=alpha" >> $GITHUB_OUTPUT
+          elif [ -n "$LATEST_CORE" ] && [ "$(printf '%s\n' "$CORE_VERSION" "$LATEST_CORE" | sort -V | head -n1)" = "$CORE_VERSION" ]; then
             echo "tag=legacy" >> $GITHUB_OUTPUT
           else
             echo "tag=latest" >> $GITHUB_OUTPUT
