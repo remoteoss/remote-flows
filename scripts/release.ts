@@ -195,7 +195,11 @@ async function main(): Promise<void> {
   packageJson.version = newVersion;
   writeFileSync('package.json', JSON.stringify(packageJson, null, 2) + '\n');
 
-  bumpCoreIfChanged(newVersion);
+  await bumpCoreIfChanged(
+    changeset.versionBump,
+    (question) =>
+      new Promise<string>((resolve) => rl.question(question, resolve)),
+  );
 
   const changelogEntry = `${formatReleaseNotes(newVersion, changeset)}\n\n`;
 
