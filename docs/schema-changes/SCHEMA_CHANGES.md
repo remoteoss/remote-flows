@@ -42,6 +42,8 @@ Schema versions for the Contract Details step in employee onboarding flows.
 
 **See country-specific documentation:** [View all countries →](./eor/contract-details/countries/README.md)
 
+**Hiring models:** some countries serve a separate schema, with its own version numbers, per hiring model. A country's version can then be an object, such as `{ cze_consulting: 7, cze_tea: 1 }`. See [Czech Republic](./eor/contract-details/countries/CZE.md#hiring-models) and the [Onboarding docs](../../src/flows/Onboarding/README.md#hiring-models).
+
 ### Version Availability
 
 - **v2** - Available for 18 countries (SDK 1.23.0+)
