@@ -1,5 +1,34 @@
 # @remoteoss/remote-flows
 
+## 1.72.0
+
+### Minor Changes
+
+#### Features
+
+- scope the engagement agreement details schema to the employment (#1964) [#1964](https://github.com/remoteoss/remote-flows/pull/1964)
+- pin contract details schema versions per hiring model (#1973) [#1973](https://github.com/remoteoss/remote-flows/pull/1973)
+
+#### Fixes
+
+- update dependency glob to v14 [security] (#1986) [#1986](https://github.com/remoteoss/remote-flows/pull/1986)
+
+#### Chores
+
+- bump pnpm to 12.16.1 (#1969) [#1969](https://github.com/remoteoss/remote-flows/pull/1969)
+- regenerate API client from the production OpenAPI spec (#1972) [#1972](https://github.com/remoteoss/remote-flows/pull/1972)
+- deploy the angular app preview only when the app or core changes (#1980) [#1980](https://github.com/remoteoss/remote-flows/pull/1980)
+- add a private angular app that consumes core (#1913) [#1913](https://github.com/remoteoss/remote-flows/pull/1913)
+- bump NLD, MYS contract_details schema (#1991) [#1991](https://github.com/remoteoss/remote-flows/pull/1991)
+- smoke-test the deployed angular preview with playwright (#1981) [#1981](https://github.com/remoteoss/remote-flows/pull/1981)
+- deploy, test and promote the angular app from main (#1987) [#1987](https://github.com/remoteoss/remote-flows/pull/1987)
+- update contract details schema canary report (#1999) [#1999](https://github.com/remoteoss/remote-flows/pull/1999)
+- build the create invoice schedule form in the angular app (#1914) [#1914](https://github.com/remoteoss/remote-flows/pull/1914)
+- bump SLV contract_details schema versions (#1997) [#1997](https://github.com/remoteoss/remote-flows/pull/1997)
+- build core to dist so it can be published (#1992) [#1992](https://github.com/remoteoss/remote-flows/pull/1992)
+- publish the core package from the release workflow (#1993) [#1993](https://github.com/remoteoss/remote-flows/pull/1993)
+- update contract details schema canary report (#2005) [#2005](https://github.com/remoteoss/remote-flows/pull/2005)
+
 ## 1.71.1
 
 ### Patch Changes
