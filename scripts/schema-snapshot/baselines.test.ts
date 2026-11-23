@@ -17,6 +17,9 @@ describe('schema baselines', () => {
       'ESP.v7.json',
       'ESP2.v9.json',
       'PRT.v1.json',
+      'CZE.v7.json',
+      'CZE.cze_tea.v1.json',
+      'CZE.cze_tea.v2.json',
     ]) {
       writeFileSync(path.join(dir, file), '{}');
     }
@@ -42,5 +45,14 @@ describe('schema baselines', () => {
     expect(baselineExists(dir, 'ESP', 8)).toBe(false);
     expect(baselineExists(dir, 'ESP2', 9)).toBe(true);
     expect(baselineExists(dir, 'PRT', 1)).toBe(true);
+  });
+
+  it('keeps a hiring model apart from the country and from other models', () => {
+    expect(listBaselineVersions(dir, 'CZE')).toEqual([7]);
+    expect(listBaselineVersions(dir, 'CZE', 'cze_tea')).toEqual([1, 2]);
+    expect(baselineExists(dir, 'CZE', 1)).toBe(false);
+    expect(baselineExists(dir, 'CZE', 1, 'cze_tea')).toBe(true);
+    expect(previousBaselineVersion(dir, 'CZE', 7, 'cze_tea')).toBe(2);
+    expect(previousBaselineVersion(dir, 'CZE', 2, 'cze_tea')).toBe(1);
   });
 });

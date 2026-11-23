@@ -7,6 +7,7 @@ import {
 } from '@/src/client';
 import { JSFFields, NestedMeta } from '@/src/types/remoteFlows';
 import { useStepState, Step } from '@/src/flows/useStepState';
+import { getDefaultHiringModel } from '@/src/flows/Onboarding/hiringModels';
 import {
   disabledInviteButtonEmploymentStatus,
   getContractDetailsSchemaVersion,
@@ -484,6 +485,7 @@ export const useOnboarding = ({
   const updateEmploymentMutation = useUpdateEmployment(
     internalCountryCode as string,
     options,
+    employment?.eor_hiring_model,
   );
   const updateBenefitsOffersMutation = useUpdateBenefitsOffers(options);
   const updateEngagementAgreementMutation =
@@ -518,7 +520,8 @@ export const useOnboarding = ({
   const isContractDetailsEnabled = Boolean(
     internalCountryCode &&
     (stepState.currentStep.name === 'contract_details' ||
-      Boolean(employmentId)),
+      Boolean(employmentId)) &&
+    (employment || !getDefaultHiringModel(internalCountryCode)),
   );
 
   const isJobTitleEligibilityEnabled = Boolean(
@@ -703,7 +706,11 @@ export const useOnboarding = ({
   );
 
   const effectiveContractDetailsJsonSchemaVersion =
-    getContractDetailsSchemaVersion(options, internalCountryCode);
+    getContractDetailsSchemaVersion(
+      options,
+      internalCountryCode,
+      employment?.eor_hiring_model,
+    );
 
   const contractDetailsSavedValues = useMemo(
     () => ({
