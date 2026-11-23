@@ -116,6 +116,12 @@ jobs:
         if: steps.version-check.outputs.changed == 'true'
         id: core-version
         run: |
+          if [ ! -f packages/core/package.json ]; then
+            echo "published=true" >> $GITHUB_OUTPUT
+            echo "No core package on this ref, skipping core publish"
+            exit 0
+          fi
+
           CORE_VERSION=$(node -p "require('./packages/core/package.json').version")
           echo "version=$CORE_VERSION" >> $GITHUB_OUTPUT
 
