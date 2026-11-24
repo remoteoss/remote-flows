@@ -1300,13 +1300,35 @@ button.reset-button {
   flex: 1;
   min-width: 0;
   grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1fr 1fr;
+  grid-template-areas: 'team_member leave_policy status start_date end_date duration';
   gap: 12px;
   padding: 12px 16px;
   color: #1e293b;
 }
 
+.RemoteFlows__ListStep__Value__team_member {
+  grid-area: team_member;
+}
+
 .RemoteFlows__ListStep__Value__leave_policy {
+  grid-area: leave_policy;
   font-weight: 500;
+}
+
+.RemoteFlows__ListStep__Value__status {
+  grid-area: status;
+}
+
+.RemoteFlows__ListStep__Value__start_date {
+  grid-area: start_date;
+}
+
+.RemoteFlows__ListStep__Value__end_date {
+  grid-area: end_date;
+}
+
+.RemoteFlows__ListStep__Value__duration {
+  grid-area: duration;
 }
 
 .RemoteFlows__ListStep__Actions {
