@@ -365,7 +365,7 @@ jobs:
           BASE_URL: ${{ env.REMOTE_FLOWS_URL }}
           VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
         working-directory: ./example
-        run: pnpm exec playwright test --project=chromium
+        run: pnpm exec playwright test --project=chromium --grep-invert @nightly
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ !cancelled() }}

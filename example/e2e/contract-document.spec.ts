@@ -14,7 +14,7 @@ const CONTRACT_DOCUMENTS_PATH =
 const SIGN_PATH =
   /^\/v1\/contractors\/employments\/[^/]+\/contract-documents\/[^/]+\/sign$/;
 
-test.describe('Contract document', () => {
+test.describe('Contract document', { tag: '@nightly' }, () => {
   let employmentId: string;
   let fullName: string;
 
