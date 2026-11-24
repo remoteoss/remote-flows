@@ -1,9 +1,25 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, PlaywrightWorkerArgs } from '@playwright/test';
 import {
   archiveEmployment,
   createContractorEmployment,
 } from './helpers/contractor';
-import { fillForm, setupVercelBypass } from './helpers/general';
+import { fillTextField, setupVercelBypass } from './helpers/general';
+import {
+  CREATE_SCHEDULE_PATH,
+  customCycleFirstDay,
+  defaultCycleDays,
+  EndType,
+  fillInvoiceItems,
+  InvoiceItem,
+  InvoiceScheduleFrequency,
+  openInvoiceScheduleForm,
+  pickStartDate,
+  selectCurrency,
+  selectCustomCycle,
+  selectEndType,
+  selectFrequency,
+  submitSchedule,
+} from './helpers/invoiceSchedule';
 
 /**
  * The flow tests for this screen render it in jsdom with the Radix selects swapped for native
@@ -18,26 +34,130 @@ import { fillForm, setupVercelBypass } from './helpers/general';
 const CONTRACTOR_CURRENCIES_PATH =
   /^\/v1\/contractors\/employments\/[^/]+\/contractor-currencies$/;
 
-const CREATE_SCHEDULE_PATH = '/v1/contractor-invoice-schedules';
+const INVOICE_NUMBER = 'E2E-1001';
+
+const ONE_ITEM: InvoiceItem[] = [
+  { description: 'E2E consulting', amount: '100' },
+];
+
+type ScheduleCase = {
+  name: string;
+  frequency: InvoiceScheduleFrequency;
+  items: InvoiceItem[];
+  endType?: EndType;
+  cycle?: 'default' | 'custom';
+  expected: Record<string, unknown>;
+  absent: string[];
+};
+
+const SCHEDULE_CASES: ScheduleCase[] = [
+  {
+    name: 'a one-off invoice',
+    frequency: 'One time',
+    items: ONE_ITEM,
+    expected: { periodicity: 'monthly', nr_occurrences: 1 },
+    absent: ['custom_days'],
+  },
+  {
+    name: 'a one-off invoice with two items',
+    frequency: 'One time',
+    items: [
+      { description: 'E2E consulting', amount: '100' },
+      { description: 'E2E expenses', amount: '50' },
+    ],
+    expected: { periodicity: 'monthly', nr_occurrences: 1 },
+    absent: ['custom_days'],
+  },
+  {
+    name: 'a weekly schedule with no end date',
+    frequency: 'Weekly',
+    items: ONE_ITEM,
+    endType: 'never',
+    expected: { periodicity: 'weekly' },
+    absent: ['nr_occurrences', 'custom_days'],
+  },
+  {
+    name: 'a bi-weekly schedule with no end date',
+    frequency: 'Bi-weekly',
+    items: ONE_ITEM,
+    endType: 'never',
+    expected: { periodicity: 'bi_weekly' },
+    absent: ['nr_occurrences', 'custom_days'],
+  },
+  {
+    name: 'a monthly schedule with no end date',
+    frequency: 'Monthly',
+    items: ONE_ITEM,
+    endType: 'never',
+    expected: { periodicity: 'monthly' },
+    absent: ['nr_occurrences', 'custom_days'],
+  },
+  {
+    name: 'a monthly schedule that ends after 3 occurrences',
+    frequency: 'Monthly',
+    items: ONE_ITEM,
+    endType: { occurrences: 3 },
+    expected: { periodicity: 'monthly', nr_occurrences: 3 },
+    absent: ['custom_days'],
+  },
+  {
+    name: 'a semi-monthly schedule on the default cycle',
+    frequency: 'Semi-monthly',
+    items: ONE_ITEM,
+    endType: 'never',
+    cycle: 'default',
+    expected: { periodicity: 'semi_monthly' },
+    absent: ['nr_occurrences'],
+  },
+  {
+    name: 'a semi-monthly schedule on a custom cycle',
+    frequency: 'Semi-monthly',
+    items: ONE_ITEM,
+    endType: 'never',
+    cycle: 'custom',
+    expected: { periodicity: 'semi_monthly' },
+    absent: ['nr_occurrences'],
+  },
+];
+
+async function newGatewayRequest(
+  playwright: PlaywrightWorkerArgs['playwright'],
+) {
+  const { baseURL, extraHTTPHeaders } = test.info().project.use;
+  return playwright.request.newContext({ baseURL, extraHTTPHeaders });
+}
 
 test.describe('Invoice schedule', () => {
   let employmentId: string;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeAll(async ({ playwright }) => {
     employmentId = '';
-    await setupVercelBypass(page);
-    employmentId = await createContractorEmployment(
-      page,
-      `Contractor ${Date.now()}`,
-    );
+    const gateway = await newGatewayRequest(playwright);
+    try {
+      employmentId = await createContractorEmployment(
+        { request: gateway },
+        `Contractor ${Date.now()}`,
+      );
+    } finally {
+      await gateway.dispose();
+    }
   });
 
-  test.afterEach(async ({ page }) => {
+  test.afterAll(async ({ playwright }) => {
     if (!employmentId) {
       return;
     }
 
-    await archiveEmployment(page, employmentId);
+    const gateway = await newGatewayRequest(playwright);
+    try {
+      await archiveEmployment({ request: gateway }, employmentId);
+    } finally {
+      await gateway.dispose();
+    }
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await setupVercelBypass(page);
   });
 
   test('renders the schedule form and offers the contractor’s currencies', async ({
@@ -83,72 +203,65 @@ test.describe('Invoice schedule', () => {
     expect(pageErrors).toEqual([]);
   });
 
-  for (const schedule of [
-    { name: 'a one-off invoice', frequency: 'One time', endType: null },
-    {
-      name: 'a monthly recurring invoice',
-      frequency: 'Monthly',
-      endType: 'never',
-    },
-  ]) {
-    test(`creates a schedule for ${schedule.name}`, async ({ page }) => {
+  for (const scheduleCase of SCHEDULE_CASES) {
+    test(`creates a schedule for ${scheduleCase.name}`, async ({ page }) => {
       const pageErrors: string[] = [];
       page.on('pageerror', (error) => pageErrors.push(error.message));
 
-      await page.goto('/?demo=invoice-schedule');
-      await page.getByLabel('Employment ID:').fill(employmentId);
-      await page
-        .getByRole('button', { name: 'Create invoice schedule' })
-        .click();
-      await expect(
-        page.getByRole('heading', { name: 'Create invoice schedule' }),
-      ).toBeVisible();
+      await openInvoiceScheduleForm(page, employmentId);
+      await selectCurrency(page, 'EUR');
+      await fillInvoiceItems(page, scheduleCase.items);
+      await selectFrequency(page, scheduleCase.frequency);
 
-      await fillForm(page, [
-        { type: 'select', name: 'currency', value: 'EUR' },
-        {
-          type: 'textField',
-          name: 'items.0.description',
-          value: 'E2E consulting',
-        },
-        { type: 'textField', name: 'items.0.amount', value: '100' },
-      ]);
+      let startDays: number[] | undefined;
+      let customDays: number[] | undefined;
+      if (scheduleCase.cycle === 'default') {
+        startDays = defaultCycleDays();
+        customDays = [15, 31];
+      }
+      if (scheduleCase.cycle === 'custom') {
+        const firstDay = customCycleFirstDay();
+        await selectCustomCycle(page, firstDay);
+        startDays = [firstDay, firstDay + 14];
+        customDays = startDays;
+      }
+      if (scheduleCase.endType) {
+        await selectEndType(page, scheduleCase.endType);
+      }
 
-      await page.locator('[data-field="periodicity"]').click();
-      await page
-        .getByRole('option', { name: schedule.frequency, exact: true })
-        .click();
-
-      await fillForm(page, [
-        ...(schedule.endType
-          ? [
-              {
-                type: 'radio' as const,
-                name: 'end_type',
-                value: schedule.endType,
-              },
-            ]
-          : []),
-        {
-          type: 'datepicker',
-          testId: 'date-picker-button-start_date',
-          value: 'auto',
-        },
-        { type: 'textField', name: 'number', value: `E2E-${Date.now()}` },
-      ]);
-
-      const scheduleResponse = page.waitForResponse(
-        (response) =>
-          response.request().method() === 'POST' &&
-          new URL(response.url()).pathname === CREATE_SCHEDULE_PATH,
+      const picked = await pickStartDate(page, startDays);
+      test.skip(
+        !picked,
+        'The calendar shows one month, so a custom cycle has no selectable day on the 29th to 31st when the month ends on a Sunday',
       );
-      await page.getByRole('button', { name: 'Create schedule' }).click();
+      await fillTextField(page, 'number', INVOICE_NUMBER);
 
-      const created = await scheduleResponse;
+      const created = await submitSchedule(page);
       expect(
         created.status(),
         `POST ${CREATE_SCHEDULE_PATH} returned ${created.status()}`,
       ).toBe(201);
+
+      const request = created.request().postDataJSON() as {
+        contractor_invoice_schedules: Record<string, unknown>[];
+      };
+      expect(request.contractor_invoice_schedules).toHaveLength(1);
+      const [schedule] = request.contractor_invoice_schedules;
+      expect(schedule).toMatchObject({
+        employment_id: employmentId,
+        currency: 'EUR',
+        number: INVOICE_NUMBER,
+        items: scheduleCase.items.map(({ description, amount }) => ({
+          description,
+          amount: Number(amount) * 100,
+        })),
+        ...scheduleCase.expected,
+        ...(customDays ? { custom_days: customDays } : {}),
+      });
+      for (const key of scheduleCase.absent) {
+        expect(schedule).not.toHaveProperty(key);
+      }
+
       const { data } = (await created.json()) as {
         data: { successes: { id: string }[] };
       };
@@ -163,4 +276,61 @@ test.describe('Invoice schedule', () => {
       expect(pageErrors).toEqual([]);
     });
   }
+
+  test('asks for the required fields and sends nothing when the form is empty', async ({
+    page,
+  }) => {
+    const submissions: string[] = [];
+    page.on('request', (request) => {
+      if (
+        request.method() === 'POST' &&
+        new URL(request.url()).pathname === CREATE_SCHEDULE_PATH
+      ) {
+        submissions.push(request.url());
+      }
+    });
+
+    await openInvoiceScheduleForm(page, employmentId);
+    await page.getByRole('button', { name: 'Create schedule' }).click();
+
+    await expect(page.getByText('Required field').first()).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Create invoice schedule' }),
+    ).toBeVisible();
+    expect(submissions).toEqual([]);
+  });
+
+  test('previews the invoice as a PDF before the schedule is created', async ({
+    page,
+  }) => {
+    await openInvoiceScheduleForm(page, employmentId);
+    await selectCurrency(page, 'EUR');
+    await fillInvoiceItems(page, [
+      { description: 'E2E consulting', amount: '100' },
+    ]);
+    await selectFrequency(page, 'One time');
+    await pickStartDate(page);
+    await fillTextField(page, 'number', INVOICE_NUMBER);
+
+    const preview = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'POST' &&
+        new URL(response.url()).pathname ===
+          `/v1/employments/${employmentId}/contractor-invoices/preview`,
+    );
+    await page.getByRole('button', { name: 'Preview invoice' }).click();
+
+    const previewResponse = await preview;
+    expect(
+      previewResponse.status(),
+      `POST contractor-invoices/preview returned ${previewResponse.status()}`,
+    ).toBe(200);
+
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toContainText('Invoice Preview');
+    await expect(dialog).toContainText('Download PDF');
+    await expect(
+      page.getByRole('heading', { name: 'Invoice schedule created' }),
+    ).toBeHidden();
+  });
 });

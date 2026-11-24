@@ -1,10 +1,15 @@
-import { Page, expect } from '@playwright/test';
+import { APIRequestContext, expect } from '@playwright/test';
 import { randomBytes } from 'crypto';
 
 const COUNTRY_CODE = 'PRT';
 
-export async function createContractorEmployment(page: Page, fullName: string) {
-  const schemaResponse = await page.request.get(
+type RequestOwner = { request: APIRequestContext };
+
+export async function createContractorEmployment(
+  owner: RequestOwner,
+  fullName: string,
+) {
+  const schemaResponse = await owner.request.get(
     `/v1/countries/${COUNTRY_CODE}/contractor_basic_information`,
   );
   expect(
@@ -27,7 +32,7 @@ export async function createContractorEmployment(page: Page, fullName: string) {
     'contractor_basic_information requires fields this helper does not fill',
   ).toEqual([]);
 
-  const employmentResponse = await page.request.post('/v1/employments', {
+  const employmentResponse = await owner.request.post('/v1/employments', {
     data: {
       type: 'contractor',
       country_code: COUNTRY_CODE,
@@ -46,8 +51,11 @@ export async function createContractorEmployment(page: Page, fullName: string) {
   return data.employment.id;
 }
 
-export async function archiveEmployment(page: Page, employmentId: string) {
-  const response = await page.request.delete(
+export async function archiveEmployment(
+  owner: RequestOwner,
+  employmentId: string,
+) {
+  const response = await owner.request.delete(
     `/v1/sandbox/employments/${employmentId}`,
   );
   expect(
