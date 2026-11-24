@@ -586,7 +586,7 @@ Neither can approve or decline: decisions go through the flows or their bags.
 | `POST /v1/timeoff/{timeoff_id}/approve` with `{ approver_id }`    | `ApproveButton`, `approve`, `approveTimeOffRequest`                                                                                 | `timeoff:write`                                   |
 | `POST /v1/timeoff/{timeoff_id}/decline` with `{ decline_reason }` | `DeclineButton`, `decline`, `declineTimeOffRequest`                                                                                 | `timeoff:write`                                   |
 | `GET /v1/employments/{employment_id}`                             | Once per employment behind a listed or reviewed request, for the session                                                            | `employment:read` or `employment:write`           |
-| `GET /v1/company-managers`, every page of 100                     | Once per session, when the list flow mounts or a request is first reviewed                                                          | `company_manager:read` or `company_manager:write` |
+| `GET /v1/company-managers`, every page of 100                     | Once per `RemoteFlows` mount, when the list flow mounts or a request is first reviewed                                              | `company_manager:read` or `company_manager:write` |
 
 The list sends only `status`, `page` (once the user changes page) and `page_size` (when you
 pass `pageSize`). According to the generated API docs, a token with only `timeoff:read` can load

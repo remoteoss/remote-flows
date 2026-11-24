@@ -1,23 +1,28 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
+import { PropsWithChildren } from 'react';
 import {
+  RemoteFlows,
   TimeOffApproveButtonProps,
   TimeOffDeclineButtonProps,
   TimeOffFlow,
   TimeOffReviewStepProps,
 } from '@/src/index';
 import {
+  companyManagersResponse,
   declineReasonErrorResponse,
   timeOffErrorResponse,
   timeOffRequestResponse,
 } from '@/src/flows/TimeOff/tests/fixtures';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 import { server } from '@/src/tests/server';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
 function renderFlow(
   timeOffId?: string,
   reviewStepProps: TimeOffReviewStepProps = {},
+  wrapper = TestProviders,
 ) {
   return render(
     <TimeOffFlow
@@ -57,7 +62,7 @@ function renderFlow(
         </>
       )}
     />,
-    { wrapper: TestProviders },
+    { wrapper },
   );
 }
 
@@ -539,6 +544,65 @@ describe('TimeOffFlow', () => {
     expect(screen.queryByText('Approved by')).not.toBeInTheDocument();
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Approve' })).toBeEnabled();
+  });
+
+  it('loads the company managers once per RemoteFlows mount', async () => {
+    mockTimeOffRequest({ status: 'approved', approver_id: 'manager-anne' });
+    mockTeamMember(teamMemberResponse());
+    const managerNames: Record<string, string> = {
+      'Bearer company-a-token': 'Anne White',
+      'Bearer company-b-token': 'Ben Black',
+    };
+    const companyManagerAuthorizations: string[] = [];
+    server.use(
+      http.get('*/v1/company-managers', ({ request }) => {
+        const authorization = request.headers.get('Authorization') ?? '';
+        companyManagerAuthorizations.push(authorization);
+        return HttpResponse.json({
+          data: {
+            ...companyManagersResponse.data,
+            company_managers: [
+              {
+                ...companyManagersResponse.data.company_managers[0],
+                user_name: managerNames[authorization],
+              },
+            ],
+          },
+        });
+      }),
+    );
+    const remoteFlowsWith =
+      (accessToken: string) =>
+      ({ children }: PropsWithChildren) => (
+        <RemoteFlows
+          auth={() => Promise.resolve({ accessToken, expiresIn: 3600 })}
+          components={defaultComponents}
+          proxy={{ url: 'http://localhost:3000' }}
+        >
+          {children}
+        </RemoteFlows>
+      );
+
+    const firstMount = renderFlow(
+      'timeoff-123',
+      {},
+      remoteFlowsWith('company-a-token'),
+    );
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+    expect(await screen.findByText('Anne White')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+    expect(await screen.findByText('Anne White')).toBeInTheDocument();
+    firstMount.unmount();
+
+    renderFlow('timeoff-123', {}, remoteFlowsWith('company-b-token'));
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+
+    expect(await screen.findByText('Ben Black')).toBeInTheDocument();
+    expect(companyManagerAuthorizations).toEqual([
+      'Bearer company-a-token',
+      'Bearer company-b-token',
+    ]);
   });
 
   it('lets the consumer render the request details', async () => {

@@ -178,13 +178,30 @@ const getCompanyManagersPage = (client: Client, page: number) =>
     query: { page, page_size: COMPANY_MANAGERS_PAGE_SIZE },
   });
 
+let lastRemoteFlowsMount = 0;
+const remoteFlowsMounts = new WeakMap<Client, number>();
+
+const getRemoteFlowsMount = (client: Client | null) => {
+  if (!client) {
+    return 0;
+  }
+  const mount = remoteFlowsMounts.get(client);
+  if (mount) {
+    return mount;
+  }
+  lastRemoteFlowsMount += 1;
+  remoteFlowsMounts.set(client, lastRemoteFlowsMount);
+  return lastRemoteFlowsMount;
+};
+
 /**
  * The company managers' names, keyed by user ID, from every page of `GET /v1/company-managers`.
- * Loaded once per session, and `null` when a page fails to load.
+ * Loaded once per `RemoteFlows` mount, so a remount, for example with another company's token,
+ * loads them again. `null` when a page fails to load, until the next mount.
  */
 export const companyManagerNamesOptions = (client: Client) =>
   queryOptions<CompanyManagerNames | null>({
-    queryKey: ['company-manager-names'] as const,
+    queryKey: ['company-manager-names', getRemoteFlowsMount(client)] as const,
     retry: false,
     staleTime: Infinity,
     queryFn: async () => {
