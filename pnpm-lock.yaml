@@ -419,6 +419,9 @@ importers:
       '@angular/platform-browser':
         specifier: 20.3.9
         version: 20.3.9(@angular/common@20.3.9(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))
+      '@remoteoss/remote-flows-angular':
+        specifier: workspace:*
+        version: link:../../packages/angular
       '@remoteoss/remote-flows-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -3253,6 +3256,7 @@ packages:
 
   '@tanstack/angular-query-experimental@5.107.1':
     resolution: {integrity: sha512-bSaFaoLfp6yHPe4QUCTNqsMM4x0DTVq2wnrwSFwyzRlWe9fo+sV69ebJ8f+jRaZheDvdCijS2wuUmmPFXeBqOg==}
+    deprecated: 'Moved to @tanstack/angular-query (devtools in @tanstack/angular-query-devtools). Migration guide: https://tanstack.com/query/latest/docs/framework/angular/guides/migrating-from-experimental'
     peerDependencies:
       '@angular/common': '>=16.0.0'
       '@angular/core': '>=16.0.0'

@@ -4,6 +4,11 @@
   "description": "Angular components for Remote embeddable HR flows (alpha)",
   "license": "MIT",
   "sideEffects": false,
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    }
+  },
   "scripts": {
     "build": "ng-packagr -p ng-package.json -c tsconfig.lib.json"
   },
