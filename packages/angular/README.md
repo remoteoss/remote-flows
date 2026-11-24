@@ -8,6 +8,10 @@ npm install @remoteoss/remote-flows-angular@alpha
 
 Only the create invoice schedule flow is covered today. See `apps/angular` for a working example.
 
+## TanStack Query
+
+`provideRemoteFlows` registers its own `QueryClient` through `provideTanStackQuery` and does not accept one. If your app also calls `provideTanStackQuery`, both providers target the same token and only one client wins, so let the flows own it and don't provide a second one in the same injector.
+
 ## Build and pack
 
 ```bash
