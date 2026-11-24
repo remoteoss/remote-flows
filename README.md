@@ -309,6 +309,10 @@ Learn more about field definitions in the [json-schema-form documentation](https
 
 For a complete implementation example, see our [example application](https://github.com/remoteoss/remote-flows/blob/main/example/src/App.tsx).
 
+## Angular
+
+An early Angular alpha is available as `@remoteoss/remote-flows-angular`. See the [Angular preview](./docs/ANGULAR_PREVIEW.md) for status, the demo and how it works.
+
 ## Contributing
 
 We welcome contributions! If you're working on this package:
