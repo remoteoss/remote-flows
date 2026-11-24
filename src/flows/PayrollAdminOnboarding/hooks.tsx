@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { FieldValues } from 'react-hook-form';
 import {
   useGPOnboardingSteps,
@@ -7,9 +7,11 @@ import {
 import { useStepState } from '@/src/flows/useStepState';
 import type { Step } from '@/src/flows/useStepState';
 import type { PayrollAdminOnboardingFlowProps } from '@/src/flows/PayrollAdminOnboarding/types';
+import { useEmploymentQuery } from '@/src/common/api/employment';
 import { useErrorReporting } from '@/src/components/error-handling/useErrorReporting';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { parseJSFToValidate } from '@/src/components/form/utils';
+import { toAdminFormValues } from '@/src/flows/PayrollAdminOnboarding/utils';
 import {
   useGPFormSchema,
   useGPCountrySelectSchema,
@@ -17,6 +19,7 @@ import {
   useGPUpdateBasicInformation,
   useGPUpdateContractDetails,
   useGPUpdateAdministrativeDetails,
+  useGPRefreshSavedEmployment,
   type GPAdminSchemaType,
 } from '@/src/flows/PayrollAdminOnboarding/api';
 import type { JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
@@ -130,10 +133,41 @@ export const usePayrollAdminOnboarding = ({
     parseFormValues: parseCountrySelectFormValues,
   } = useGPCountrySelectSchema();
 
+  const isSavedValuesStep =
+    currentStep === 'contract_details' ||
+    currentStep === 'administrative_details';
+
+  // Only an employment the partner passed in has anything saved: one created
+  // in this session starts empty, and its in-session edits are step values.
+  const { data: employment, isLoading: isLoadingEmployment } =
+    useEmploymentQuery({
+      employmentId: initialEmploymentId as string,
+      enabled: !!initialEmploymentId,
+    });
+
+  const savedSection = isSavedValuesStep
+    ? employment?.[currentStep]
+    : undefined;
+
+  // A saved null or empty value means "not set", so it must not overwrite the
+  // partner's initialValues for that field.
+  const savedApiValues = useMemo(
+    () =>
+      savedSection
+        ? (Object.fromEntries(
+            Object.entries(savedSection).filter(
+              ([, value]) => value !== null && value !== '',
+            ),
+          ) as FieldValues)
+        : undefined,
+    [savedSection],
+  );
+
   const savedStepValues = {
     ...(initialValues?.[
       currentStep === 'select_country' ? 'basic_information' : currentStep
     ] as FieldValues | undefined),
+    ...savedApiValues,
     ...(stepState.values?.[currentStep] as FieldValues | undefined),
   };
 
@@ -157,6 +191,32 @@ export const usePayrollAdminOnboarding = ({
   const isLoadingSchema = isSelectCountryPhase
     ? isLoadingCountrySelect
     : currentSchemaQuery.isLoading;
+
+  // Saved money comes back in cents, so it only becomes a form default once
+  // the step's schema says which fields are money.
+  const stepInitialValues = useMemo(() => {
+    if (!isSavedValuesStep) {
+      return initialValues;
+    }
+    return {
+      ...initialValues,
+      [currentStep]: {
+        ...(initialValues?.[currentStep] as FieldValues | undefined),
+        ...toAdminFormValues(savedApiValues, currentSchemaQuery.data?.fields),
+      },
+    };
+  }, [
+    initialValues,
+    isSavedValuesStep,
+    currentStep,
+    savedApiValues,
+    currentSchemaQuery.data?.fields,
+  ]);
+
+  const isLoadingSavedValues =
+    isSavedValuesStep && !!initialEmploymentId && isLoadingEmployment;
+
+  const refreshSavedEmployment = useGPRefreshSavedEmployment();
 
   const createEmploymentMutation = useGPCreateEmployment();
   const updateBasicInformationMutation = useGPUpdateBasicInformation();
@@ -308,6 +368,7 @@ export const usePayrollAdminOnboarding = ({
             employmentId: internalEmploymentId,
             contractDetails: parsedValues,
           });
+          await refreshSavedEmployment(internalEmploymentId);
           await refetchSteps();
           return data;
         }
@@ -322,6 +383,7 @@ export const usePayrollAdminOnboarding = ({
             employmentId: internalEmploymentId,
             administrativeDetails: parsedValues,
           });
+          await refreshSavedEmployment(internalEmploymentId);
           await refetchSteps();
           return data;
         }
@@ -340,13 +402,18 @@ export const usePayrollAdminOnboarding = ({
       updateBasicInformationAsync,
       updateContractDetailsAsync,
       updateAdminDetailsAsync,
+      refreshSavedEmployment,
       refetchSteps,
     ],
   );
 
   return {
     stepState,
-    isLoading: isLoadingSteps || isLoadingSchema || isLoadingLegalEntities,
+    isLoading:
+      isLoadingSteps ||
+      isLoadingSchema ||
+      isLoadingLegalEntities ||
+      isLoadingSavedValues,
     isSubmitting,
     isComplete: isComplete ?? false,
     companyId,
@@ -358,7 +425,7 @@ export const usePayrollAdminOnboarding = ({
     isErrorLegalEntities,
     countryCode: internalCountryCode,
     employmentId: internalEmploymentId,
-    initialValues,
+    initialValues: stepInitialValues,
     options,
     apiSteps,
     refetchSteps,
