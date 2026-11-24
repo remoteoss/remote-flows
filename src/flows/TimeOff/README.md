@@ -230,11 +230,13 @@ applies:
 | `cancel_decline_reason` | Reason for declining cancellation | The request is not `declined` and has a `decline_reason`: a cancellation request was declined |
 
 "Requested by" is "Anne White (Employer)" when `created_by_id` is one of the company managers'
-`user_id`. Any other `created_by_id` is the team member themselves: "Jane Smith (Employee)", or
-"(Contractor)" on a contractor employment. A request with no `created_by_id`, for example one
-entered by Remote or created automatically, has no "Requested by". Dates are shown in the
-browser's time zone. `updated_at` changes with every change to the request, approval and
-decline included, so most decided requests have a "Last edited on".
+`user_id`. Any other `created_by_id` is taken to be the team member themselves: "Jane Smith
+(Employee)", or "(Contractor)" on a contractor employment. A manager who has left the company
+is the exception, see [Current limitations](#current-limitations). A request with no
+`created_by_id`, for example one entered by Remote or created automatically, has no
+"Requested by". Dates are shown in the browser's time zone. `updated_at` changes with every
+change to the request, approval and decline included, so most decided requests have a "Last
+edited on".
 
 Read `details` by `name`, not by position. The rows that need a name (`team_member`,
 `created_by`, `approved_by`) are only there once the names have loaded (see
@@ -672,6 +674,9 @@ the sandbox yet. Until it is, these points are expected but unconfirmed:
 - **Not shown.** The API does not return the approvers a request still waits for ("Pending
   approval from"), attachments, payroll periods, or who declined a request and when, so the
   details leave them out.
+- **Departed managers show as the team member.** A request entered by a company manager who
+  has since left the company shows the team member as the person who requested it, because
+  the API no longer lists that manager.
 - **Status is the only filter.** The list can't be filtered by employee, dates or type, or
   sorted.
 - **No ID check before review.** Any non-blank ID moves on; an unknown one shows as `not_found`
