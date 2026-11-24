@@ -196,11 +196,10 @@ Runs on pull requests to `main`:
 
 Runs when a release PR is merged:
 
-- Publishes the internal core package (`@remoteoss/remote-flows-core`) to npm, only when its version isn't on npm yet
 - Publishes package to npm
 - Creates GitHub release
 
-Core is bumped by `pnpm run release` and `pnpm run release:fix` only when something under `packages/core` changed since the last release tag, and it takes that release's version number. Core publishes before the main package, so a failed run can be re-run: a core version already on npm is skipped. The first core publish needs a one-time setup: publish the package once by hand so the name exists on npm, then add a trusted publisher (repository `remoteoss/remote-flows`, workflow `release.yml`) in the package's npm settings.
+The release does not bump or publish the internal core package (`@remoteoss/remote-flows-core`). Its version is changed by hand in a PR and published manually; see `packages/core/README.md`.
 
 #### PR Preview Workflow (`.github/workflows/pr-preview.yml`)
 
