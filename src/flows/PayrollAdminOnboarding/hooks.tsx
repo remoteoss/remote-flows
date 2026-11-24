@@ -185,31 +185,40 @@ export const usePayrollAdminOnboarding = ({
   // is chosen, then switch to the basic-information schema.
   const isSelectCountryPhase =
     currentStep === 'select_country' && !internalCountryCode;
+
+  // The form mounts with its defaults, so the step's schema stays hidden until
+  // the saved employment has loaded.
+  const isLoadingSavedEmployment =
+    isSavedValuesStep && !!initialEmploymentId && isLoadingEmployment;
   const currentSchema = isSelectCountryPhase
     ? countrySelectForm
-    : currentSchemaQuery.data;
+    : isLoadingSavedEmployment
+      ? undefined
+      : currentSchemaQuery.data;
   const isLoadingSchema = isSelectCountryPhase
     ? isLoadingCountrySelect
     : currentSchemaQuery.isLoading;
 
   // Saved money comes back in cents, so it only becomes a form default once
   // the step's schema says which fields are money.
-  const savedValues = useMemo<
-    Partial<Record<AdminStepKey, Record<string, unknown>>>
-  >(
-    () => ({
-      [currentStep]: toAdminFormValues(
-        savedApiValues,
-        currentSchemaQuery.data?.fields,
-      ),
-    }),
-    [currentStep, savedApiValues, currentSchemaQuery.data?.fields],
-  );
-
-  const isLoadingSavedValues =
-    isSavedValuesStep &&
-    !!initialEmploymentId &&
-    (isLoadingEmployment || currentSchemaQuery.isLoading);
+  const stepInitialValues = useMemo(() => {
+    if (!isSavedValuesStep) {
+      return initialValues;
+    }
+    return {
+      ...initialValues,
+      [currentStep]: {
+        ...(initialValues?.[currentStep] as FieldValues | undefined),
+        ...toAdminFormValues(savedApiValues, currentSchemaQuery.data?.fields),
+      },
+    };
+  }, [
+    initialValues,
+    isSavedValuesStep,
+    currentStep,
+    savedApiValues,
+    currentSchemaQuery.data?.fields,
+  ]);
 
   const refreshSavedEmployment = useGPRefreshSavedEmployment();
 
@@ -408,9 +417,7 @@ export const usePayrollAdminOnboarding = ({
       isLoadingSteps ||
       isLoadingSchema ||
       isLoadingLegalEntities ||
-      isLoadingSavedValues,
-    /** True while an existing employment's saved values are loading for the contract or administrative details step. Render the step once it is false. */
-    isLoadingSavedValues,
+      isLoadingSavedEmployment,
     isSubmitting,
     isComplete: isComplete ?? false,
     companyId,
@@ -422,9 +429,7 @@ export const usePayrollAdminOnboarding = ({
     isErrorLegalEntities,
     countryCode: internalCountryCode,
     employmentId: internalEmploymentId,
-    initialValues,
-    /** The current step's saved values, in form units, for building your own form. Empty until the step's schema has loaded. */
-    savedValues,
+    initialValues: stepInitialValues,
     options,
     apiSteps,
     refetchSteps,

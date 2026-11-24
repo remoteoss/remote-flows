@@ -86,10 +86,7 @@ function AdminFlowForm() {
         const currentStep = adminBag.stepState.currentStep.name;
         const allSteps = Object.entries(STEP_LABELS);
 
-        if (
-          adminBag.isLoadingSavedValues ||
-          (adminBag.isLoading && adminBag.fields.length === 0)
-        ) {
+        if (adminBag.isLoading && adminBag.fields.length === 0) {
           return <p>Loading...</p>;
         }
 
