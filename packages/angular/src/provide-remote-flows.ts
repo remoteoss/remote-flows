@@ -3,7 +3,8 @@ import {
   provideTanStackQuery,
   QueryClient,
 } from '@tanstack/angular-query-experimental';
-import { Client, createClient } from './remote-core';
+import { createClient } from '@remoteoss/remote-flows-core';
+import type { Client } from '@remoteoss/remote-flows-core/client/client';
 import { FIELD_COMPONENTS, FieldComponents } from './forms/field-contract';
 
 export const REMOTE_CLIENT = new InjectionToken<Client>('REMOTE_CLIENT');

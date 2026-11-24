@@ -1,7 +1,7 @@
 import {
   getBlankRowValues,
   resolveFieldDynamicProperties,
-} from '../remote-core';
+} from '@remoteoss/remote-flows-core';
 
 export type FieldOption = {
   value: string;

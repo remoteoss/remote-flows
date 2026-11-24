@@ -5,7 +5,7 @@ import {
   FormControl,
   FormGroup,
 } from '@angular/forms';
-import { HeadlessFormOptions } from '../remote-core';
+import type { HeadlessFormOptions } from '@remoteoss/remote-flows-core';
 import { ENGINE_ERROR } from './control-state';
 import { ArrayView, FieldView } from './field-contract';
 import { FieldNode } from '../core/field-tree';

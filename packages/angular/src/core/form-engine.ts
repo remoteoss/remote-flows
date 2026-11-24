@@ -1,13 +1,11 @@
 import {
   buildHeadlessForm,
-  parseValuesForValidation,
-} from '@remoteoss/remote-flows-core';
-import {
   getInitialValues,
-  HeadlessFormOptions,
+  type HeadlessFormOptions,
   parseJSFToValidate,
+  parseValuesForValidation,
   withFieldsetObjects,
-} from '../remote-core';
+} from '@remoteoss/remote-flows-core';
 import { FieldNode, toFieldNodes } from './field-tree';
 
 type Values = Record<string, unknown>;

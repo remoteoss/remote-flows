@@ -10,7 +10,7 @@ import {
   employmentOptions,
   selectContractorCurrencyCodes,
   selectEmployment,
-} from '../../remote-core';
+} from '@remoteoss/remote-flows-core';
 import { REMOTE_CLIENT } from '../../provide-remote-flows';
 import { createFormStore } from '../../forms/form-store';
 
