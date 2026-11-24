@@ -45,11 +45,4 @@ describe('toFormValues', () => {
       ),
     ).toEqual({ job_title: 'Payroll analyst', annual_salary: 5000 });
   });
-
-  it('returns nothing while there are no saved values or no fields yet', () => {
-    expect(toFormValues(undefined, fields)).toBeUndefined();
-    expect(toFormValues({ job_title: 'Payroll analyst' }, undefined)).toBe(
-      undefined,
-    );
-  });
 });

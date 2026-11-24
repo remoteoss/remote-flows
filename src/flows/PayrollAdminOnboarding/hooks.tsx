@@ -145,9 +145,23 @@ export const usePayrollAdminOnboarding = ({
       enabled: !!initialEmploymentId,
     });
 
-  const savedApiValues = isSavedValuesStep
-    ? (employment?.[currentStep] as FieldValues | null | undefined)
+  const savedSection = isSavedValuesStep
+    ? employment?.[currentStep]
     : undefined;
+
+  // A saved null or empty value means "not set", so it must not overwrite the
+  // partner's initialValues for that field.
+  const savedApiValues = useMemo(
+    () =>
+      savedSection
+        ? (Object.fromEntries(
+            Object.entries(savedSection).filter(
+              ([, value]) => value !== null && value !== '',
+            ),
+          ) as FieldValues)
+        : undefined,
+    [savedSection],
+  );
 
   const savedStepValues = {
     ...(initialValues?.[
@@ -185,7 +199,7 @@ export const usePayrollAdminOnboarding = ({
   >(
     () => ({
       [currentStep]: toFormValues(
-        savedApiValues ?? undefined,
+        savedApiValues,
         currentSchemaQuery.data?.fields,
       ),
     }),

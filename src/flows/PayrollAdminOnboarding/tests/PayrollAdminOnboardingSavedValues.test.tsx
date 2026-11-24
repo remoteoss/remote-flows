@@ -63,6 +63,7 @@ const savedEmployment = {
   contract_details: {
     job_title: 'Payroll analyst',
     annual_salary: 500000,
+    work_email: null,
   },
   administrative_details: { tax_number: '123-456' },
 };
@@ -177,7 +178,7 @@ describe('PayrollAdminOnboardingFlow saved values', () => {
   });
 
   it('opens the contract and administrative details steps with what is saved, money in dollars', async () => {
-    mockApi();
+    const { putBodies } = mockApi();
     renderFlow();
 
     expect(await screen.findByLabelText('Job title')).toHaveValue(
@@ -188,6 +189,9 @@ describe('PayrollAdminOnboardingFlow saved values', () => {
     await clickNext();
 
     expect(await screen.findByLabelText('Tax number')).toHaveValue('123-456');
+    expect(putBodies.contract_details).toEqual({
+      contract_details: { job_title: 'Payroll analyst', annual_salary: 500000 },
+    });
   });
 
   it('prefers saved values over initialValues and keeps initialValues for fields nothing saved', async () => {

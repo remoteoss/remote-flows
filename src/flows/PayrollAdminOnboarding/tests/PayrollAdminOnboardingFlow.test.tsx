@@ -122,6 +122,13 @@ describe('PayrollAdminOnboardingFlow select country step', () => {
   });
 
   it('offers the countries and creates the employment with the one picked', async () => {
+    let employmentReads = 0;
+    server.use(
+      http.get('*/v1/employments/:employmentId', () => {
+        employmentReads += 1;
+        return HttpResponse.json({ data: { employment: {} } });
+      }),
+    );
     renderFlow();
 
     const select = await screen.findByTestId('country_code');
@@ -147,5 +154,6 @@ describe('PayrollAdminOnboardingFlow select country step', () => {
       engaged_by_entity_slug: 'le-1',
       basic_information: { name: 'Ada Lovelace' },
     });
+    expect(employmentReads).toBe(0);
   });
 });

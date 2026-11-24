@@ -205,6 +205,7 @@ export const useGPRefreshSavedEmployment = () => {
     (employmentId: string) =>
       queryClient.refetchQueries({
         queryKey: employmentOptions(client as Client, employmentId).queryKey,
+        exact: true,
       }),
     [client, queryClient],
   );
