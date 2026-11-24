@@ -12,9 +12,9 @@ Only the create invoice schedule flow is covered today. See `apps/angular` for a
 
 ```bash
 pnpm run build          # runs ng-packagr into dist/
-cd dist && npm pack     # the tarball partners get; always publish from dist/, never from the package root
+pnpm pack               # the tarball partners get
 ```
 
-Publish with `npm publish --tag alpha` from `dist/` so a plain install never picks it up.
+`publishConfig.directory` makes `pnpm pack` and `pnpm publish` take their files from `dist/`, so run them from this folder, never `npm publish` inside `dist/`. Publish with `pnpm publish --tag alpha` so a plain install never picks it up.
 
-Core is a dependency pinned to an exact version in `package.json`. The demo app resolves core from the local `packages/core` (a path alias in its `tsconfig.json`), like the React SDK, so it shows what is on `main`. Partners get the pinned published version, which can lag `main`. When the Angular package needs a core change, publish core, then bump that pin and reinstall.
+Core is a `workspace:*` dependency, so the repo, the demo app and the type-check all use the local `packages/core`. When the package is packed, pnpm writes core's current version into the manifest. Partners get that published version, which can lag `main`. When the Angular package needs a core change, bump and publish core first, then pack this package.

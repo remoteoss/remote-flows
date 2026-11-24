@@ -4,7 +4,7 @@ Private Angular 20 app that shows the create invoice schedule form for a contrac
 
 ## Layout
 
-The library lives in `packages/angular` and is published as `@remoteoss/remote-flows-angular` (alpha, `--tag alpha`). The app imports it through that name (a path alias in `tsconfig.json` pointing at the package source). The package depends on the published `@remoteoss/remote-flows-core` at an exact alpha version, so partners install it with one command and core stays internal. `src/app` is what a partner writes.
+The library lives in `packages/angular` and is published as `@remoteoss/remote-flows-angular` (alpha, `--tag alpha`). The app imports it through that name (a workspace dependency, resolved to the package source). The package depends on `@remoteoss/remote-flows-core` through the workspace, and when it is packed that becomes the published core version, so partners install it with one command and core stays internal. `src/app` is what a partner writes.
 
 | Folder    | What it holds                                                                                                                                                                                     |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
