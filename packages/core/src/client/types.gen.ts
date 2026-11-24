@@ -1433,7 +1433,7 @@ export type Employment = {
    */
   manager?: string;
   /**
-   * Whether this employment takes engagement agreement details. It depends on the country and the hiring model of the active contract. When false, saving engagement agreement details for this employment returns a 404.
+   * Whether this employment takes engagement agreement details. Only EOR employments take them, and it depends on the country and the hiring model of the active contract. When false, saving engagement agreement details for this employment returns a 404.
    */
   requires_engagement_agreement_details?: boolean;
   /**
@@ -1905,6 +1905,10 @@ export type CostCenterAllocationId = string;
 export type EmploymentShowResponse = {
   data: {
     employment?: Employment & {
+      /**
+       * `true` when the employee is linked to an integration, such as an HRIS sync, and every Remote notification to them is turned off. Remote then doesn't invite them, and sends them only the emails it must, such as documents to sign. `false` otherwise.
+       */
+      emails_blocked_by_integration?: boolean;
       /**
        * Most updated termination date for the offboarding. This date is subject to change through the offboarding process even after it is finalized.
        */
@@ -4510,12 +4514,12 @@ export type AccountsAssignedRoles = Array<{
     | 'rps'
     | 'secondary_reports'
     | 'direct_reports'
-    | 'assigned_billing_legal_entities'
-    | 'employment_countries'
     | 'direct_and_indirect_reports'
+    | 'employment_countries'
     | 'employment_departments'
     | 'employment_company_structure_nodes'
-    | 'onboarding_reports';
+    | 'onboarding_reports'
+    | 'assigned_billing_legal_entities';
   name: string;
   slug: string;
   type?: 'default' | 'custom' | 'template' | 'owner';
@@ -5946,6 +5950,9 @@ export type ProjectBudget = {
  */
 export type TimeoffDaysParams = {
   day?: Date;
+  /**
+   * The hours taken off on this day. When the employee's work schedule decides the day, leave it out to book the scheduled time. Hours above the scheduled time are rejected, and a day with no scheduled time books 0.
+   */
   hours?: number;
 };
 
@@ -7170,6 +7177,10 @@ export type TimeTrackingParams = {
    * Optional free-text notes about this time entry, such as project or task details.
    */
   notes?: string | null;
+  /**
+   * For `on_call` entries only: `restricted` when the employee was working, or had to stay at or near the workplace; `unrestricted` when they only had to be reachable and could use their time freely. Where the employee's attendance policy counts only restricted on-call time as work (US), unrestricted on-call time is not work: it does not count toward overtime. Empty counts as restricted. Any other type with a value is rejected.
+   */
+  on_call_restriction?: 'restricted' | 'unrestricted';
   timezone: Timezone;
   /**
    * The category of time being tracked (e.g., regular hours, overtime, on-call).
@@ -7271,7 +7282,7 @@ export type ConvertCurrencyParams = {
  */
 export type TopUpTimeTracking = {
   /**
-   * The day this entry is filed under. A `minimum_engagement` or `late_cancellation` entry is filed under the local day of the call-in, or of the shift the change was about, in the entry's timezone. A `guaranteed_hours` entry is filed under the last day of the timesheet week, or the last day in that week the contract guarantees hours; its `total_hours` covers the whole week, so it is not that day's pay.
+   * The day this entry is filed under. A `minimum_engagement`, `late_cancellation` or `late_schedule_change` entry is filed under the local day of the call-in, or of the shift the change was about, in the entry's timezone. A `guaranteed_hours` entry is filed under the last day of the timesheet week, or the last day in that week the contract guarantees hours; its `total_hours` covers the whole week, so it is not that day's pay.
    */
   date: string;
   /**
@@ -7279,9 +7290,13 @@ export type TopUpTimeTracking = {
    */
   notes: string | null;
   /**
-   * Why Remote wrote the top-up. `guaranteed_hours`: the week's worked time is below the contract's guaranteed hours. `minimum_engagement`: a call-in is shorter than the policy's minimum paid time. `late_cancellation`: an employer cancelled, shortened or moved a shift inside the paid notice window, and the worker is paid the hours lost. Null only for an entry the system never writes.
+   * Why Remote wrote the top-up. `guaranteed_hours`: the week's worked time, plus the paid breaks the policy counts, is below the contract's guaranteed hours. `minimum_engagement`: a call-in is shorter than the policy's minimum paid time. `late_cancellation`: an employer cancelled, shortened or moved a shift inside the paid notice window, and the worker is paid the hours lost. `late_schedule_change`: an employer added, lengthened or moved a shift inside the paid notice window, and the policy pays a fixed number of hours for each such change (US predictive scheduling). Null only for an entry the system never writes.
    */
-  reason: 'guaranteed_hours' | 'minimum_engagement' | 'late_cancellation';
+  reason:
+    | 'guaranteed_hours'
+    | 'minimum_engagement'
+    | 'late_cancellation'
+    | 'late_schedule_change';
   total_hours: HoursAndMinutes;
   /**
    * Always `top_up`: the entry pays hours the employee did not work.
@@ -9100,7 +9115,7 @@ export type FileParams = {
    */
   file: Blob | File;
   /**
-   * A more specific classification within the type (e.g., "ir_35" for a UK contractor tax determination).
+   * A more specific classification within the type (e.g., "ir_35" for a UK contractor tax determination). For `type: document`, any value is accepted.
    */
   sub_type?: string;
   /**
@@ -9483,6 +9498,30 @@ export type UsingRegistrationNumber = {
    * The company registration number. Exactly one of this field or `tax_number` must be submitted, not both.
    */
   registration_number: string;
+};
+
+/**
+ * SandboxStatementOfWorkParams
+ *
+ * Seeds the rate from a signed Statement of Work, whether or not Statements of Work are turned on
+ * for the company. Omit it to set the main rate as an employer's rate edit does.
+ *
+ */
+export type SandboxStatementOfWorkParams = {
+  /**
+   * The Statement of Work's name, which can't be blank. Another Statement of Work of the contractor with the same name,
+   * ignoring case and spaces, can't start on the same date.
+   *
+   */
+  name?: string | null;
+  /**
+   * The last day of the services. Omit it for services with no end date.
+   */
+  service_end_date?: string | null;
+  /**
+   * The day the services start, and the rate with them.
+   */
+  service_start_date: string;
 };
 
 /**
@@ -14957,6 +14996,7 @@ export type SandboxCreateContractorRateParams = {
    * How often the contractor is paid. Must be null or omitted for a `one_off` rate.
    */
   pay_frequency?: 'weekly' | 'bi_weekly' | 'semi_monthly' | 'monthly';
+  statement_of_work?: SandboxStatementOfWorkParams;
   /**
    * The unit the amount is paid per.
    */
@@ -15121,6 +15161,10 @@ export type TimeTracking = {
    * Optional free-text notes about this time tracking entry, such as project or task details.
    */
   notes: string | null;
+  /**
+   * For `on_call` entries only: whether the on-call time was restricted (`restricted`: working, or had to stay at or near the workplace) or not (`unrestricted`: only had to be reachable). Empty when not answered, which counts as restricted.
+   */
+  on_call_restriction?: 'restricted' | 'unrestricted';
   time_breakdown: TimeBreakdown;
   timezone: Timezone;
   total_hours: HoursAndMinutes;
@@ -26509,11 +26553,11 @@ export type GetV1EmploymentsEmploymentIdFilesData = {
   };
   query?: {
     /**
-     * Filter by file type (optional)
+     * Filter by file type (optional). Common values: `contract`, `document`, `tax_document`, `id`.
      */
     type?: string;
     /**
-     * Filter by file sub_type (optional)
+     * Filter by file sub_type (optional). For example `personal_id`, `w_9_form` or `employer_managed_document`.
      */
     sub_type?: string;
     /**
