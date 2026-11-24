@@ -10,7 +10,9 @@
     }
   },
   "scripts": {
-    "build": "ng-packagr -p ng-package.json -c tsconfig.lib.json"
+    "version:write": "node scripts/write-version.mjs",
+    "version:check": "node scripts/write-version.mjs --check",
+    "build": "pnpm run version:write && ng-packagr -p ng-package.json -c tsconfig.lib.json"
   },
   "peerDependencies": {
     "@angular/common": ">=20.0.0 <21.0.0",
