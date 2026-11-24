@@ -78,12 +78,9 @@ The browser never holds Remote credentials. Your frontend talks to a small backe
 
 This is the part we most want from you. Useful things to tell us:
 
-- Which flows you need in Angular first.
 - Where the field component contract gets in your way.
 - Whether you need NgModules, standalone components only, or both.
 - Anything that took longer than it should to set up.
-
-Send feedback to your Remote contact, or open an issue on [GitHub](https://github.com/remoteoss/remote-flows/issues).
 
 ## Related
 
