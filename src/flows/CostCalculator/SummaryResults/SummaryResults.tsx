@@ -84,7 +84,7 @@ const SummaryHeader = ({
         <div className='RemoteFlows__SummaryHeader__IconContainer flex h-12 w-12 items-center justify-center rounded-lg bg-[#F4F4F5]'>
           <Globe className='RemoteFlows__SummaryHeader__Icon h-6 w-6 text-[#000000]' />
         </div>
-        <div className='RemoteFlows__SummaryHeader__Content space-y-1'>
+        <div className='RemoteFlows__SummaryHeader__Content'>
           <h2 className='RemoteFlows__SummaryHeader__Title text-lg font-medium leading-none text-[#181818]'>
             {title}
           </h2>
@@ -157,7 +157,7 @@ const MultiColumnAccordion = ({
         </AccordionTrigger>
 
         <AccordionContent className='RemoteFlows__SummaryResults__AccordionContent px-0 pb-4'>
-          <div className='RemoteFlows__SummaryResults__AccordionRows space-y-3'>
+          <div className='RemoteFlows__SummaryResults__AccordionRows'>
             {rows.map((row, index) => (
               <div
                 key={index}

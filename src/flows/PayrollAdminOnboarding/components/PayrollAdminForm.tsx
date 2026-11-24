@@ -30,7 +30,7 @@ export function PayrollAdminForm({
       <form
         id={formId}
         onSubmit={form.handleSubmit((values) => onSubmit(values, form))}
-        className='space-y-4 RemoteFlows__PayrollAdminForm'
+        className='RemoteFlows__PayrollAdminForm'
       >
         <JSONSchemaFormFields
           fields={adminBag.fields}

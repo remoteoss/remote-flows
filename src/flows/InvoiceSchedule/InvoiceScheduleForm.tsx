@@ -92,7 +92,7 @@ export function InvoiceScheduleForm({
       <form
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
-        className='space-y-4 RemoteFlows__InvoiceScheduleForm'
+        className='RemoteFlows__InvoiceScheduleForm'
       >
         <JSONSchemaFormFields fields={invoiceScheduleBag.fields} />
       </form>

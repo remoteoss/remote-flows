@@ -98,7 +98,7 @@ export function ContractDocumentPreviewForm({
       <form
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
-        className='space-y-4 RemoteFlows__ContractDocumentPreviewForm'
+        className='RemoteFlows__ContractDocumentPreviewForm'
       >
         <JSONSchemaFormFields
           components={components}
