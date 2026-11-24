@@ -537,6 +537,98 @@ describe('PayrollEmployeeOnboardingFlow saved values', () => {
     expect(await screen.findByLabelText('Account holder')).toHaveValue('First');
   });
 
+  it('starts the bank account step from the default account saved under local_details', async () => {
+    const { putBodies } = mockApi({
+      withBankSubstep: true,
+      saved: {
+        bankAccounts: [
+          {
+            is_default: false,
+            local_details: { account_holder: 'Old', account_number: '111' },
+          },
+          {
+            is_default: true,
+            slug: 'bank-account-slug',
+            status: 'approved',
+            local_details: {
+              account_holder: 'Jane Doe',
+              account_number: '222',
+              bank_number: '003',
+            },
+            international_details: {
+              account_holder: 'Overridden',
+              iban: 'PT50000201231234567890154',
+            },
+          },
+        ],
+      },
+    });
+    renderFlow();
+
+    await screen.findByLabelText('Given name');
+    fireEvent.click(screen.getByRole('button', { name: 'Go to bank account' }));
+    await waitForStep('bank_account');
+
+    expect(await screen.findByLabelText('Account holder')).toHaveValue(
+      'Jane Doe',
+    );
+    expect(screen.getByLabelText('Account number')).toHaveValue('222');
+    await clickNext();
+
+    await waitFor(() => expect(putBodies.bank_account).toBeDefined());
+    expect(putBodies.bank_account).toEqual({
+      bank_account_details: {
+        account_holder: 'Jane Doe',
+        account_number: '222',
+      },
+    });
+  });
+
+  it('starts the bank account step from an account saved only under international_details', async () => {
+    mockApi({
+      withBankSubstep: true,
+      saved: {
+        bankAccounts: [
+          {
+            is_default: true,
+            local_details: null,
+            international_details: {
+              account_holder: 'Jane Doe',
+              account_number: '222',
+            },
+          },
+        ],
+      },
+    });
+    renderFlow();
+
+    await screen.findByLabelText('Given name');
+    fireEvent.click(screen.getByRole('button', { name: 'Go to bank account' }));
+
+    expect(await screen.findByLabelText('Account holder')).toHaveValue(
+      'Jane Doe',
+    );
+    expect(screen.getByLabelText('Account number')).toHaveValue('222');
+  });
+
+  it('leaves the bank account blank when the saved account has no details', async () => {
+    mockApi({
+      withBankSubstep: true,
+      saved: {
+        bankAccounts: [
+          { is_default: true, local_details: null, international_details: {} },
+        ],
+      },
+    });
+    renderFlow();
+
+    await screen.findByLabelText('Given name');
+    fireEvent.click(screen.getByRole('button', { name: 'Go to bank account' }));
+
+    expect(await screen.findByLabelText('Account holder')).toHaveValue('');
+    expect(screen.getByLabelText('Account number')).toHaveValue('');
+  });
+
   it('does not read the saved bank account when the bank step is hidden', async () => {
     const { bankReads } = mockApi({ withBankSubstep: false });
     renderFlow();
