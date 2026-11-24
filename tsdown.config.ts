@@ -1,6 +1,6 @@
 import { copyFile } from 'node:fs/promises';
 import { defineConfig } from 'tsdown';
-import { ENVIRONMENTS } from './src/environments';
+import { ENVIRONMENTS } from './packages/core/src/environments';
 
 const env = process.env.NODE_ENV;
 

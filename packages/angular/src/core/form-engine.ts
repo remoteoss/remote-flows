@@ -1,7 +1,7 @@
 import {
   buildHeadlessForm,
   getInitialValues,
-  HeadlessFormOptions,
+  type HeadlessFormOptions,
   parseJSFToValidate,
   parseValuesForValidation,
   withFieldsetObjects,

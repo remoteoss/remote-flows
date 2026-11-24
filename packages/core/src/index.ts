@@ -53,6 +53,8 @@ export {
 } from './domains/invoice-schedule/utils';
 export type { ContractorInvoicePreview } from './domains/invoice-schedule/types';
 export { clearBase64Data, formatCurrency } from './format';
+export { ENVIRONMENTS, defaultEnvironment } from './environments';
+export type { Environment } from './environments';
 export { createClient } from './createClient';
 export type { AuthResponse, CreateClientOptions } from './createClient';
 export {

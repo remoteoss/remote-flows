@@ -1,17 +1,14 @@
 # Angular app
 
-Private Angular 20 app that shows the create invoice schedule form for a contractor, using `@remoteoss/remote-flows-core` through the workspace link. It is not published.
+Private Angular 20 app that shows the create invoice schedule form for a contractor, using `@remoteoss/remote-flows-angular` from `packages/angular`. It is not published.
 
 ## Layout
 
-`src/lib` is the code that would become `@remoteoss/remote-flows-angular`. The app imports it through that name (a path alias in `tsconfig.json`), so moving it into a package later means moving the folder and dropping the alias. `src/app` is what a partner writes.
+The library lives in `packages/angular` and is published as `@remoteoss/remote-flows-angular` (alpha, `--tag alpha`). The app imports it through that name (a workspace dependency, resolved to the package source). The package depends on `@remoteoss/remote-flows-core` through the workspace, and when it is packed that becomes the published core version, so partners install it with one command and core stays internal. `src/app` is what a partner writes.
 
-| Folder                           | What it holds                                                                                                                                                                                             |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/lib/core`                   | Framework-free logic: the form engine wrapper, the field tree, path helpers. Candidates for `packages/core`                                                                                               |
-| `src/lib/forms`                  | The Reactive Forms layer: the field contract, the outlet that picks a component per field type, the store that syncs controls with the engine                                                             |
-| `src/lib/flows/invoice-schedule` | The flow: `injectInvoiceSchedule` (the headless bag, not exported yet), and the components behind the single `InvoiceScheduleFlow` import: the flow, the form and the `rfInvoiceScheduleSubmit` directive |
-| `src/app`                        | The partner's code: `app.ts` is the shell, `pages/create-invoice` is the page (layout, loading state, notices, success message), and `fields` holds the Material field components the page brings         |
+| Folder    | What it holds                                                                                                                                                                                     |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/app` | The partner's code: `app.ts` is the shell, `pages/create-invoice` is the page (layout, loading state, notices, success message), and `fields` holds the Material field components the page brings |
 
 The pieces mirror the React flow. `InvoiceScheduleFlow` is one import that brings in three pieces. The flow component creates the state, and the form and the button find it by injecting the flow component they sit inside, where React uses a context. The form component renders the fields. `rfInvoiceScheduleSubmit` goes on the partner's own button and wires `type`, `form` and `disabled`. The partner reads the bag from a template reference (`#flow="rfInvoiceScheduleFlow"`) where React uses the `render` prop.
 

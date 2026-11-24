@@ -6,7 +6,7 @@ export const InvoiceScheduleFlow = [
   InvoiceScheduleFlowComponent,
   InvoiceScheduleFormComponent,
   InvoiceScheduleSubmitDirective,
-];
+] as const;
 
 export {
   InvoiceScheduleFlowComponent,
