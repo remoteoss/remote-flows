@@ -1291,7 +1291,8 @@
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "POST /v1/employments -> {\"message\":\"Internal Server Error\"}"
     },
     {
       "country": "LTU",
@@ -1410,21 +1411,24 @@
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "MUS",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "MUS",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "MUS",
@@ -1704,7 +1708,8 @@
       "version": 4,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "PATCH /v1/employments/{id} -> \"Internal Server Error\""
     },
     {
       "country": "PAK",
@@ -2110,21 +2115,24 @@
       "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> {\"message\":\"Internal Server Error\"}"
     },
     {
       "country": "KOR",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> {\"message\":\"Internal Server Error\"}"
     },
     {
       "country": "KOR",
       "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> {\"message\":\"Internal Server Error\"}"
     },
     {
       "country": "KOR",
