@@ -75,9 +75,11 @@ type EmploymentSections = Partial<
 function mockApi({
   employmentStatus = 200,
   schemaDelayMs = 0,
+  employmentDelayMs = 0,
 }: {
   employmentStatus?: number;
   schemaDelayMs?: number;
+  employmentDelayMs?: number;
 } = {}) {
   const employment: EmploymentSections = structuredClone(savedEmployment);
   const putBodies: Record<string, unknown> = {};
@@ -93,7 +95,8 @@ function mockApi({
     http.get('*/v1/employments/:employmentId/onboarding-steps', () =>
       HttpResponse.json({ data: { steps: [] } }),
     ),
-    http.get('*/v1/employments/:employmentId', () => {
+    http.get('*/v1/employments/:employmentId', async () => {
+      await delay(employmentDelayMs);
       if (employmentStatus !== 200) {
         return HttpResponse.json(
           { message: 'Not found' },
@@ -140,6 +143,9 @@ function renderStep({
     BackButton,
   } = components;
   const currentStep = adminBag.stepState.currentStep.name;
+  if (adminBag.isLoading) {
+    return <p>Loading...</p>;
+  }
   return (
     <>
       <p data-testid='current-step'>{currentStep}</p>
@@ -261,8 +267,8 @@ describe('PayrollAdminOnboardingFlow saved values', () => {
     expect(screen.getByLabelText('Annual salary')).toHaveValue('5000');
   });
 
-  it('waits for the step schema before opening the form, so saved values are not dropped', async () => {
-    mockApi({ schemaDelayMs: 50 });
+  it('waits for the step schema and the saved employment before opening the form', async () => {
+    mockApi({ schemaDelayMs: 30, employmentDelayMs: 80 });
     renderFlow();
 
     expect(await screen.findByLabelText('Job title')).toHaveValue(
