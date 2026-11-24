@@ -761,25 +761,6 @@ export function getInitialValues(
 }
 
 /**
- * Turns saved values from the API (money in cents) into the form's own units.
- * Only keys the API returned and the schema knows about are kept.
- */
-export function toFormValues(
-  apiValues: Record<string, unknown> | undefined,
-  fields: JSFFields | undefined,
-): Record<string, unknown> | undefined {
-  if (!apiValues || !fields) {
-    return undefined;
-  }
-  const formValues = getInitialValues(fields, apiValues);
-  return Object.fromEntries(
-    Object.keys(apiValues)
-      .filter((key) => key in formValues)
-      .map((key) => [key, formValues[key]]),
-  );
-}
-
-/**
  * Wraps fields listed in fieldsets with a fieldset field.
  * @param fields - Complete fields list.
  * @param fieldsets - fields list to be wrapped in a fieldset field.

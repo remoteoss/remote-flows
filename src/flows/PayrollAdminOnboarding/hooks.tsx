@@ -11,7 +11,7 @@ import { useEmploymentQuery } from '@/src/common/api/employment';
 import { useErrorReporting } from '@/src/components/error-handling/useErrorReporting';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { parseJSFToValidate } from '@/src/components/form/utils';
-import { toFormValues } from '@remoteoss/remote-flows-core';
+import { toAdminFormValues } from '@/src/flows/PayrollAdminOnboarding/utils';
 import {
   useGPFormSchema,
   useGPCountrySelectSchema,
@@ -198,7 +198,7 @@ export const usePayrollAdminOnboarding = ({
     Partial<Record<AdminStepKey, Record<string, unknown>>>
   >(
     () => ({
-      [currentStep]: toFormValues(
+      [currentStep]: toAdminFormValues(
         savedApiValues,
         currentSchemaQuery.data?.fields,
       ),
