@@ -104,12 +104,19 @@ export function customCycleFirstDay(today = new Date()) {
 
 export async function pickStartDate(page: Page, allowedDays?: number[]) {
   await page.getByTestId('date-picker-button-start_date').click();
+  await page
+    .locator('[role="dialog"] button[role="gridcell"]')
+    .first()
+    .waitFor({ state: 'visible' });
   const days = page.locator(
     '[role="dialog"] button[role="gridcell"]:not([disabled])',
   );
-  await days.first().waitFor({ state: 'visible' });
 
   const labels = await days.allInnerTexts();
+  if (labels.length === 0) {
+    throw new Error('The start date calendar has no selectable day');
+  }
+
   const index = allowedDays
     ? labels.findIndex((label) => allowedDays.includes(Number(label)))
     : 0;
