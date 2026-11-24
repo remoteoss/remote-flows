@@ -230,6 +230,12 @@ type SavedEmployment = NonNullable<
   EmploymentDetailsOnlyResponse['data']['employment']
 >;
 
+const isPlainObject = (value: unknown): value is SavedValues =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+// The API nests a saved account's fields under `international_details` and
+// `local_details`, while the form's fields are top level. `local_details` wins
+// when both hold a field.
 const pickDefaultBankAccount = (
   bankAccounts: SavedEmployment['bank_account_details'],
 ): SavedValues | undefined => {
@@ -239,8 +245,17 @@ const pickDefaultBankAccount = (
   if (!account) {
     return undefined;
   }
-  const { is_default: _isDefault, ...values } = account;
-  return values;
+  const {
+    is_default: _isDefault,
+    local_details: localDetails,
+    international_details: internationalDetails,
+    ...values
+  } = account;
+  return {
+    ...values,
+    ...(isPlainObject(internationalDetails) ? internationalDetails : {}),
+    ...(isPlainObject(localDetails) ? localDetails : {}),
+  };
 };
 
 const fromEmployment =
