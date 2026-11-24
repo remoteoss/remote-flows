@@ -1,10 +1,6 @@
 {
   "extends": "./tsconfig.lib.json",
   "compilerOptions": {
-    "noEmit": true,
-    "paths": {
-      "@remoteoss/remote-flows-core": ["../core/src/index.ts"],
-      "@remoteoss/remote-flows-core/*": ["../core/src/*"]
-    }
+    "noEmit": true
   }
 }
