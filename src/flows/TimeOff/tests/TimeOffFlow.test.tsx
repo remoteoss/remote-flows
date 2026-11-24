@@ -561,12 +561,13 @@ describe('TimeOffFlow', () => {
         return HttpResponse.json({
           data: {
             ...companyManagersResponse.data,
-            company_managers: [
-              {
-                ...companyManagersResponse.data.company_managers[0],
-                user_name: managerNames[authorization],
-              },
-            ],
+            company_managers:
+              companyManagersResponse.data?.company_managers?.map(
+                (manager) => ({
+                  ...manager,
+                  user_name: managerNames[authorization],
+                }),
+              ),
           },
         });
       }),
