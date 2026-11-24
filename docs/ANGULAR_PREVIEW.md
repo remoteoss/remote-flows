@@ -17,10 +17,10 @@ Requirements: Angular 20, `@tanstack/angular-query-experimental` 5 and RxJS 7.8.
 
 ## Try the demo
 
-- Angular demo: `<ANGULAR_DEMO_URL>`
+- Angular demo: https://remote-flows-angular.vercel.app/?employmentId=4279eb0a-1a85-4a0b-a162-4045d9f490e3
 - React demo: https://remote-flows-eight.vercel.app
 
-The demos run against Remote's sandbox. They sit behind a password, so ask your Remote contact for access. Open the Angular demo with `?employmentId=<id>` in the URL to load the form for a contractor.
+The demos run against Remote's sandbox. They sit behind a password, so ask your Remote contact for access. The Angular demo link above already includes a sandbox contractor. To use another, change the `employmentId` in the URL.
 
 The source for the demo is in [`apps/angular`](../apps/angular). The part you would write yourself is `src/app`, which is a good starting point to copy from.
 
