@@ -421,7 +421,7 @@ importers:
         version: 20.3.9(@angular/common@20.3.9(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.9(@angular/compiler@20.3.9)(rxjs@7.8.2)(zone.js@0.15.1))
       '@remoteoss/remote-flows-angular':
         specifier: workspace:*
-        version: link:../../packages/angular/dist
+        version: link:../../packages/angular
       axios:
         specifier: 1.20.0
         version: 1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
@@ -496,6 +496,7 @@ importers:
       typescript:
         specifier: 5.9.3
         version: 5.9.3
+    linkDirectory: false
     publishDirectory: dist
 
   packages/core:
