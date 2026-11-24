@@ -1,4 +1,4 @@
-import { parseJSFToValidate } from './form';
+import { parseJSFToValidate, toFormValues } from './form';
 
 describe('parseJSFToValidate file conversion', () => {
   const fileField = {
@@ -28,5 +28,28 @@ describe('parseJSFToValidate file conversion', () => {
     });
 
     expect(convertFiles).not.toHaveBeenCalled();
+  });
+});
+
+describe('toFormValues', () => {
+  const fields = [
+    { name: 'job_title', type: 'text', isVisible: true },
+    { name: 'annual_salary', type: 'money', isVisible: true },
+  ] as Parameters<typeof toFormValues>[1];
+
+  it('converts saved money from cents and drops keys the schema does not know', () => {
+    expect(
+      toFormValues(
+        { job_title: 'Payroll analyst', annual_salary: 500000, retired: 'x' },
+        fields,
+      ),
+    ).toEqual({ job_title: 'Payroll analyst', annual_salary: 5000 });
+  });
+
+  it('returns nothing while there are no saved values or no fields yet', () => {
+    expect(toFormValues(undefined, fields)).toBeUndefined();
+    expect(toFormValues({ job_title: 'Payroll analyst' }, undefined)).toBe(
+      undefined,
+    );
   });
 });

@@ -17,6 +17,7 @@ export {
   isDateDisabled,
   isFieldLocked,
   parseJSFToValidate,
+  toFormValues,
 } from './form/form';
 export {
   buildHeadlessForm,

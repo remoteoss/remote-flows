@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { FieldValues } from 'react-hook-form';
 import {
   getV1CountriesCountryCodeForm,
@@ -17,6 +17,7 @@ import { toOneOf } from '@/src/common/headlessForm';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
 import { countriesOptions } from '@/src/common/api/countries';
+import { employmentOptions } from '@remoteoss/remote-flows-core';
 import { gpSelectCountrySchema } from '@/src/flows/PayrollAdminOnboarding/json-schemas/selectCountryStep';
 
 export type GPAdminSchemaType =
@@ -190,4 +191,21 @@ export const useGPInviteEmployee = () => {
         path: { employment_id: employmentId },
       }),
   });
+};
+
+/**
+ * Fetches the employment again after a save, so reopening the flow in the same
+ * session pre-fills from what was just saved, not from older data.
+ */
+export const useGPRefreshSavedEmployment = () => {
+  const { client } = useClient();
+  const queryClient = useQueryClient();
+
+  return useCallback(
+    (employmentId: string) =>
+      queryClient.refetchQueries({
+        queryKey: employmentOptions(client as Client, employmentId).queryKey,
+      }),
+    [client, queryClient],
+  );
 };
