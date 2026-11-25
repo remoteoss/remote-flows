@@ -42,7 +42,7 @@ Whichever setup you use, the token should act as the person using your app, not 
 - a company admin or manager: `sub: urn:remote-api:company-manager:user:<user_id>`
 - an employee: `sub: urn:remote-api:employee:employment:<employment_id>`
 
-`example/api/jwt_auth.js` shows how to build and exchange the assertion. Remote has to allow your integration to act on behalf of users before this grant works; until then the token request is refused.
+`example/api/jwt_auth.js` shows how to build and exchange the assertion.
 
 Don't hand the browser a token obtained once from a refresh token and shared by every visitor, and don't attach one to every proxied call: every user of your app would act on Remote as the one user that token belongs to.
 
