@@ -26,7 +26,8 @@ The SDK calls the Remote gateway itself, with a token it gets from your backend 
 ```tsx
 const fetchToken = async () => {
   const response = await fetch('/api/remote-token'); // your backend
-  return response.json(); // { accessToken, expiresIn }
+  const { access_token, expires_in } = await response.json();
+  return { accessToken: access_token, expiresIn: expires_in };
 };
 
 <RemoteFlows auth={fetchToken}>{/* flows */}</RemoteFlows>;
@@ -41,7 +42,7 @@ Whichever setup you use, the token should act as the person using your app, not 
 - a company admin or manager: `sub: urn:remote-api:company-manager:user:<user_id>`
 - an employee: `sub: urn:remote-api:employee:employment:<employment_id>`
 
-`example/api/jwt_auth.js` shows how to build and exchange the assertion.
+`example/api/jwt_auth.js` shows how to build and exchange the assertion. Remote has to allow your integration to act on behalf of users before this grant works; until then the token request is refused.
 
 Don't hand the browser a token obtained once from a refresh token and shared by every visitor, and don't attach one to every proxied call: every user of your app would act on Remote as the one user that token belongs to.
 
@@ -49,11 +50,14 @@ Don't hand the browser a token obtained once from a refresh token and shared by 
 
 The browser can send anything. Some flows say which employment a call is about: `PayrollEmployeeOnboarding` sends it in the `x-rf-employment-id` header, which your proxy receives. Before minting an employee assertion for that id, check that it belongs to the user in your session, and answer 403 otherwise. In the example this is `authorizeEmployment` in `example/api/authorize.js`; the demo has no login and lets everything through, so replace it with your own check.
 
+The same goes for ids in the path or body when your proxy signs the call with a token that has more rights than the user. Creating and updating companies (`POST /v1/companies`, `PATCH /v1/companies/{company_id}`) uses a client credentials token, which is valid for every company your integration manages: check that the company in the path belongs to the user in your session before forwarding.
+
 ## Proxy checklist
 
 - Authenticate the request with your own session before adding any Remote token.
 - Build the assertion subject from that session, never from a header, query parameter or body field.
 - Forward only to the Remote gateway. Use a fixed host and take only the path from the request.
+- Forward only the methods and paths your flows use, at least for calls signed with client credentials.
 - Set the `Authorization` header yourself on every call; never forward the one the browser sent.
 - Don't forward the browser's cookies to the gateway: your session cookie is for your backend only.
 - If your proxy authenticates with a cookie (`credentials: 'include'`), protect it against CSRF: a `SameSite` cookie and/or an anti-CSRF token.

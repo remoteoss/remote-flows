@@ -870,7 +870,7 @@ onError: ({ error, fieldErrors }) => {
 
 ### 5.1 Auth Prop Architecture
 
-Flows require authentication via the `auth` prop on `<RemoteFlows>`:
+In the direct setup, flows get their token through the `auth` prop on `<RemoteFlows>` (with a proxy, leave `auth` out; see [Securing authentication](./docs/AUTHENTICATION_SECURITY.md)):
 
 ```tsx
 <RemoteFlows

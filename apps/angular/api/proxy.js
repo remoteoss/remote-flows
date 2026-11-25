@@ -70,9 +70,10 @@ function getTokenType(method, path) {
   // All other requests use user token. In this demo that is one shared
   // identity read from env (REMOTE_REFRESH_TOKEN), the same for every
   // visitor. In your integration, mint the token for the user logged in to
-  // your app instead, e.g. a company-manager assertion
-  // (fetchCompanyManagerToken in jwt_auth.js) whose subject comes from your
-  // session, never from the request.
+  // your app instead: a company-manager assertion built like
+  // generateJWTToken in jwt_auth.js, but with `sub` set to the Remote user id
+  // of the user in your session (not VITE_USER_ID, and never a value from the
+  // request).
   return 'user-token';
 }
 
