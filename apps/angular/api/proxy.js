@@ -4,6 +4,7 @@ const {
   fetchAccessToken,
 } = require('./get_token.js');
 const { fetchEmployeeToken } = require('./jwt_auth.js');
+const { authorizeEmployment } = require('./authorize.js');
 const { buildGatewayURL } = require('./utils.js');
 
 /**
@@ -60,12 +61,18 @@ function getTokenType(method, path) {
 
   // /v1/employee/* endpoints need an employment-scoped assertion. The FE
   // identifies which employment via the x-rf-employment-id header; the proxy
-  // mints the JWT-bearer token server-side so the FE never sees it.
+  // checks it with authorizeEmployment and mints the JWT-bearer token
+  // server-side so the FE never sees it.
   if (/^\/v1\/employee\//.test(pathname)) {
     return 'employee-assertion';
   }
 
-  // All other requests use user token
+  // All other requests use user token. In this demo that is one shared
+  // identity read from env (REMOTE_REFRESH_TOKEN), the same for every
+  // visitor. In your integration, mint the token for the user logged in to
+  // your app instead, e.g. a company-manager assertion
+  // (fetchCompanyManagerToken in jwt_auth.js) whose subject comes from your
+  // session, never from the request.
   return 'user-token';
 }
 
@@ -78,10 +85,18 @@ function getTokenType(method, path) {
  * @param {object} options.params - Query parameters
  * @param {object} options.headers - Additional headers
  * @param {boolean} options.requiresAuth - Whether authentication is required (default: true)
+ * @param {object} options.req - The incoming Express request, passed to authorizeEmployment
  * @returns {Promise<object>} - Axios response
  */
 async function createProxyRequest(path, method = 'GET', options = {}) {
-  const { body, params, headers = {}, requiresAuth = true, stream } = options;
+  const {
+    body,
+    params,
+    headers = {},
+    requiresAuth = true,
+    stream,
+    req,
+  } = options;
 
   const gatewayUrl = buildGatewayURL();
   const targetUrl = `${gatewayUrl}${path}`;
@@ -100,6 +115,10 @@ async function createProxyRequest(path, method = 'GET', options = {}) {
     maxContentLength: 100 * 1024 * 1024, // 100MB
     timeout: 60000, // 60 seconds for file uploads
   };
+
+  // The browser's cookies are for this backend (e.g. your session), not for
+  // Remote: don't forward them to the gateway.
+  delete requestConfig.headers.cookie;
 
   // Remove Content-Type for streaming (let axios handle it)
   if (stream) {
@@ -120,6 +139,12 @@ async function createProxyRequest(path, method = 'GET', options = {}) {
           {
             response: { status: 400, data: { error: 'employmentId required' } },
           },
+        );
+      }
+      if (!(await authorizeEmployment(req, employmentId))) {
+        throw Object.assign(
+          new Error('Not allowed to act as this employment'),
+          { response: { status: 403, data: { error: 'forbidden' } } },
         );
       }
       ({ accessToken } = await fetchEmployeeToken(employmentId));
@@ -151,6 +176,7 @@ function createProxyMiddleware(requiresAuth = true) {
         params: req.query,
         headers: req.headers,
         requiresAuth,
+        req,
       });
 
       res.status(response.status).json(response.data);

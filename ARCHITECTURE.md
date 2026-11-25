@@ -921,6 +921,8 @@ Consumers can proxy API calls through their backend:
 
 - **Security:** Never expose API keys client-side
 
+See [Securing authentication](./docs/AUTHENTICATION_SECURITY.md) for the recommended setup and what the proxy must check.
+
 ---
 
 ## 6. Customization System
