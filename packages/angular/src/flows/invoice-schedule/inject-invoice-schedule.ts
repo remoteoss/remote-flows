@@ -119,9 +119,20 @@ export function injectInvoiceSchedule({
     defaultValues,
   });
 
-  const createdScheduleId = signal<string | null>(null);
-  const submitError = signal<Error | null>(null);
+  const result = signal<InvoiceScheduleSubmitResult | null>(null);
   const isValidating = signal(false);
+
+  const createdScheduleId = computed(() => {
+    const current = result();
+    return current?.status === 'created'
+      ? (selectCreatedInvoiceSchedule(current.response).id ?? null)
+      : null;
+  });
+
+  const submitError = computed(() => {
+    const current = result();
+    return current?.status === 'failed' ? current.error : null;
+  });
 
   const error = computed(
     () => employment.error() ?? currencies.error() ?? null,
@@ -135,20 +146,12 @@ export function injectInvoiceSchedule({
   );
 
   function fail(thrown: unknown): InvoiceScheduleSubmitResult {
-    const error = toSubmitError(thrown);
-    submitError.set(error);
-    return { status: 'failed', error };
+    return { status: 'failed', error: toSubmitError(thrown) };
   }
 
-  async function onSubmit({
+  async function submit({
     beforeSubmit,
-  }: InvoiceScheduleSubmitOptions = {}): Promise<InvoiceScheduleSubmitResult> {
-    if (error() || !schema() || isValidating() || createSchedule.isPending()) {
-      return { status: 'skipped' };
-    }
-    createdScheduleId.set(null);
-    submitError.set(null);
-    isValidating.set(true);
+  }: InvoiceScheduleSubmitOptions): Promise<InvoiceScheduleSubmitResult> {
     try {
       const { hasErrors } = await store.submit();
       if (hasErrors) {
@@ -163,16 +166,28 @@ export function injectInvoiceSchedule({
       if (response.error) {
         return fail(response.error);
       }
-      const { id, hasFailures } = selectCreatedInvoiceSchedule(response.data);
+      const { hasFailures } = selectCreatedInvoiceSchedule(response.data);
       if (hasFailures || !response.data) {
         return fail(new Error(CREATE_FAILED_MESSAGE));
-      }
-      if (id) {
-        createdScheduleId.set(id);
       }
       return { status: 'created', response: response.data };
     } catch (thrown) {
       return fail(thrown);
+    }
+  }
+
+  async function onSubmit(
+    options: InvoiceScheduleSubmitOptions = {},
+  ): Promise<InvoiceScheduleSubmitResult> {
+    if (error() || !schema() || isValidating() || createSchedule.isPending()) {
+      return { status: 'skipped' };
+    }
+    result.set(null);
+    isValidating.set(true);
+    try {
+      const outcome = await submit(options);
+      result.set(outcome);
+      return outcome;
     } finally {
       isValidating.set(false);
     }
@@ -184,8 +199,9 @@ export function injectInvoiceSchedule({
     isLoading,
     error,
     isSubmitting: computed(() => isValidating() || createSchedule.isPending()),
+    result: result.asReadonly(),
     createdScheduleId,
-    submitError: submitError.asReadonly(),
+    submitError,
     onSubmit,
   };
 }
