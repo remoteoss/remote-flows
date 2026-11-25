@@ -66,6 +66,7 @@ export {
 export type {
   TimeOffApproveButtonProps,
   TimeOffApproveOptions,
+  TimeOffCreator,
   TimeOffDeclineButtonProps,
   TimeOffDeclineOptions,
   TimeOffDecisionError,
@@ -80,6 +81,7 @@ export type {
   TimeOffRequestDetail,
   TimeOffRequestError,
   TimeOffRequestIdFormValues,
+  TimeOffRequestPeople,
   TimeOffRequestsError,
   TimeOffReviewStepProps,
   TimeOffStatusFilterFormValues,

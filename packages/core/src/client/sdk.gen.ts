@@ -3065,12 +3065,40 @@ export const getV1CompaniesSchema = <ThrowOnError extends boolean = false>(
  * `service_start_date` is updated in place and keeps its `id`. A main rate with one belongs to a
  * Statement of Work and is kept: seeding adds a new main rate beside it, and the list endpoint
  * returns both while that Statement of Work is in force. This lets the rate endpoints be exercised
- * without going through contract signature. Contractor of Record contractors, including ones not
- * active yet, and Contractor Management Plus contractors whose contract is signed cannot be seeded,
- * since their Statement of Work sets the rate: the endpoint returns `422`.
+ * without going through contract signature. Without `statement_of_work`, Contractor of Record
+ * contractors, including ones not active yet, and Contractor Management Plus contractors whose
+ * contract is signed cannot be seeded, since their Statement of Work sets the rate: the endpoint
+ * returns `422`.
  *
  * The currency is derived from the legal entity the contractor is paid in by. A rate in a
  * currency the contractor cannot be paid in is rejected with `422`.
+ *
+ * With `statement_of_work`, the rate comes from a signed Statement of Work instead, made from
+ * Remote's templates as signature makes one, so the rate carries the Statement of Work's service
+ * dates and its contract documents are listed and open like any other. A contractor with no signed
+ * Contractor Services Agreement from Remote's template gets one, signed, which holds their first
+ * Statement of Work and sets the main rate. Each later seed adds a Statement of Work document, whose
+ * rate is the main rate only when the contractor has none. This works for Contractor Management,
+ * Contractor Management Plus and Contractor of Record contractors, whether or not Statements of Work
+ * are turned on for the company, but only for an active contractor. The company's owner makes and
+ * signs the documents for the company, so the partner needs only the contractor rate permissions
+ * this endpoint asks for. No email or in-app notification is sent, and the checks an employer's rate
+ * change goes through, such as a Contractor of Record contractor's risk reserve, are skipped. As
+ * when an employer makes a new contract document, the contractor's documents that are not signed
+ * yet, such as a draft agreement, are archived. The `contract_document.status.changed` webhook fires
+ * for the signed document and for each archived one, as when an employer makes and signs a document.
+ * Without `pay_frequency` a rate is invoiced monthly; a `one_off` rate is paid on completion of the
+ * services and takes no `pay_frequency`.
+ *
+ * The Statement of Work goes through the contractor's own contract details form, so its rules apply:
+ * for a Contractor Management Plus contractor a `service_start_date` in the past is rejected with
+ * `422`, while other contractors' Statements of Work may start in the past. A name another Statement
+ * of Work of the contractor already has with the same start date, a blank name, an end date before
+ * the start date, an `amount` with more than two decimal places or a `pay_frequency` on a `one_off`
+ * rate is rejected with `422`, and nothing is seeded. Seeds without a name are never treated as
+ * duplicates. A contractor whose Contractor Management Plus upgrade waits for its agreement to be
+ * signed is rejected with `422` too: seed once the upgrade has started, which happens shortly after
+ * the agreement is signed, or cancel the upgrade with a `downgrade` first.
  *
  * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
  *
@@ -4343,6 +4371,8 @@ export const getV1ContractorsEmploymentsEmploymentIdContractDocumentsId = <
  * List contract documents for an employment
  *
  * Only contractor employment types are supported. Lists contract documents for a specific employment with pagination, filtering by status, and sorted by updated_at descending (latest first).
+ *
+ * Some of these documents also exist as files, listed by List employment files, with a different ID. For example, once a contractor agreement is signed, its PDF can also be stored as a file. The API doesn't link the two. To avoid storing the same document twice, read [Working with Files](https://developer.remote.com/docs/working-with-files).
  *
  * ## Authentication
  *
@@ -8698,6 +8728,8 @@ export const getV1CountriesCountryCodeForm = <
  * Download file
  *
  * Downloads a file.
+ *
+ * The file is returned in `content` as a base64 data URI. Its MIME type comes from the extension in the file's `name`, not from the file's bytes. For example, `id.pdf` returns `data:application/pdf;base64,...` and `id.png` returns `data:image/png;base64,...`.
  *
  * ## Authentication
  *
@@ -13690,6 +13722,15 @@ export const postV1TimeoffTimeoffIdApprove = <
  *
  * Supports filtering by file type and sub_type.
  *
+ * These are the most common types. Other types and sub types exist, and each file in the response shows its `type` and `sub_type`.
+ *
+ * - `contract`: signed contracts. For contractors, this includes contractor services agreements (CSAs), statements of work (SOWs), and custom contractor agreements created from a template. A contractor's contract only appears once everyone has signed it.
+ * - `document`: other documents. Files with `sub_type: employer_managed_document` are documents the company created in Remote from one of its templates and had signed.
+ * - `tax_document`: tax forms, such as W-9s (`sub_type: w_9_form`).
+ * - `id`: identity documents, such as `sub_type: personal_id`.
+ *
+ * For contractors, some documents exist both as a file and as a contract document, with different IDs. The API doesn't link them. To avoid storing the same document twice, read [Working with Files](https://developer.remote.com/docs/working-with-files).
+ *
  * ## Authentication
  *
  * This endpoint accepts any one of the following token types:
@@ -14222,6 +14263,8 @@ export const getV1ResignationsOffboardingRequestId = <
  *
  * Uploads a file associated with a specified employment.
  *
+ * `type` and `sub_type` label the file. For `type: document`, `sub_type` can be any value. Some other types, such as `id`, `tax_document` and `contract`, check the `sub_type`, and what is accepted can depend on the employment's country.
+ *
  * Please contact api-support@remote.com to request access to this endpoint.
  *
  * ## Authentication
@@ -14289,6 +14332,7 @@ export const postV1Documents = <ThrowOnError extends boolean = false>(
  *
  * * Employment needs to have the following JSON Schema forms filled: `contract_details` and `pricing_plan_details`
  * * `provisional_start_date` must consider the minimum onboarding time of the employment's country
+ * * An employment waiting for its onboarding reserve (`created_awaiting_reserve`) is invited only when Remote has unblocked onboarding for its legal entity. Otherwise the request returns 409.
  *
  * If there are validations errors, they are returned with a Conflict HTTP Status (409) and a descriptive message.
  * HTTP Status OK (200) is returned in case of success.

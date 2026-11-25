@@ -2436,6 +2436,7 @@ export type {
   SalaryDecreaseDetails,
   SandboxContractorRateResponse,
   SandboxCreateContractorRateParams,
+  SandboxStatementOfWorkParams,
   ScheduleId,
   SdkErrorPayload,
   SendBackTimesheetParams,

@@ -1,4 +1,5 @@
 import {
+  CompanyManagersResponse,
   ListTimeoffResponse,
   TimeoffErrorResponse,
   TimeoffResponse,
@@ -86,4 +87,22 @@ export const declineReasonErrorResponse: TimeoffErrorResponse = {
     },
   ],
   message: 'Missing field',
+};
+
+export const companyManagersResponse: CompanyManagersResponse = {
+  data: {
+    current_page: 1,
+    total_count: 1,
+    total_pages: 1,
+    company_managers: [
+      {
+        billing_contacts: [],
+        company_id: 'company-1',
+        role: 'admin',
+        user_email: 'anne.white@example.com',
+        user_id: 'manager-anne',
+        user_name: 'Anne White',
+      },
+    ],
+  },
 };
