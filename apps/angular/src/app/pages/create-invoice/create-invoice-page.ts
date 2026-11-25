@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   CreatedInvoiceSchedules,
   InvoiceScheduleFlow,
@@ -48,6 +49,7 @@ import { InvoicePreviewDialog } from './invoice-preview-dialog';
               mat-stroked-button
               rfInvoiceSchedulePreview
               (previewed)="openPreview($event)"
+              (previewFailed)="onPreviewError($event)"
             >
               {{
                 flow.bag.isPreviewing()
@@ -59,11 +61,6 @@ import { InvoicePreviewDialog } from './invoice-preview-dialog';
               Create invoice schedule
             </button>
           </div>
-          @if (flow.bag.previewError(); as previewError) {
-            <app-alert severity="error">
-              Could not preview the invoice: {{ previewError.message }}
-            </app-alert>
-          }
           @if (flow.bag.submitError(); as submitError) {
             <app-alert severity="error">
               Could not create the invoice schedule: {{ submitError.message }}
@@ -83,6 +80,7 @@ import { InvoicePreviewDialog } from './invoice-preview-dialog';
 })
 export class CreateInvoicePage {
   private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
 
   protected openPreview(preview: InvoiceSchedulePreview) {
     this.dialog.open(InvoicePreviewDialog, {
@@ -90,6 +88,13 @@ export class CreateInvoicePage {
       width: '900px',
       maxWidth: '95vw',
     });
+  }
+
+  protected onPreviewError(error: Error) {
+    this.snackBar.open(
+      `Could not preview the invoice: ${error.message}`,
+      'Dismiss',
+    );
   }
 
   protected readonly onSubmit = (payload: InvoiceSchedulePayload) => {
