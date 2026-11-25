@@ -284,7 +284,7 @@ export function injectInvoiceSchedule({
     onSubmit,
     invoiceNumberSequence,
     canManageInvoiceNumberSequence,
-    isOpeningInvoiceNumberSequence: createMagicLink.isPending,
+    isOpeningInvoiceNumberSequence: computed(() => createMagicLink.isPending()),
     openInvoiceNumberSequence,
     isPreviewing,
     preview: preview.asReadonly(),
