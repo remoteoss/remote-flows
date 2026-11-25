@@ -123,22 +123,18 @@ export function createFormStore({
   defaultValues = {},
   options,
 }: CreateFormStoreArgs) {
-  const engine = computed(() => {
-    const current = schema();
-    return current ? createFormEngine(current, options) : null;
-  });
+  const engine = createFormEngine(options);
 
   const revision = signal(0);
-  let validationRun = 0;
 
   const form = computed(() => {
-    const current = engine();
-    if (!current) {
+    const synced = engine.sync(schema(), defaultValues);
+    if (!synced) {
       return null;
     }
     const group = buildGroup(
-      current.nodes,
-      current.initialValues({
+      synced.nodes,
+      synced.initialValues({
         currency: '',
         periodicity: '',
         start_date: '',
@@ -147,7 +143,7 @@ export function createFormStore({
         ...defaultValues,
       }),
     );
-    return { engine: current, group };
+    return { nodes: synced.nodes, group };
   });
 
   function toViews(
@@ -206,23 +202,22 @@ export function createFormStore({
   const fields = computed<FieldView[]>(() => {
     revision();
     const current = form();
-    return current ? toViews(current.engine.nodes, current.group, '') : [];
+    return current ? toViews(current.nodes, current.group, '') : [];
   });
 
   async function validate() {
     const current = form();
     if (!current) {
-      return { hasErrors: false };
+      return {};
     }
-    const run = ++validationRun;
     const rawValues = current.group.getRawValue();
-    const errors = await current.engine.validate(rawValues);
-    if (run === validationRun && form() === current) {
-      syncLocked(current.engine.nodes, current.group, rawValues);
+    const errors = await engine.validate(rawValues);
+    if (errors) {
+      syncLocked(current.nodes, current.group, rawValues);
       applyErrors(current.group, errors);
       revision.update((count) => count + 1);
     }
-    return { hasErrors: Object.keys(errors).length > 0 };
+    return errors;
   }
 
   effect((onCleanup) => {
@@ -239,12 +234,16 @@ export function createFormStore({
 
   async function submit() {
     form()?.group.markAllAsTouched();
-    return validate();
+    let errors = await validate();
+    while (errors === null) {
+      errors = await validate();
+    }
+    return { hasErrors: Object.keys(errors).length > 0 };
   }
 
   async function parse() {
     const current = form();
-    return current ? current.engine.parse(current.group.getRawValue()) : {};
+    return current ? engine.parse(current.group.getRawValue()) : {};
   }
 
   return { fields, validate, submit, parse };
