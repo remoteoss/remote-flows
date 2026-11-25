@@ -249,6 +249,8 @@ export const getTimeOffListItems = (
       listedDetails: LISTED_DETAILS.flatMap((name) =>
         details.filter((detail) => detail.name === name),
       ),
-      canDecide: timeOffRequest.status === 'requested',
+      canDecide:
+        timeOffRequest.status === 'requested' ||
+        timeOffRequest.status === 'cancel_requested',
     };
   });

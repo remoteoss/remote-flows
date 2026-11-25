@@ -224,6 +224,37 @@ const decisionResponse =
       },
     });
 
+function mockCancellationRequest(
+  statusAfterDecision: typeof timeOffRequestResponse.data.timeoff.status,
+  decisionResponse: () => Response = () =>
+    HttpResponse.json({ data: { status: 'ok' } }),
+) {
+  let status: typeof statusAfterDecision = 'cancel_requested';
+  const requests: string[] = [];
+  server.use(
+    http.get('*/v1/timeoff/:id', ({ params }) => {
+      requests.push(`GET ${params.id}`);
+      return HttpResponse.json({
+        data: { timeoff: { ...timeOffRequestResponse.data.timeoff, status } },
+      });
+    }),
+    http.post(
+      '*/v1/timeoff/:id/cancel-request/:decision',
+      async ({ params, request }) => {
+        requests.push(
+          `POST ${params.id} ${params.decision} ${await request.text()}`.trim(),
+        );
+        const response = decisionResponse();
+        if (response.ok) {
+          status = statusAfterDecision;
+        }
+        return response;
+      },
+    ),
+  );
+  return requests;
+}
+
 describe('TimeOffFlow', () => {
   beforeEach(() => {
     queryClient.clear();
@@ -935,6 +966,91 @@ describe('TimeOffFlow', () => {
           fieldErrors: [],
         }),
       );
+    },
+  );
+
+  it.each([
+    ['approves', 'cancelled', 'Cancelled'],
+    ['declines', 'approved', 'Approved'],
+  ] as const)(
+    '%s a cancellation request and shows the reloaded %s request',
+    async (decision, status, label) => {
+      const requests = mockCancellationRequest(status);
+      const onSuccess = vi.fn();
+      if (decision === 'approves') {
+        renderApproval({ approverId: 'manager-1', onSuccess });
+      } else {
+        renderDecline({ onSuccess });
+      }
+
+      fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+      expect(
+        await screen.findByText('Cancellation requested'),
+      ).toBeInTheDocument();
+      fireEvent.click(
+        screen.getByRole('button', {
+          name: decision === 'approves' ? 'Approve' : 'Decline',
+        }),
+      );
+
+      expect(await screen.findByText(label)).toBeInTheDocument();
+      expect(onSuccess).toHaveBeenCalledWith({
+        ...timeOffRequestResponse.data.timeoff,
+        status,
+      });
+      expect(requests).toEqual([
+        'GET timeoff-123',
+        decision === 'approves'
+          ? 'POST timeoff-123 approve'
+          : 'POST timeoff-123 decline {"decline_reason":null}',
+        'GET timeoff-123',
+      ]);
+    },
+  );
+
+  it('sends the reason given for declining a cancellation request', async () => {
+    const requests = mockCancellationRequest('approved');
+    renderDecline({ declineReason: 'The handover is not done' });
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+    await screen.findByText('Cancellation requested');
+    fireEvent.click(screen.getByRole('button', { name: 'Decline' }));
+
+    expect(await screen.findByText('Approved')).toBeInTheDocument();
+    expect(requests[1]).toBe(
+      'POST timeoff-123 decline {"decline_reason":"The handover is not done"}',
+    );
+  });
+
+  it.each([
+    [422, 'rejected', timeOffErrorResponse, timeOffErrorResponse.field_errors],
+    [409, 'request_failed', { message: 'Conflict' }, []],
+  ] as const)(
+    'reports a %i cancellation decision as %s without reloading the request',
+    async (status, reason, body, fieldErrors) => {
+      const requests = mockCancellationRequest('approved', () =>
+        HttpResponse.json(body, { status }),
+      );
+      const onError = vi.fn();
+      renderDecline({ onError });
+
+      fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+      await screen.findByText('Cancellation requested');
+      fireEvent.click(screen.getByRole('button', { name: 'Decline' }));
+
+      await waitFor(() =>
+        expect(onError).toHaveBeenCalledWith({
+          reason,
+          status,
+          message: body.message,
+          fieldErrors,
+        }),
+      );
+      expect(screen.getByText('Cancellation requested')).toBeInTheDocument();
+      expect(requests).toEqual([
+        'GET timeoff-123',
+        'POST timeoff-123 decline {"decline_reason":null}',
+      ]);
     },
   );
 });

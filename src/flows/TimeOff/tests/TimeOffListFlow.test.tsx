@@ -345,6 +345,85 @@ describe('TimeOffListFlow', () => {
     expect(requestedIds).toEqual(['timeoff-1']);
   });
 
+  it('decides on listed requested and cancellation requests only, through the route that fits each', async () => {
+    const statuses = [
+      'requested',
+      'cancel_requested',
+      'approved',
+      'declined',
+      'taken',
+      'cancelled',
+    ] as const;
+    let cancellationStatus: (typeof statuses)[number] = 'cancel_requested';
+    const requests: string[] = [];
+    server.use(
+      http.get('*/v1/timeoff', () => {
+        requests.push('GET list');
+        return HttpResponse.json({
+          data: {
+            ...timeOffRequestsResponse.data,
+            timeoffs: statuses.map((status) => ({
+              ...listedTimeOff(`timeoff-${status}`, `${status} leave`),
+              status:
+                status === 'cancel_requested' ? cancellationStatus : status,
+            })),
+          },
+        });
+      }),
+      http.get('*/v1/timeoff/:id', ({ params }) => {
+        requests.push(`GET ${params.id}`);
+        return HttpResponse.json({
+          data: {
+            timeoff: {
+              ...listedTimeOff(params.id as string, 'Reviewed leave'),
+              status: cancellationStatus,
+            },
+          },
+        });
+      }),
+      http.post('*/v1/timeoff/:id/cancel-request/approve', ({ params }) => {
+        requests.push(`POST ${params.id} cancel-request/approve`);
+        cancellationStatus = 'cancelled';
+        return HttpResponse.json({ data: { status: 'ok' } });
+      }),
+    );
+    renderFlow();
+
+    await screen.findByText('cancel_requested leave');
+    const actionsOf = (item: HTMLElement) =>
+      within(item)
+        .getAllByRole('button')
+        .map((button) => button.getAttribute('aria-label')?.split(' ')[0]);
+    expect(screen.getAllByRole('listitem').map(actionsOf)).toEqual([
+      ['View', 'Decline', 'Approve'],
+      ['View', 'Decline', 'Approve'],
+      ['View'],
+      ['View'],
+      ['View'],
+      ['View'],
+    ]);
+
+    fireEvent.click(
+      within(screen.getAllByRole('listitem')[1]).getByRole('button', {
+        name: /^Approve/,
+      }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('listitem').map(actionsOf)[1]).toEqual([
+        'View',
+      ]);
+    });
+    expect(requests.slice(0, 2)).toEqual([
+      'GET list',
+      'POST timeoff-cancel_requested cancel-request/approve',
+    ]);
+    expect(new Set(requests.slice(2))).toEqual(
+      new Set(['GET timeoff-cancel_requested', 'GET list']),
+    );
+    expect(requests).toHaveLength(4);
+  });
+
   it('shows the team member of each listed request once their employment loads', async () => {
     mockTimeOffRequests();
     let respond: (response: Response) => void = () => {};

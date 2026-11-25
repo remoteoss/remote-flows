@@ -102,15 +102,16 @@ export type TimeOffDecisionError = {
 export type TimeOffApproveOptions = {
   /**
    * Sent unchanged as `approver_id`, which the API requires: the `id` of a user allowed to approve
-   * time off, as listed by the company managers endpoint, or `null`.
+   * time off, as listed by the company managers endpoint, or `null`. Not sent when approving a
+   * cancellation request, whose route takes no body.
    */
   approverId: NullableApproverId;
 };
 
 export type TimeOffDeclineOptions = {
   /**
-   * Sent unchanged as `decline_reason`, which the API requires: why the request is declined, or
-   * `null` to give no reason.
+   * Sent unchanged as `decline_reason`, which the API requires: why the request, or its
+   * cancellation request, is declined, or `null` to give no reason.
    */
   declineReason: DeclineTimeoffParams['decline_reason'];
 };
@@ -207,7 +208,8 @@ export type TimeOffListItem = TimeOffRequestPeople & {
    */
   listedDetails: TimeOffRequestDetail[];
   /**
-   * Whether the request awaits a decision, so it can be approved or declined.
+   * Whether the request awaits a decision, so it can be approved or declined: it is `requested`,
+   * or `cancel_requested` and the decision is on its cancellation.
    */
   canDecide: boolean;
 };
@@ -242,8 +244,8 @@ type TimeOffButtonProps = PropsWithChildren<
 export type TimeOffApproveButtonProps = Omit<TimeOffButtonProps, 'onError'> &
   TimeOffApproveOptions & {
     /**
-     * Called with the request as the API returns it once approved. Read the outcome from its
-     * `status` rather than assuming `approved`.
+     * Called with the request as the API returns it once approved, or as it is reloaded once its
+     * cancellation is approved. Read the outcome from its `status` rather than assuming one.
      */
     onSuccess?: (timeOffRequest: TimeOffRequest) => void | Promise<void>;
     /**
@@ -255,8 +257,8 @@ export type TimeOffApproveButtonProps = Omit<TimeOffButtonProps, 'onError'> &
 export type TimeOffDeclineButtonProps = Omit<TimeOffButtonProps, 'onError'> &
   TimeOffDeclineOptions & {
     /**
-     * Called with the request as the API returns it once declined. Read the outcome from its
-     * `status` rather than assuming `declined`.
+     * Called with the request as the API returns it once declined, or as it is reloaded once its
+     * cancellation is declined. Read the outcome from its `status` rather than assuming one.
      */
     onSuccess?: (timeOffRequest: TimeOffRequest) => void | Promise<void>;
     /**

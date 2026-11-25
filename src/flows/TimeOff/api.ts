@@ -10,6 +10,7 @@ import {
   selectEmployment,
 } from '@remoteoss/remote-flows-core';
 import {
+  DeclineCancelTimeoffParams,
   DeclineTimeoffParams,
   getV1CompanyManagers,
   getV1Timeoff,
@@ -18,6 +19,8 @@ import {
   ListTimeoffResponse,
   NullableApproverId,
   postV1TimeoffTimeoffIdApprove,
+  postV1TimeoffTimeoffIdCancelRequestApprove,
+  postV1TimeoffTimeoffIdCancelRequestDecline,
   postV1TimeoffTimeoffIdDecline,
   TimeoffErrorResponse,
   TimeoffResponse,
@@ -337,6 +340,91 @@ export const useDeclineTimeOffRequest = () => {
         response.data,
       );
       void queryClient.invalidateQueries({ queryKey: ['timeoff-requests'] });
+    },
+  });
+};
+
+/**
+ * Approves the cancellation of one time-off request with
+ * `POST /v1/timeoff/{timeoff_id}/cancel-request/approve`. The API answers without the request.
+ */
+export const useApproveTimeOffCancellationRequest = () => {
+  const { client } = useClient();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ timeOffId }: { timeOffId: string }) =>
+      postV1TimeoffTimeoffIdCancelRequestApprove({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: { timeoff_id: timeOffId },
+      }),
+    onSuccess: (response) => {
+      if (response.error) {
+        return;
+      }
+      void queryClient.invalidateQueries({ queryKey: ['timeoff-requests'] });
+    },
+  });
+};
+
+/**
+ * Declines the cancellation of one time-off request with
+ * `POST /v1/timeoff/{timeoff_id}/cancel-request/decline`. The API answers without the request.
+ */
+export const useDeclineTimeOffCancellationRequest = () => {
+  const { client } = useClient();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      timeOffId,
+      declineReason,
+    }: {
+      timeOffId: string;
+      declineReason: DeclineCancelTimeoffParams['decline_reason'];
+    }) =>
+      postV1TimeoffTimeoffIdCancelRequestDecline({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: { timeoff_id: timeOffId },
+        body: { decline_reason: declineReason },
+      }),
+    onSuccess: (response) => {
+      if (response.error) {
+        return;
+      }
+      void queryClient.invalidateQueries({ queryKey: ['timeoff-requests'] });
+    },
+  });
+};
+
+/**
+ * Loads one time-off request again with `GET /v1/timeoff/{id}` after a decision that doesn't
+ * return it, then caches it so the request under review shows its new status.
+ */
+export const useReloadTimeOffRequest = () => {
+  const { client } = useClient();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ timeOffId }: { timeOffId: string }) =>
+      getV1TimeoffId({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: { id: timeOffId },
+      }),
+    onSuccess: (response, { timeOffId }) => {
+      if (!response.data) {
+        return;
+      }
+      queryClient.setQueryData(
+        timeOffRequestOptions(client as Client, timeOffId).queryKey,
+        response.data,
+      );
     },
   });
 };
