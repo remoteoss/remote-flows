@@ -1,35 +1,22 @@
-import { Component, inject, Pipe, PipeTransform } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {
   CreatedInvoiceSchedules,
   InvoiceScheduleFlow,
   InvoiceSchedulePayload,
 } from '@remoteoss/remote-flows-angular';
 import { Alert } from '../../ui/alert';
-
-const PDF_DATA_URI_PREFIX = 'data:application/pdf;base64,';
-
-@Pipe({ name: 'pdfUrl' })
-class PdfUrlPipe implements PipeTransform {
-  private readonly sanitizer = inject(DomSanitizer);
-
-  transform(content: string): SafeResourceUrl | null {
-    return content.startsWith(PDF_DATA_URI_PREFIX)
-      ? this.sanitizer.bypassSecurityTrustResourceUrl(content)
-      : null;
-  }
-}
+import { InvoicePreviewOpener } from './invoice-preview-dialog';
 
 @Component({
   selector: 'app-create-invoice-page',
   imports: [
     Alert,
+    InvoicePreviewOpener,
     InvoiceScheduleFlow,
     MatButtonModule,
     MatProgressSpinnerModule,
-    PdfUrlPipe,
   ],
   template: `
     <h1>Create invoice schedule</h1>
@@ -72,15 +59,7 @@ class PdfUrlPipe implements PipeTransform {
               Could not preview the invoice: {{ previewError.message }}
             </app-alert>
           }
-          @if (flow.bag.preview(); as preview) {
-            @if (preview.content | pdfUrl; as url) {
-              <iframe
-                title="Invoice preview"
-                style="width: 100%; height: 40rem; border: 0"
-                [src]="url"
-              ></iframe>
-            }
-          }
+          <app-invoice-preview-opener [preview]="flow.bag.preview()" />
           @if (flow.bag.submitError(); as submitError) {
             <app-alert severity="error">
               Could not create the invoice schedule: {{ submitError.message }}
