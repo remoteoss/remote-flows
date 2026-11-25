@@ -2,6 +2,7 @@
 const jwt = require('jsonwebtoken');
 
 const { buildGatewayURL } = require('./utils.js');
+const { authorizeEmployment } = require('./authorize.js');
 
 const DEFAULT_SCOPES = 'all:write';
 
@@ -174,6 +175,9 @@ async function getEmployeeToken(req, res) {
       .json({ error: 'This endpoint is not available in production mode' });
   }
   const { employmentId } = req.params;
+  if (!(await authorizeEmployment(req, employmentId))) {
+    return res.status(403).json({ error: 'forbidden' });
+  }
   try {
     const { accessToken, expiresIn } = await fetchEmployeeToken(employmentId);
     return res
