@@ -6,7 +6,11 @@ import {
   TimeOffRequestError,
   TimeOffRequestsError,
 } from '@remoteoss/remote-flows';
-import { Alert, AlertDescription } from '@remoteoss/remote-flows/internals';
+import {
+  Alert,
+  AlertDescription,
+  Button,
+} from '@remoteoss/remote-flows/internals';
 import { AlertCircle, CheckIcon, EyeIcon, XIcon } from 'lucide-react';
 import { RemoteFlows } from './RemoteFlows';
 import { TimeOffDeclineDialog } from './TimeOffDeclineDialog';
@@ -122,10 +126,18 @@ export function TimeOffList() {
                         </ViewButton>
                         {canDecide && (
                           <>
-                            <DeclineButton
-                              aria-label='Decline'
-                              title='Decline'
-                              declineReason={null}
+                            <TimeOffDeclineDialog
+                              DeclineButton={DeclineButton}
+                              disabled={timeOffListBag.isSubmitting}
+                              trigger={
+                                <Button
+                                  type='button'
+                                  aria-label='Decline'
+                                  title='Decline'
+                                >
+                                  <XIcon />
+                                </Button>
+                              }
                               onClick={clearDecision}
                               onSuccess={(declinedTimeOffRequest) =>
                                 setOutcome({
@@ -134,9 +146,7 @@ export function TimeOffList() {
                                 })
                               }
                               onError={setDecisionError}
-                            >
-                              <XIcon />
-                            </DeclineButton>
+                            />
                             <ApproveButton
                               aria-label='Approve'
                               title='Approve'

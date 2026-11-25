@@ -1,4 +1,4 @@
-import { ComponentType, useState } from 'react';
+import { ComponentType, ReactElement, useState } from 'react';
 import type { TimeOffDeclineButtonProps } from '@remoteoss/remote-flows';
 import {
   Button,
@@ -19,11 +19,17 @@ type TimeOffDeclineDialogProps = Pick<
 > & {
   DeclineButton: ComponentType<TimeOffDeclineButtonProps>;
   disabled?: boolean;
+  trigger?: ReactElement;
 };
 
 export function TimeOffDeclineDialog({
   DeclineButton,
   disabled,
+  trigger = (
+    <Button type='button' className='back-button'>
+      Decline
+    </Button>
+  ),
   onClick,
   onSuccess,
   onError,
@@ -40,10 +46,8 @@ export function TimeOffDeclineDialog({
         }
       }}
     >
-      <DialogTrigger asChild>
-        <Button type='button' className='back-button' disabled={disabled}>
-          Decline
-        </Button>
+      <DialogTrigger asChild disabled={disabled}>
+        {trigger}
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
