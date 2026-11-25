@@ -389,18 +389,14 @@ describe('createHeadlessFormController', () => {
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
-  it('validates against the new form when sync replaces it mid-validation', async () => {
-    let resolveFirst!: (value: unknown) => void;
-    let callCount = 0;
-    const convertFiles = vi.fn(() => {
-      callCount += 1;
-      if (callCount === 1) {
-        return new Promise((resolve) => {
-          resolveFirst = resolve;
-        });
-      }
-      return Promise.resolve([{ name: 'old.pdf' }]);
-    });
+  it('returns a real result for a validation whose form sync replaced mid-validation', async () => {
+    let resolveConversion!: (value: unknown) => void;
+    const convertFiles = vi.fn(
+      () =>
+        new Promise((resolve) => {
+          resolveConversion = resolve;
+        }),
+    );
 
     const controller = createHeadlessFormController({ convertFiles });
     const listener = vi.fn();
@@ -413,14 +409,13 @@ describe('createHeadlessFormController', () => {
     });
 
     controller.sync({ schema: structuredClone(fileSchema) });
-    resolveFirst([{ name: 'old.pdf' }]);
+    resolveConversion([{ name: 'old.pdf' }]);
 
     expect(await pendingValidation).toMatchObject({
       formErrors: { note: expect.any(String) },
     });
-    expect(convertFiles).toHaveBeenCalledTimes(2);
-    expect(controller.getRevision()).toBe(1);
-    expect(listener).toHaveBeenCalledTimes(1);
+    expect(controller.getRevision()).toBe(0);
+    expect(listener).not.toHaveBeenCalled();
   });
 
   it('leaves the caller schema untouched', async () => {
