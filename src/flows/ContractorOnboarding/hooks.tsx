@@ -42,7 +42,7 @@ import {
 import { useCompanyOpenTasks } from '@/src/common/api/companies';
 import {
   buildInvoiceScheduleFormValues,
-  type ContractorInvoicePreview,
+  selectContractorInvoicePreview,
 } from '@remoteoss/remote-flows-core';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
@@ -81,11 +81,7 @@ import {
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
-import {
-  clearBase64Data,
-  createStructuredError,
-  prettifyFormValues,
-} from '@/src/lib/utils';
+import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
 import { eorProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 import {
@@ -1689,19 +1685,7 @@ export const useContractorOnboarding = ({
       values: parsedValues,
     });
 
-    // The API returns `content` as a `data:application/pdf;base64,...` string,
-    // not the `Blob | File` the OpenAPI spec's `format: binary` implies.
-    const preview = response?.data?.contractor_invoice_preview as
-      | ContractorInvoicePreview
-      | undefined;
-
-    if (!preview) {
-      return undefined;
-    }
-
-    // Same normalization the contract document preview does — the data URI
-    // prefix is what makes the content renderable in an iframe / downloadable.
-    return { ...preview, content: clearBase64Data(preview.content) };
+    return selectContractorInvoicePreview(response);
   };
 
   const handleNextStep = () => {

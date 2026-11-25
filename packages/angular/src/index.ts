@@ -6,5 +6,6 @@ export {
   InvoiceScheduleFlow,
   InvoiceScheduleFlowComponent,
   InvoiceScheduleFormComponent,
+  InvoiceSchedulePreviewDirective,
   InvoiceScheduleSubmitDirective,
 } from './flows/invoice-schedule';

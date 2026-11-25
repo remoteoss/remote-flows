@@ -14,6 +14,7 @@ import {
   isDefaultCycleDay,
   openInvoiceScheduleForm,
   pickStartDate,
+  previewInvoice,
   selectCurrency,
   selectCustomCycle,
   selectEndType,
@@ -247,6 +248,42 @@ test.describe('Invoice schedule', () => {
       expect(pageErrors).toEqual([]);
     });
   }
+
+  test('previews the invoice as a PDF without creating a schedule', async ({
+    page,
+  }) => {
+    const pageErrors: string[] = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
+    const submissions: string[] = [];
+    page.on('request', (request) => {
+      if (
+        request.method() === 'POST' &&
+        new URL(request.url()).pathname === CREATE_SCHEDULE_PATH
+      ) {
+        submissions.push(request.url());
+      }
+    });
+
+    await openInvoiceScheduleForm(page, employmentId);
+    await selectCurrency(page, 'EUR');
+    await fillInvoiceItems(page, ONE_ITEM);
+    await selectFrequency(page, 'One time');
+    await pickStartDate(page);
+    await page
+      .getByRole('textbox', { name: 'Invoice number' })
+      .fill(INVOICE_NUMBER);
+
+    const previewed = await previewInvoice(page);
+    expect(
+      previewed.status(),
+      `POST contractor-invoices/preview returned ${previewed.status()}`,
+    ).toBe(200);
+
+    await expect(page.locator('iframe[title="Invoice preview"]')).toBeVisible();
+    await expect(page.getByText(/Invoice schedule created/)).toBeHidden();
+    expect(submissions).toEqual([]);
+    expect(pageErrors).toEqual([]);
+  });
 
   test('asks for the required fields and sends nothing when the form is empty', async ({
     page,

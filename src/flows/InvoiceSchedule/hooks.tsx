@@ -9,6 +9,7 @@ import {
   buildInvoiceSchedulePayload,
   type ContractorInvoicePreview,
   isContractorOfRecord,
+  selectContractorInvoicePreview,
   selectCreatedInvoiceSchedule,
 } from '@remoteoss/remote-flows-core';
 import { useEmploymentQuery } from '@/src/common/api/employment';
@@ -19,7 +20,7 @@ import {
   InvoiceSchedulePayload,
   UseInvoiceScheduleOptions,
 } from '@/src/flows/InvoiceSchedule/types';
-import { clearBase64Data, createStructuredError } from '@/src/lib/utils';
+import { createStructuredError } from '@/src/lib/utils';
 import { Fields } from '@remoteoss/remote-json-schema-form-kit';
 
 /**
@@ -134,17 +135,7 @@ export const useInvoiceSchedule = ({
         values: parsed,
       });
 
-      // Cast because `content` arrives as a `data:application/pdf;base64,…` string, not the
-      // `Blob | File` the OpenAPI spec's `format: binary` makes the generated type promise.
-      const preview = response?.data?.contractor_invoice_preview as
-        | ContractorInvoicePreview
-        | undefined;
-
-      if (!preview) {
-        return undefined;
-      }
-
-      return { ...preview, content: clearBase64Data(preview.content) };
+      return selectContractorInvoicePreview(response);
     },
     [
       assertEmploymentId,
