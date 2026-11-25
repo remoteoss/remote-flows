@@ -922,4 +922,57 @@ describe('buildInvoiceNumberSequenceModify', () => {
 
     expect(findField(form, 'number').description).toBe(INVOICE_NUMBER_INTRO);
   });
+
+  describe("with the partner's own jsfModify", () => {
+    const build = (sequence: string | undefined, jsfModify: $TSFixMe) =>
+      createHeadlessForm(
+        buildCreateInvoiceScheduleSchema({
+          invoiceNumberSequence: sequence,
+        }) as $TSFixMe,
+        {},
+        { jsfModify: buildInvoiceNumberSequenceModify(sequence, jsfModify) },
+      );
+
+    it("keeps the partner's changes to other fields", () => {
+      const form = build(undefined, {
+        fields: { note: { title: 'Memo for the contractor' } },
+      });
+
+      expect(findField(form, 'note').label).toBe('Memo for the contractor');
+      expect(findField(form, 'number').description).toBe(INVOICE_NUMBER_INTRO);
+    });
+
+    it('lets the partner replace the invoice number text', () => {
+      const form = build(undefined, {
+        fields: { number: { presentation: { description: 'Use our format' } } },
+      });
+
+      expect(findField(form, 'number').description).toBe('Use our format');
+    });
+
+    it('lets the partner retitle the sequence statement and keeps its text', () => {
+      const form = build('Text/Invoice count', {
+        fields: {
+          [INVOICE_NUMBER_SEQUENCE_FIELD]: {
+            presentation: { statement: { title: 'Numbered for you' } },
+          },
+        },
+      });
+
+      expect(findField(form, INVOICE_NUMBER_SEQUENCE_FIELD).statement).toEqual({
+        title: 'Numbered for you',
+        description:
+          'Your current sequence is: <strong>Text/Invoice count</strong>',
+        severity: 'info',
+      });
+    });
+
+    it("keeps the partner's top-level options", () => {
+      expect(
+        buildInvoiceNumberSequenceModify(undefined, {
+          allOf: [{ marker: true }],
+        }).allOf,
+      ).toEqual([{ marker: true }]);
+    });
+  });
 });

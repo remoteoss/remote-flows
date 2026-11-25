@@ -2,7 +2,10 @@ import { Component, inject, Pipe, PipeTransform } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { InvoiceScheduleFlow } from '@remoteoss/remote-flows-angular';
+import {
+  InvoiceScheduleFlow,
+  type JSFModify,
+} from '@remoteoss/remote-flows-angular';
 
 const PDF_DATA_URI_PREFIX = 'data:application/pdf;base64,';
 
@@ -31,6 +34,8 @@ class PdfUrlPipe implements PipeTransform {
       <rf-invoice-schedule-flow
         #flow="rfInvoiceScheduleFlow"
         [employmentId]="employmentId"
+        [defaultValues]="defaultValues"
+        [jsfModify]="jsfModify"
       >
         @if (flow.bag.isLoading()) {
           <mat-spinner diameter="32" />
@@ -89,6 +94,17 @@ class PdfUrlPipe implements PipeTransform {
   `,
 })
 export class CreateInvoicePage {
-  protected readonly employmentId =
-    new URLSearchParams(window.location.search).get('employmentId') ?? '';
+  private readonly params = new URLSearchParams(window.location.search);
+
+  protected readonly employmentId = this.params.get('employmentId') ?? '';
+
+  protected readonly defaultValues = this.params.get('note')
+    ? { note: this.params.get('note') }
+    : undefined;
+
+  protected readonly jsfModify: JSFModify | undefined = this.params.get(
+    'noteLabel',
+  )
+    ? { fields: { note: { title: this.params.get('noteLabel') ?? '' } } }
+    : undefined;
 }

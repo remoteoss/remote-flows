@@ -18,8 +18,10 @@ export type EndType = 'never' | { occurrences: number };
 export async function openInvoiceScheduleForm(
   page: Page,
   employmentId: string,
+  params: Record<string, string> = {},
 ) {
-  await page.goto(`/?employmentId=${employmentId}`);
+  const query = new URLSearchParams({ employmentId, ...params });
+  await page.goto(`/?${query}`);
   await expect(
     page.getByRole('button', { name: 'Create invoice schedule' }),
   ).toBeVisible();

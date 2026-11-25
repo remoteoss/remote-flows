@@ -285,6 +285,29 @@ test.describe('Invoice schedule', () => {
     expect(pageErrors).toEqual([]);
   });
 
+  test('explains the invoice number input', async ({ page }) => {
+    await openInvoiceScheduleForm(page, employmentId);
+
+    await expect(
+      page.getByText(
+        "We'll automatically number all invoices after the first one based on this number.",
+      ),
+    ).toBeVisible();
+  });
+
+  test('applies the default values and field changes the page passes in', async ({
+    page,
+  }) => {
+    await openInvoiceScheduleForm(page, employmentId, {
+      note: 'Paid monthly',
+      noteLabel: 'Memo for the contractor',
+    });
+
+    await expect(
+      page.getByRole('textbox', { name: 'Memo for the contractor' }),
+    ).toHaveValue('Paid monthly');
+  });
+
   test('asks for the required fields and sends nothing when the form is empty', async ({
     page,
   }) => {

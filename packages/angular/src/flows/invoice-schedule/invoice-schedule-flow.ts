@@ -1,4 +1,5 @@
 import { Component, inject, input } from '@angular/core';
+import type { JSFModify } from '@remoteoss/remote-flows-core';
 import { injectInvoiceSchedule } from './inject-invoice-schedule';
 
 let flowCount = 0;
@@ -10,9 +11,15 @@ let flowCount = 0;
 })
 export class InvoiceScheduleFlowComponent {
   readonly employmentId = input.required<string>();
+  readonly defaultValues = input<Record<string, unknown>>();
+  readonly jsfModify = input<JSFModify>();
 
   readonly formId = `rf-invoice-schedule-form-${flowCount++}`;
-  readonly bag = injectInvoiceSchedule({ employmentId: this.employmentId });
+  readonly bag = injectInvoiceSchedule({
+    employmentId: this.employmentId,
+    defaultValues: this.defaultValues,
+    jsfModify: this.jsfModify,
+  });
 }
 
 export function injectInvoiceScheduleFlow() {

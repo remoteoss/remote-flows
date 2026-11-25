@@ -5,7 +5,10 @@ import {
   FormControl,
   FormGroup,
 } from '@angular/forms';
-import type { HeadlessFormOptions } from '@remoteoss/remote-flows-core';
+import {
+  isDeepEqual,
+  type HeadlessFormOptions,
+} from '@remoteoss/remote-flows-core';
 import { ENGINE_ERROR } from './control-state';
 import { ArrayView, FieldView } from './field-contract';
 import { FieldNode } from '../core/field-tree';
@@ -17,7 +20,7 @@ type Schema = Record<string, unknown>;
 
 type CreateFormStoreArgs = {
   schema: Signal<Schema | undefined>;
-  defaultValues?: Values;
+  defaultValues?: Signal<Values | undefined>;
   options?: Signal<HeadlessFormOptions | undefined>;
 };
 
@@ -120,15 +123,20 @@ function applyErrors(control: AbstractControl, errors: Values) {
 
 export function createFormStore({
   schema,
-  defaultValues = {},
+  defaultValues,
   options,
 }: CreateFormStoreArgs) {
   const engine = createFormEngine();
 
+  const stableDefaults = computed(() => defaultValues?.() ?? {}, {
+    equal: isDeepEqual,
+  });
+  const stableOptions = computed(() => options?.(), { equal: isDeepEqual });
+
   const revision = signal(0);
 
   const form = computed(() => {
-    const synced = engine.sync(schema(), defaultValues, options?.());
+    const synced = engine.sync(schema(), stableDefaults(), stableOptions());
     if (!synced) {
       return null;
     }
@@ -140,7 +148,7 @@ export function createFormStore({
         start_date: '',
         number: '',
         note: '',
-        ...defaultValues,
+        ...stableDefaults(),
       }),
     );
     return { nodes: synced.nodes, group };
