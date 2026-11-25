@@ -29,7 +29,7 @@
     "@angular/common": "20.3.9",
     "@angular/compiler": "20.3.9",
     "@angular/compiler-cli": "20.3.9",
-    "@angular/core": "20.3.9",
+    "@angular/core": "20.3.28",
     "@angular/forms": "20.3.9",
     "@tanstack/angular-query-experimental": "5.107.1",
     "ng-packagr": "20.3.2",
