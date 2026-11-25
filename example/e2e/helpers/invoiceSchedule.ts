@@ -97,6 +97,20 @@ export function customCycleFirstDay(today = new Date()) {
   return day <= 28 ? day - 14 : 1;
 }
 
+async function showNextMonth(page: Page) {
+  const monthSelect = page.locator('[role="dialog"] select[name="months"]');
+  const yearSelect = page.locator('[role="dialog"] select[name="years"]');
+  const month = Number(await monthSelect.inputValue());
+  if (month === 11) {
+    const year = Number(await yearSelect.inputValue());
+    await yearSelect.selectOption(String(year + 1));
+    await monthSelect.selectOption('0');
+    return;
+  }
+
+  await monthSelect.selectOption(String(month + 1));
+}
+
 export async function pickStartDate(page: Page, allowedDays?: number[]) {
   await page.getByTestId('date-picker-button-start_date').click();
   await page
@@ -107,20 +121,28 @@ export async function pickStartDate(page: Page, allowedDays?: number[]) {
     '[role="dialog"] button[role="gridcell"]:not([disabled])',
   );
 
-  const labels = await days.allInnerTexts();
-  if (labels.length === 0) {
-    throw new Error('The start date calendar has no selectable day');
-  }
+  const findIndex = async () => {
+    const labels = await days.allInnerTexts();
+    const index = allowedDays
+      ? labels.findIndex((label) => allowedDays.includes(Number(label)))
+      : labels.length > 0
+        ? 0
+        : -1;
+    return { index, labels };
+  };
 
-  const index = allowedDays
-    ? labels.findIndex((label) => allowedDays.includes(Number(label)))
-    : 0;
+  let { index, labels } = await findIndex();
   if (index === -1) {
-    return false;
+    await showNextMonth(page);
+    ({ index, labels } = await findIndex());
+  }
+  if (index === -1) {
+    throw new Error(
+      `The start date calendar has no selectable day${allowedDays ? ` matching [${allowedDays.join(', ')}]` : ''} (enabled: [${labels.join(', ')}])`,
+    );
   }
 
   await days.nth(index).click();
-  return true;
 }
 
 export async function submitSchedule(page: Page) {

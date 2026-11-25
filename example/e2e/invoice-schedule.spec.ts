@@ -229,11 +229,7 @@ test.describe('Invoice schedule', () => {
         await selectEndType(page, scheduleCase.endType);
       }
 
-      const picked = await pickStartDate(page, startDays);
-      test.skip(
-        !picked,
-        'The calendar shows one month, so a custom cycle has no selectable day on the 29th to 31st when the month ends on a Sunday',
-      );
+      await pickStartDate(page, startDays);
       await fillTextField(page, 'number', INVOICE_NUMBER);
 
       const created = await submitSchedule(page);
