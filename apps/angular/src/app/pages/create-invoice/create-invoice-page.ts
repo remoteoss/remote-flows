@@ -2,7 +2,12 @@ import { Component, inject, Pipe, PipeTransform } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { InvoiceScheduleFlow } from '@remoteoss/remote-flows-angular';
+import {
+  CreatedInvoiceSchedules,
+  InvoiceScheduleFlow,
+  InvoiceSchedulePayload,
+} from '@remoteoss/remote-flows-angular';
+import { Alert } from '../../ui/alert';
 
 const PDF_DATA_URI_PREFIX = 'data:application/pdf;base64,';
 
@@ -20,6 +25,7 @@ class PdfUrlPipe implements PipeTransform {
 @Component({
   selector: 'app-create-invoice-page',
   imports: [
+    Alert,
     InvoiceScheduleFlow,
     MatButtonModule,
     MatProgressSpinnerModule,
@@ -35,16 +41,20 @@ class PdfUrlPipe implements PipeTransform {
         @if (flow.bag.isLoading()) {
           <mat-spinner diameter="32" />
         } @else if (flow.bag.error(); as error) {
-          <p class="rf-statement" data-severity="error" role="alert">
+          <app-alert severity="error">
             Could not load the invoice schedule form: {{ error.message }}
-          </p>
+          </app-alert>
         } @else {
           @if (flow.bag.isContractorOfRecord()) {
-            <p class="rf-statement" data-severity="info">
+            <app-alert severity="info">
               Contractor of Record invoices are limited to one-off schedules.
-            </p>
+            </app-alert>
           }
-          <rf-invoice-schedule-form />
+          <rf-invoice-schedule-form
+            [beforeSubmit]="onSubmit"
+            (created)="onSuccess($event)"
+            (submitFailed)="onError($event)"
+          />
           <div class="rf-actions">
             <button mat-stroked-button rfInvoiceSchedulePreview>
               {{
@@ -58,9 +68,9 @@ class PdfUrlPipe implements PipeTransform {
             </button>
           </div>
           @if (flow.bag.previewError(); as previewError) {
-            <p class="rf-statement" data-severity="error" role="alert">
+            <app-alert severity="error">
               Could not preview the invoice: {{ previewError.message }}
-            </p>
+            </app-alert>
           }
           @if (flow.bag.preview(); as preview) {
             @if (preview.content | pdfUrl; as url) {
@@ -72,14 +82,14 @@ class PdfUrlPipe implements PipeTransform {
             }
           }
           @if (flow.bag.submitError(); as submitError) {
-            <p class="rf-statement" data-severity="error" role="alert">
+            <app-alert severity="error">
               Could not create the invoice schedule: {{ submitError.message }}
-            </p>
+            </app-alert>
           }
           @if (flow.bag.createdScheduleId(); as id) {
-            <p class="rf-statement" data-severity="success">
+            <app-alert severity="success">
               Invoice schedule created: {{ id }}
-            </p>
+            </app-alert>
           }
         }
       </rf-invoice-schedule-flow>
@@ -89,6 +99,18 @@ class PdfUrlPipe implements PipeTransform {
   `,
 })
 export class CreateInvoicePage {
+  protected readonly onSubmit = (payload: InvoiceSchedulePayload) => {
+    console.log('onSubmit', payload);
+  };
+
+  protected onSuccess(response: CreatedInvoiceSchedules) {
+    console.log('onSuccess', response);
+  }
+
+  protected onError(error: Error) {
+    console.log('onError', error);
+  }
+
   protected readonly employmentId =
     new URLSearchParams(window.location.search).get('employmentId') ?? '';
 }

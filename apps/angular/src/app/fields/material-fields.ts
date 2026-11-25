@@ -10,6 +10,7 @@ import {
   FieldComponents,
   FieldOutlet,
 } from '@remoteoss/remote-flows-angular';
+import { Alert } from '../ui/alert';
 
 @Component({
   selector: 'app-input-field',
@@ -155,16 +156,17 @@ export class RadioField extends FieldComponent {
 
 @Component({
   selector: 'app-statement-field',
+  imports: [Alert],
   template: `
     @if (meta().statement; as statement) {
-      <div class="rf-statement" [attr.data-severity]="statement.severity">
+      <app-alert [severity]="statement.severity">
         @if (statement.title) {
           <strong>{{ statement.title }}</strong>
         }
         @if (statement.description) {
           <span [innerHTML]="statement.description"></span>
         }
-      </div>
+      </app-alert>
     }
   `,
 })
