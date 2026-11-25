@@ -25,6 +25,14 @@ export type CreatedInvoiceSchedules = NonNullable<
 
 export type InvoiceSchedulePayload = Record<string, unknown>;
 
+export type InvoiceSchedulePreview = ContractorInvoicePreview;
+
+export type InvoiceSchedulePreviewResult =
+  | { status: 'skipped' }
+  | { status: 'invalid' }
+  | { status: 'previewed'; preview: InvoiceSchedulePreview }
+  | { status: 'failed'; error: Error };
+
 export type InvoiceScheduleSubmitOptions = {
   beforeSubmit?: (payload: InvoiceSchedulePayload) => Promise<void> | void;
 };
@@ -127,8 +135,7 @@ export function injectInvoiceSchedule({
 
   const result = signal<InvoiceScheduleSubmitResult | null>(null);
   const isValidating = signal(false);
-  const preview = signal<ContractorInvoicePreview | null>(null);
-  const previewError = signal<Error | null>(null);
+  const previewResult = signal<InvoiceSchedulePreviewResult | null>(null);
   const isPreviewValidating = signal(false);
 
   const isSubmitting = computed(
@@ -147,6 +154,16 @@ export function injectInvoiceSchedule({
 
   const submitError = computed(() => {
     const current = result();
+    return current?.status === 'failed' ? current.error : null;
+  });
+
+  const preview = computed(() => {
+    const current = previewResult();
+    return current?.status === 'previewed' ? current.preview : null;
+  });
+
+  const previewError = computed(() => {
+    const current = previewResult();
     return current?.status === 'failed' ? current.error : null;
   });
 
@@ -209,17 +226,11 @@ export function injectInvoiceSchedule({
     }
   }
 
-  async function previewInvoice() {
-    if (error() || !schema() || isPreviewing() || isSubmitting()) {
-      return;
-    }
-    preview.set(null);
-    previewError.set(null);
-    isPreviewValidating.set(true);
+  async function requestPreview(): Promise<InvoiceSchedulePreviewResult> {
     try {
       const { hasErrors } = await store.submit();
       if (hasErrors) {
-        return;
+        return { status: 'invalid' };
       }
       const values = await store.parse();
       const response = await previewSchedule.mutateAsync({
@@ -227,17 +238,34 @@ export function injectInvoiceSchedule({
         values,
       });
       if (response.error) {
-        previewError.set(toSubmitError(response.error, PREVIEW_FAILED_MESSAGE));
-        return;
+        return {
+          status: 'failed',
+          error: toSubmitError(response.error, PREVIEW_FAILED_MESSAGE),
+        };
       }
       const document = selectContractorInvoicePreview(response.data);
-      if (document) {
-        preview.set(document);
-      } else {
-        previewError.set(new Error(PREVIEW_FAILED_MESSAGE));
+      if (!document) {
+        return { status: 'failed', error: new Error(PREVIEW_FAILED_MESSAGE) };
       }
+      return { status: 'previewed', preview: document };
     } catch (thrown) {
-      previewError.set(toSubmitError(thrown, PREVIEW_FAILED_MESSAGE));
+      return {
+        status: 'failed',
+        error: toSubmitError(thrown, PREVIEW_FAILED_MESSAGE),
+      };
+    }
+  }
+
+  async function previewInvoice(): Promise<InvoiceSchedulePreviewResult> {
+    if (error() || !schema() || isPreviewing() || isSubmitting()) {
+      return { status: 'skipped' };
+    }
+    previewResult.set(null);
+    isPreviewValidating.set(true);
+    try {
+      const outcome = await requestPreview();
+      previewResult.set(outcome);
+      return outcome;
     } finally {
       isPreviewValidating.set(false);
     }
@@ -254,8 +282,9 @@ export function injectInvoiceSchedule({
     submitError,
     onSubmit,
     isPreviewing,
-    preview: preview.asReadonly(),
-    previewError: previewError.asReadonly(),
+    previewResult: previewResult.asReadonly(),
+    preview,
+    previewError,
     previewInvoice,
   };
 }

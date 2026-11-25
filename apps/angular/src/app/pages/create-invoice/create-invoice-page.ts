@@ -1,19 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   CreatedInvoiceSchedules,
   InvoiceScheduleFlow,
   InvoiceSchedulePayload,
+  InvoiceSchedulePreview,
 } from '@remoteoss/remote-flows-angular';
 import { Alert } from '../../ui/alert';
-import { InvoicePreviewOpener } from './invoice-preview-dialog';
+import { InvoicePreviewDialog } from './invoice-preview-dialog';
 
 @Component({
   selector: 'app-create-invoice-page',
   imports: [
     Alert,
-    InvoicePreviewOpener,
     InvoiceScheduleFlow,
     MatButtonModule,
     MatProgressSpinnerModule,
@@ -43,7 +44,11 @@ import { InvoicePreviewOpener } from './invoice-preview-dialog';
             (submitFailed)="onError($event)"
           />
           <div class="rf-actions">
-            <button mat-stroked-button rfInvoiceSchedulePreview>
+            <button
+              mat-stroked-button
+              rfInvoiceSchedulePreview
+              (previewed)="openPreview($event)"
+            >
               {{
                 flow.bag.isPreviewing()
                   ? 'Generating preview…'
@@ -59,7 +64,6 @@ import { InvoicePreviewOpener } from './invoice-preview-dialog';
               Could not preview the invoice: {{ previewError.message }}
             </app-alert>
           }
-          <app-invoice-preview-opener [preview]="flow.bag.preview()" />
           @if (flow.bag.submitError(); as submitError) {
             <app-alert severity="error">
               Could not create the invoice schedule: {{ submitError.message }}
@@ -78,6 +82,16 @@ import { InvoicePreviewOpener } from './invoice-preview-dialog';
   `,
 })
 export class CreateInvoicePage {
+  private readonly dialog = inject(MatDialog);
+
+  protected openPreview(preview: InvoiceSchedulePreview) {
+    this.dialog.open(InvoicePreviewDialog, {
+      data: preview,
+      width: '900px',
+      maxWidth: '95vw',
+    });
+  }
+
   protected readonly onSubmit = (payload: InvoiceSchedulePayload) => {
     console.log('onSubmit', payload);
   };

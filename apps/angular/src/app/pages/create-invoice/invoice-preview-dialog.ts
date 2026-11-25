@@ -1,24 +1,16 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  effect,
   inject,
-  input,
   Pipe,
   PipeTransform,
-  untracked,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import type { InvoiceSchedulePreview } from '@remoteoss/remote-flows-angular';
 
 const PDF_DATA_URI_PREFIX = 'data:application/pdf;base64,';
-
-type InvoicePreview = { content: string };
 
 @Pipe({ name: 'pdfUrl' })
 class PdfUrlPipe implements PipeTransform {
@@ -59,33 +51,6 @@ class PdfUrlPipe implements PipeTransform {
     }
   `,
 })
-class InvoicePreviewDialog {
-  protected readonly data = inject<InvoicePreview>(MAT_DIALOG_DATA);
-}
-
-@Component({
-  selector: 'app-invoice-preview-opener',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: ``,
-})
-export class InvoicePreviewOpener {
-  readonly preview = input<InvoicePreview | null>(null);
-
-  private readonly dialog = inject(MatDialog);
-
-  constructor() {
-    effect(() => {
-      const preview = this.preview();
-      if (!preview) {
-        return;
-      }
-      untracked(() =>
-        this.dialog.open(InvoicePreviewDialog, {
-          data: preview,
-          width: '900px',
-          maxWidth: '95vw',
-        }),
-      );
-    });
-  }
+export class InvoicePreviewDialog {
+  protected readonly data = inject<InvoiceSchedulePreview>(MAT_DIALOG_DATA);
 }

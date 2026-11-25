@@ -20,5 +20,7 @@ export {
 export type {
   CreatedInvoiceSchedules,
   InvoiceSchedulePayload,
+  InvoiceSchedulePreview,
+  InvoiceSchedulePreviewResult,
   InvoiceScheduleSubmitResult,
 } from './inject-invoice-schedule';
