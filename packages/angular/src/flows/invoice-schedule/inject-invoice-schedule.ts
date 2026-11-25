@@ -41,7 +41,11 @@ function toSubmitError(thrown: unknown) {
   if (thrown instanceof Error) {
     return thrown;
   }
-  const message = (thrown as { message?: unknown } | null)?.message;
+  const body = thrown as {
+    message?: unknown;
+    error?: { message?: unknown };
+  } | null;
+  const message = body?.error?.message ?? body?.message;
   return new Error(
     typeof message === 'string' ? message : CREATE_FAILED_MESSAGE,
   );
@@ -157,7 +161,7 @@ export function injectInvoiceSchedule({
     error,
     isSubmitting: computed(() => isValidating() || createSchedule.isPending()),
     createdScheduleId,
-    submitError,
+    submitError: submitError.asReadonly(),
     onSubmit,
   };
 }
