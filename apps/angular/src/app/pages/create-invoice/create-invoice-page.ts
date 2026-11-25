@@ -50,6 +50,20 @@ class PdfUrlPipe implements PipeTransform {
             </p>
           }
           <rf-invoice-schedule-form />
+          @if (flow.bag.canManageInvoiceNumberSequence()) {
+            <button
+              mat-button
+              type="button"
+              [disabled]="flow.bag.isOpeningInvoiceNumberSequence()"
+              (click)="flow.bag.openInvoiceNumberSequence()"
+            >
+              {{
+                flow.bag.invoiceNumberSequence()
+                  ? 'Edit invoice number sequence'
+                  : 'Create an invoice number sequence'
+              }}
+            </button>
+          }
           <div class="rf-actions">
             <button mat-stroked-button rfInvoiceSchedulePreview>
               {{

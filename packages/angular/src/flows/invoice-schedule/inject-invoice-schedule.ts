@@ -9,9 +9,12 @@ import {
   contractorCurrenciesOptions,
   contractorInvoiceSequenceOptions,
   createInvoiceScheduleMutation,
+  createMagicLinkMutation,
   type ContractorInvoicePreview,
   type JSFModify,
   employmentOptions,
+  identityOptions,
+  INVOICE_NUMBER_SEQUENCE_PATH,
   isContractorOfRecord as isContractorOfRecordEmployment,
   previewContractorInvoiceMutation,
   selectContractorCurrencyCodes,
@@ -19,6 +22,8 @@ import {
   selectCreatedInvoiceSchedule,
   selectEmployment,
   selectInvoiceNumberSequenceText,
+  selectMagicLinkUrl,
+  selectUserId,
 } from '@remoteoss/remote-flows-core';
 import { REMOTE_CLIENT } from '../../provide-remote-flows';
 import { createFormStore } from '../../forms/form-store';
@@ -90,6 +95,13 @@ export function injectInvoiceSchedule({
     ...contractorInvoiceSequenceOptions(client),
     select: selectInvoiceNumberSequenceText,
   }));
+
+  const identity = injectQuery(() => ({
+    ...identityOptions(client),
+    select: selectUserId,
+  }));
+
+  const createMagicLink = injectMutation(() => createMagicLinkMutation(client));
 
   const createSchedule = injectMutation(() =>
     createInvoiceScheduleMutation(client),
@@ -191,6 +203,42 @@ export function injectInvoiceSchedule({
     }
   }
 
+  const canManageInvoiceNumberSequence = computed(() =>
+    Boolean(identity.data()),
+  );
+
+  async function openInvoiceNumberSequence() {
+    const userId = identity.data();
+    if (!userId || createMagicLink.isPending()) {
+      return;
+    }
+    const tab = window.open('', '_blank');
+    if (tab) {
+      tab.opener = null;
+    }
+    try {
+      const response = await createMagicLink.mutateAsync({
+        user_id: userId,
+        path: INVOICE_NUMBER_SEQUENCE_PATH,
+      });
+      const url = response.error
+        ? undefined
+        : selectMagicLinkUrl(response.data);
+      if (!url) {
+        tab?.close();
+        return;
+      }
+      if (tab) {
+        tab.location.href = url;
+      } else {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
+    } catch (thrown) {
+      tab?.close();
+      console.error(thrown);
+    }
+  }
+
   async function previewInvoice() {
     if (error() || !schema() || isPreviewing() || isSubmitting()) {
       return;
@@ -234,6 +282,10 @@ export function injectInvoiceSchedule({
     createdScheduleId,
     submitError: submitError.asReadonly(),
     onSubmit,
+    invoiceNumberSequence,
+    canManageInvoiceNumberSequence,
+    isOpeningInvoiceNumberSequence: computed(() => createMagicLink.isPending()),
+    openInvoiceNumberSequence,
     isPreviewing,
     preview: preview.asReadonly(),
     previewError: previewError.asReadonly(),

@@ -1,15 +1,17 @@
+import { useQuery } from '@tanstack/react-query';
+import { selectMagicLinkUrl, selectUserId } from '@remoteoss/remote-flows-core';
 import { useMagicLink } from '@/src/common/api';
-import { useIdentity } from '@/src/common/api/identity';
+import { useIdentityOptions } from '@/src/common/api/identity';
 import { useFormFields } from '@/src/context';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { ReactNode } from 'react';
 
 export function useMagicLinkUserId() {
-  const { data: identity, isLoading } = useIdentity();
-  return {
-    userId: identity && 'user' in identity ? identity.user.id : undefined,
-    isLoading,
-  };
+  const { data: userId, isLoading } = useQuery({
+    ...useIdentityOptions(),
+    select: selectUserId,
+  });
+  return { userId, isLoading };
 }
 
 type MagicLinkButtonProps = {
@@ -51,7 +53,7 @@ export function MagicLinkButton({
 
     try {
       const response = await mutateAsyncOrThrow({ user_id: userId, path });
-      const url = response?.data.url;
+      const url = selectMagicLinkUrl(response);
 
       if (!url) {
         tab?.close();
