@@ -38,7 +38,7 @@ You set up three things:
 // app.config.ts
 provideRemoteFlows({
   fields: MY_FIELD_COMPONENTS,
-  proxy: { url: window.location.origin },
+  auth: () => fetch('/api/remote-token').then((r) => r.json()),
 });
 ```
 
@@ -65,7 +65,17 @@ Each field component receives a real Angular `FormControl` (a `FormGroup` for a 
 
 ### Authentication
 
-The browser never holds Remote credentials. Your frontend talks to a small backend proxy that you own, and the proxy calls Remote with a token. The demo includes a minimal proxy in [`apps/angular/api`](../apps/angular/api). Point `proxy.url` at your own.
+The browser never holds your client secret. Expose one endpoint on your backend that exchanges your credentials for a token and returns `{ accessToken, expiresIn }`, and pass it as `auth`. The SDK calls it when it needs a token and refreshes it before it expires.
+
+```ts
+provideRemoteFlows({
+  fields: MY_FIELD_COMPONENTS,
+  environment: 'partners',
+  auth: () => fetch('/api/remote-token').then((r) => r.json()),
+});
+```
+
+If you would rather route every request through your own backend, pass `proxy: { url }` instead. The demo includes a minimal proxy in [`apps/angular/api`](../apps/angular/api).
 
 ## Philosophy
 

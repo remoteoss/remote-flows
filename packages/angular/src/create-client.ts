@@ -1,4 +1,5 @@
 import {
+  type AuthResponse,
   createClient as createClientCore,
   ENVIRONMENTS,
   type Environment,
@@ -14,6 +15,7 @@ declare global {
 }
 
 type Options = {
+  auth?: () => Promise<AuthResponse>;
   environment?: Environment;
   proxy?: { url: string; headers?: Record<string, string> };
 };
@@ -29,7 +31,7 @@ export function createClient(options: Options) {
     debug(npmPackageVersion);
   }
 
-  return createClientCore(undefined, {
+  return createClientCore(options.auth, {
     baseUrl: options.environment
       ? ENVIRONMENTS[options.environment]
       : undefined,
