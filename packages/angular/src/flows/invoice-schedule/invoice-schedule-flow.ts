@@ -1,5 +1,8 @@
-import { Component, inject, input } from '@angular/core';
-import { injectInvoiceSchedule } from './inject-invoice-schedule';
+import { Component, inject, input, output } from '@angular/core';
+import {
+  CreatedInvoiceSchedules,
+  injectInvoiceSchedule,
+} from './inject-invoice-schedule';
 
 let flowCount = 0;
 
@@ -10,9 +13,15 @@ let flowCount = 0;
 })
 export class InvoiceScheduleFlowComponent {
   readonly employmentId = input.required<string>();
+  readonly created = output<CreatedInvoiceSchedules>();
+  readonly submitFailed = output<Error>();
 
   readonly formId = `rf-invoice-schedule-form-${flowCount++}`;
-  readonly bag = injectInvoiceSchedule({ employmentId: this.employmentId });
+  readonly bag = injectInvoiceSchedule({
+    employmentId: this.employmentId,
+    onSuccess: (response) => this.created.emit(response),
+    onError: (error) => this.submitFailed.emit(error),
+  });
 }
 
 export function injectInvoiceScheduleFlow() {

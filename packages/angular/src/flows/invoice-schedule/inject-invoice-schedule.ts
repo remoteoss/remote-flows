@@ -16,9 +16,15 @@ import {
 import { REMOTE_CLIENT } from '../../provide-remote-flows';
 import { createFormStore } from '../../forms/form-store';
 
+export type CreatedInvoiceSchedules = NonNullable<
+  Parameters<typeof selectCreatedInvoiceSchedule>[0]
+>;
+
 type InvoiceScheduleOptions = {
   employmentId: Signal<string>;
   defaultValues?: Record<string, unknown>;
+  onSuccess?: (response: CreatedInvoiceSchedules) => void;
+  onError?: (error: Error) => void;
 };
 
 function rejectOnError<T extends { error?: unknown; response?: Response }>(
@@ -54,6 +60,8 @@ function toSubmitError(thrown: unknown) {
 export function injectInvoiceSchedule({
   employmentId,
   defaultValues,
+  onSuccess,
+  onError,
 }: InvoiceScheduleOptions) {
   const client = inject(REMOTE_CLIENT);
 
@@ -118,6 +126,12 @@ export function injectInvoiceSchedule({
       (currencies.isPending() && !schema()),
   );
 
+  function fail(thrown: unknown) {
+    const failure = toSubmitError(thrown);
+    submitError.set(failure);
+    onError?.(failure);
+  }
+
   async function onSubmit() {
     if (error() || !schema() || isValidating() || createSchedule.isPending()) {
       return;
@@ -136,19 +150,22 @@ export function injectInvoiceSchedule({
         values,
       });
       if (response.error) {
-        submitError.set(toSubmitError(response.error));
+        fail(response.error);
         return;
       }
       const { id, hasFailures } = selectCreatedInvoiceSchedule(response.data);
       if (hasFailures) {
-        submitError.set(new Error(CREATE_FAILED_MESSAGE));
+        fail(new Error(CREATE_FAILED_MESSAGE));
         return;
       }
       if (id) {
         createdScheduleId.set(id);
       }
+      if (response.data) {
+        onSuccess?.(response.data);
+      }
     } catch (thrown) {
-      submitError.set(toSubmitError(thrown));
+      fail(thrown);
     } finally {
       isValidating.set(false);
     }
