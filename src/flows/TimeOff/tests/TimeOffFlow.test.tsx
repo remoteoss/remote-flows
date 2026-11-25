@@ -1,23 +1,28 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
+import { PropsWithChildren } from 'react';
 import {
+  RemoteFlows,
   TimeOffApproveButtonProps,
   TimeOffDeclineButtonProps,
   TimeOffFlow,
   TimeOffReviewStepProps,
 } from '@/src/index';
 import {
+  companyManagersResponse,
   declineReasonErrorResponse,
   timeOffErrorResponse,
   timeOffRequestResponse,
 } from '@/src/flows/TimeOff/tests/fixtures';
+import { defaultComponents } from '@/src/tests/defaultComponents';
 import { server } from '@/src/tests/server';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
 function renderFlow(
   timeOffId?: string,
   reviewStepProps: TimeOffReviewStepProps = {},
+  wrapper = TestProviders,
 ) {
   return render(
     <TimeOffFlow
@@ -57,7 +62,7 @@ function renderFlow(
         </>
       )}
     />,
-    { wrapper: TestProviders },
+    { wrapper },
   );
 }
 
@@ -81,6 +86,47 @@ function mockTimeOffRequest(
   );
   return requestedIds;
 }
+
+function mockTeamMember(response: () => Response) {
+  const requestedEmploymentIds: string[] = [];
+  server.use(
+    http.get('*/v1/employments/:id', ({ params }) => {
+      requestedEmploymentIds.push(params.id as string);
+      return response();
+    }),
+  );
+  return requestedEmploymentIds;
+}
+
+const teamMemberResponse =
+  (type: 'employee' | 'contractor' = 'employee') =>
+  () =>
+    HttpResponse.json({
+      data: {
+        employment: {
+          id: timeOffRequestResponse.data.timeoff.employment_id,
+          full_name: 'Jane Smith',
+          type,
+        },
+      },
+    });
+
+function mockCompanyManagers(response: () => Response) {
+  let requests = 0;
+  server.use(
+    http.get('*/v1/company-managers', () => {
+      requests += 1;
+      return response();
+    }),
+  );
+  return () => requests;
+}
+
+const renderedDetails = (container: HTMLElement) =>
+  [...container.querySelectorAll('.RemoteFlows__ReviewStep__Item')].map(
+    (item) =>
+      `${item.querySelector('dt')?.textContent}: ${item.querySelector('dd')?.textContent}`,
+  );
 
 function renderApproval(
   approveButtonProps: Partial<TimeOffApproveButtonProps> = {},
@@ -332,12 +378,256 @@ describe('TimeOffFlow', () => {
     },
   );
 
-  it('lets the consumer render the request details', async () => {
+  it('shows the team member of the request under review', async () => {
     mockTimeOffRequest();
+    const requestedEmploymentIds = mockTeamMember(teamMemberResponse());
+    renderFlow('timeoff-123');
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+
+    expect(await screen.findByText('Jane Smith')).toBeInTheDocument();
+    expect(screen.getByText('Team member')).toBeInTheDocument();
+    expect(requestedEmploymentIds).toEqual([
+      timeOffRequestResponse.data.timeoff.employment_id,
+    ]);
+  });
+
+  const insertedAt = '2026-11-20T09:12:44Z';
+  const coreDetails = [
+    'Type: Paid time off',
+    'Start date: Nov 16, 2026',
+    'End date: Nov 17, 2026',
+    'Duration: 16 hours',
+    'Notes: Family trip',
+  ];
+
+  it.each([
+    [
+      'a requested request with no reasons, never edited, with no creator',
+      { inserted_at: insertedAt, updated_at: insertedAt },
+      [
+        'Status: Requested',
+        'Team member: Jane Smith',
+        ...coreDetails,
+        'Requested on: Nov 20, 2026',
+      ],
+    ],
+    [
+      'a declined request with its decline reason, edited by a company manager',
+      {
+        status: 'declined',
+        decline_reason: 'Team is short-staffed that week',
+        inserted_at: insertedAt,
+        updated_at: '2026-11-22T15:03:10Z',
+        created_by_id: 'manager-anne',
+        edit_reason: "Dates moved at the employee's request",
+      },
+      [
+        'Status: Declined',
+        'Team member: Jane Smith',
+        'Reason for decline: Team is short-staffed that week',
+        ...coreDetails,
+        'Requested on: Nov 20, 2026',
+        'Last edited on: Nov 22, 2026',
+        'Requested by: Anne White (Employer)',
+        "Edit reason: Dates moved at the employee's request",
+      ],
+    ],
+    [
+      'an approved request with its approver and a declined cancellation',
+      {
+        status: 'approved',
+        decline_reason: 'The handover is not done',
+        cancel_reason: 'Trip cancelled',
+        created_by_id: 'user-jane',
+        approver_id: 'manager-anne',
+        approved_at: '2026-11-21T10:00:00Z',
+      },
+      [
+        'Status: Approved',
+        'Team member: Jane Smith',
+        ...coreDetails,
+        'Requested by: Jane Smith (Employee)',
+        'Approved by: Anne White',
+        'Approved on: Nov 21, 2026',
+        'Reason for declining cancellation: The handover is not done',
+      ],
+    ],
+    [
+      'a taken request approved by someone who is not a company manager',
+      {
+        status: 'taken',
+        approver_id: 'user-remote',
+        approved_at: '2026-11-21T10:00:00Z',
+      },
+      [
+        'Status: Taken',
+        'Team member: Jane Smith',
+        ...coreDetails,
+        'Approved on: Nov 21, 2026',
+      ],
+    ],
+    [
+      'a requested request with an approver',
+      { approver_id: 'manager-anne', approved_at: '2026-11-21T10:00:00Z' },
+      ['Status: Requested', 'Team member: Jane Smith', ...coreDetails],
+    ],
+    [
+      'a cancelled request with its cancellation reason',
+      {
+        status: 'cancelled',
+        cancel_reason: 'Trip cancelled',
+        cancelled_at: '2026-11-21T10:00:00Z',
+      },
+      [
+        'Status: Cancelled',
+        'Team member: Jane Smith',
+        'Cancelled on: Nov 21, 2026',
+        ...coreDetails,
+        'Cancellation reason: Trip cancelled',
+      ],
+    ],
+  ] as const)('shows %s', async (_, timeoff, expectedDetails) => {
+    mockTimeOffRequest(timeoff);
+    mockTeamMember(teamMemberResponse());
+    const { container } = renderFlow('timeoff-123');
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+
+    await waitFor(() => {
+      expect(renderedDetails(container)).toEqual(expectedDetails);
+    });
+  });
+
+  it.each([
+    ['employee', 'Jane Smith (Employee)'],
+    ['contractor', 'Jane Smith (Contractor)'],
+  ] as const)(
+    'shows a request the team member entered on an %s employment',
+    async (type, creator) => {
+      mockTimeOffRequest({ created_by_id: 'user-jane' });
+      mockTeamMember(teamMemberResponse(type));
+      renderFlow('timeoff-123');
+
+      fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+
+      expect(await screen.findByText(creator)).toBeInTheDocument();
+      expect(screen.getByText('Requested by')).toBeInTheDocument();
+    },
+  );
+
+  it('still reviews and decides on the request when its names fail to load', async () => {
+    mockTimeOffRequest({
+      created_by_id: 'manager-anne',
+      status: 'approved',
+      approver_id: 'manager-anne',
+    });
+    const requestedEmploymentIds = mockTeamMember(() =>
+      HttpResponse.json({ message: 'Forbidden' }, { status: 403 }),
+    );
+    const companyManagerRequests = mockCompanyManagers(() =>
+      HttpResponse.json({ message: 'Not Found' }, { status: 404 }),
+    );
+    renderApproval();
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+
+    expect(await screen.findByText('Paid time off')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(requestedEmploymentIds).toHaveLength(1);
+    });
+    await waitFor(() => {
+      expect(companyManagerRequests()).toBe(1);
+    });
+    expect(screen.queryByText('Team member')).not.toBeInTheDocument();
+    expect(screen.queryByText('Requested by')).not.toBeInTheDocument();
+    expect(screen.queryByText('Approved by')).not.toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Approve' })).toBeEnabled();
+  });
+
+  it('loads the company managers once per RemoteFlows mount', async () => {
+    mockTimeOffRequest({ status: 'approved', approver_id: 'manager-anne' });
+    mockTeamMember(teamMemberResponse());
+    const managerNames: Record<string, string> = {
+      'Bearer company-a-token': 'Anne White',
+      'Bearer company-b-token': 'Ben Black',
+    };
+    const companyManagerAuthorizations: string[] = [];
+    server.use(
+      http.get('*/v1/company-managers', ({ request }) => {
+        const authorization = request.headers.get('Authorization') ?? '';
+        companyManagerAuthorizations.push(authorization);
+        return HttpResponse.json({
+          data: {
+            ...companyManagersResponse.data,
+            company_managers:
+              companyManagersResponse.data?.company_managers?.map(
+                (manager) => ({
+                  ...manager,
+                  user_name: managerNames[authorization],
+                }),
+              ),
+          },
+        });
+      }),
+    );
+    const remoteFlowsWith =
+      (accessToken: string) =>
+      ({ children }: PropsWithChildren) => (
+        <RemoteFlows
+          auth={() => Promise.resolve({ accessToken, expiresIn: 3600 })}
+          components={defaultComponents}
+          proxy={{ url: 'http://localhost:3000' }}
+        >
+          {children}
+        </RemoteFlows>
+      );
+
+    const firstMount = renderFlow(
+      'timeoff-123',
+      {},
+      remoteFlowsWith('company-a-token'),
+    );
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+    expect(await screen.findByText('Anne White')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+    expect(await screen.findByText('Anne White')).toBeInTheDocument();
+    firstMount.unmount();
+
+    renderFlow('timeoff-123', {}, remoteFlowsWith('company-b-token'));
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+
+    expect(await screen.findByText('Ben Black')).toBeInTheDocument();
+    expect(companyManagerAuthorizations).toEqual([
+      'Bearer company-a-token',
+      'Bearer company-b-token',
+    ]);
+  });
+
+  it('lets the consumer render the request details', async () => {
+    mockTimeOffRequest({
+      status: 'approved',
+      created_by_id: 'manager-anne',
+      approver_id: 'manager-anne',
+    });
+    mockTeamMember(teamMemberResponse());
     renderFlow('timeoff-123', {
-      render: ({ timeOffRequest, details }) => (
+      render: ({
+        timeOffRequest,
+        teamMemberName,
+        createdBy,
+        approverName,
+        details,
+      }) => (
         <ul>
           <li>{timeOffRequest.timezone}</li>
+          <li>Team member: {teamMemberName}</li>
+          <li>
+            Creator: {createdBy?.name}, {createdBy?.role}
+          </li>
+          <li>Approver: {approverName}</li>
           {details.map((detail) => (
             <li key={detail.name}>
               {detail.name}: {detail.value}
@@ -350,7 +640,19 @@ describe('TimeOffFlow', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
 
     expect(await screen.findByText('Europe/Madrid')).toBeInTheDocument();
-    expect(screen.getByText('status: Requested')).toBeInTheDocument();
+    expect(screen.getByText('status: Approved')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Team member: Jane Smith'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('team_member: Jane Smith')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Creator: Anne White, Employer'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('created_by: Anne White (Employer)'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Approver: Anne White')).toBeInTheDocument();
+    expect(screen.getByText('approved_by: Anne White')).toBeInTheDocument();
     expect(screen.queryByText('Status')).not.toBeInTheDocument();
   });
 
@@ -520,6 +822,29 @@ describe('TimeOffFlow', () => {
 
     expect(await screen.findByText('Declined')).toBeInTheDocument();
     expect(bodies).toEqual([{ decline_reason: 'Business purposes' }]);
+  });
+
+  it('shows the decline reason the decline answers with, without loading the request again', async () => {
+    const requestedIds = mockTimeOffRequest();
+    mockDecline(
+      decisionResponse({
+        status: 'declined',
+        decline_reason: 'Overlaps with the release',
+      }),
+    );
+    const { container } = renderDecline({
+      declineReason: 'Overlaps with the release',
+    });
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Decline' }));
+
+    await waitFor(() => {
+      expect(renderedDetails(container)).toContain(
+        'Reason for decline: Overlaps with the release',
+      );
+    });
+    expect(requestedIds).toEqual(['timeoff-123']);
   });
 
   it('disables approval while a decline is being sent', async () => {

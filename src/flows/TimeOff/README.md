@@ -206,13 +206,48 @@ Shows the loaded request. It renders nothing while the request is loading or fai
 the first time, so render those states yourself (see [Loading and errors](#loading-and-errors)).
 A failed reload keeps the request shown, next to `timeOffRequestError`.
 
-By default it renders a list of the request's details: type, status, start date, end date and
-duration, plus the notes and the cancellation reason when the request has them.
+By default it renders a list of the request's details, in this order, each one only when it
+applies:
 
-| Prop       | Type                                                                                                              | Description                                                                           |
-| ---------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `render`   | `({ timeOffRequest, details }: { timeOffRequest: TimeOffRequest; details: TimeOffRequestDetail[] }) => ReactNode` | Replaces the default details. `details` are the same details, labelled and formatted. |
-| `children` | `ReactNode`                                                                                                       | Rendered under the details, for example the Approve and Decline buttons.              |
+| `name`                  | Label                             | Shown when                                                                                    |
+| ----------------------- | --------------------------------- | --------------------------------------------------------------------------------------------- |
+| `status`                | Status                            | Always                                                                                        |
+| `team_member`           | Team member                       | The team member's employment has loaded                                                       |
+| `decline_reason`        | Reason for decline                | The request is `declined` and has a `decline_reason`                                          |
+| `cancelled_on`          | Cancelled on                      | The request is `cancelled` and has a `cancelled_at`                                           |
+| `leave_policy`          | Type                              | Always                                                                                        |
+| `start_date`            | Start date                        | Always                                                                                        |
+| `end_date`              | End date                          | Always                                                                                        |
+| `duration`              | Duration                          | Always                                                                                        |
+| `notes`                 | Notes                             | The request has `notes`                                                                       |
+| `requested_on`          | Requested on                      | The request has an `inserted_at`                                                              |
+| `last_edited_on`        | Last edited on                    | Its `updated_at` differs from its `inserted_at`                                               |
+| `created_by`            | Requested by                      | Its `created_by_id` resolves to a name, shown as "Name (Role)"                                |
+| `edit_reason`           | Edit reason                       | The request has an `edit_reason`                                                              |
+| `approved_by`           | Approved by                       | The request is `approved` or `taken` and its `approver_id` is one of the company managers     |
+| `approved_on`           | Approved on                       | The request is `approved` or `taken` and has an `approved_at`                                 |
+| `cancel_reason`         | Cancellation reason               | The request is `cancel_requested` or `cancelled` and has a `cancel_reason`                    |
+| `cancel_decline_reason` | Reason for declining cancellation | The request is not `declined` and has a `decline_reason`: a cancellation request was declined |
+
+"Requested by" is "Anne White (Employer)" when `created_by_id` is one of the company managers'
+`user_id`. Any other `created_by_id` is taken to be the team member themselves: "Jane Smith
+(Employee)", or "(Contractor)" on a contractor employment. A manager who has left the company
+is the exception, see [Current limitations](#current-limitations). A request with no
+`created_by_id`, for example one entered by Remote or created automatically, has no
+"Requested by". Dates are shown in the browser's time zone. `updated_at` changes with every
+change to the request, approval and decline included, so most decided requests have a "Last
+edited on".
+
+Read `details` by `name`, not by position. The rows that need a name (`team_member`,
+`created_by`, `approved_by`) are only there once the names have loaded (see
+[Requests and authentication](#requests-and-authentication)), so the entries after them move when
+they arrive, and which rows a request has depends on its status and data. New detail names may be
+added later, so give a `switch` on `name` a default branch.
+
+| Prop       | Type                                                                                  | Description                                                                                                                                                                                                                                                                                                                  |
+| ---------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `render`   | `({ timeOffRequest, teamMemberName, createdBy, approverName, details }) => ReactNode` | Replaces the default details. `teamMemberName`, `createdBy` (`{ name, role }`, `role` being `Employer`, `Employee` or `Contractor`) and `approverName` are the names behind the `team_member`, `created_by` and `approved_by` rows, each `undefined` until it loads. `details` are the same details, labelled and formatted. |
+| `children` | `ReactNode`                                                                           | Rendered under the details, for example the Approve and Decline buttons.                                                                                                                                                                                                                                                     |
 
 `ReviewStep` does not decide which actions fit the request. Render Approve and Decline only
 when `timeOffRequest.status` is `requested`, as in the example: that is the only status the API
@@ -402,9 +437,10 @@ keeps the current status and goes back to the first page. It takes no props.
 Lists the requests of the loaded page. It renders nothing until a page with requests is loaded:
 use `isLoadingTimeOffRequests`, `timeOffRequestsError` and `isEmpty` for those states.
 
-By default each row shows the request's type, status, dates and duration, then its actions:
-`ViewButton`, and for a `requested` request `DeclineButton` and `ApproveButton`. Each default
-action is labelled after its row ("Approve Paid time off, Requested, …") for screen readers.
+By default each row shows the team member's name, once their employment loads, then the
+request's type, status, start date, end date and duration, then its actions: `ViewButton`, and
+for a `requested` request `DeclineButton` and `ApproveButton`. Each default action is labelled
+after its row ("Approve Jane Smith, Paid time off, Requested, …") for screen readers.
 **The default row actions send `declineReason: null` and `approverId: null`.** To send a reason
 or an approver, render your own actions with `renderActions`.
 
@@ -414,9 +450,14 @@ or an approver, render your own actions with `renderActions`.
 | `renderActions` | `(item: TimeOffListItem) => ReactNode` | Replaces the actions of each row. `ViewButton`, `ApproveButton` and `DeclineButton` rendered here act on that row's request.                                    |
 | `renderItem`    | `(item: TimeOffListItem) => ReactNode` | Replaces the whole list markup: only what it returns renders for each request, with no list or row element around it. The buttons act on that request here too. |
 
-`TimeOffListItem` is `{ timeOffRequest, details, listedDetails, canDecide }`: the request, all
-its details labelled and formatted, the ones a row shows by default, and whether it is
-`requested` and so can be approved or declined.
+`TimeOffListItem` is `{ timeOffRequest, teamMemberName, createdBy, approverName, details,
+listedDetails, canDecide }`: the request, the names behind it as in `ReviewStep`'s `render`, all
+its details as listed in [ReviewStep](#reviewstep), the ones a row shows by default, and whether
+it is `requested` and so can be approved or declined. Read `details` and `listedDetails` by
+`name`, not by position: `team_member` is their first entry once the name has loaded and absent
+before, so the others move when it arrives. The accessible names of the default row actions start
+with the team member's name for the same reason, so match them on the leave type or the dates
+rather than on the whole label.
 
 With `managerUserId` the user ID you want to send as the approver:
 
@@ -483,6 +524,9 @@ alone you build your own UI from the bag. Every hook must be used inside `<Remot
 | `timeOffId`             | The ID stored when leaving the request ID step, or the one you supplied.                 |
 | `hasRequestId`          | Whether the request ID step holds a non-blank ID.                                        |
 | `timeOffRequest`        | The request under review, once loaded on the `review` step.                              |
+| `teamMemberName`        | The full name of the team member the request under review is for, once it loads.         |
+| `createdBy`             | `{ name, role }`: who entered the request under review, once the names it needs load.    |
+| `approverName`          | The company manager who approved the request under review, once the managers load.       |
 | `isLoading`             | `true` on the first load of the request under review.                                    |
 | `timeOffRequestError`   | A `TimeOffRequestError`, or `null`.                                                      |
 | `refetchTimeOffRequest` | Loads the request under review again.                                                    |
@@ -494,8 +538,9 @@ alone you build your own UI from the bag. Every hook must be used inside `<Remot
 ### useTimeOffList
 
 `useTimeOffList({ pageSize? })` returns `timeOffListBag`. Its review keys (`timeOffRequest`,
-`isLoading`, `timeOffRequestError`, `refetchTimeOffRequest`, `approve`, `decline`) work as in
-`useTimeOff`, on the request picked from the list. The other keys:
+`teamMemberName`, `createdBy`, `approverName`, `isLoading`, `timeOffRequestError`,
+`refetchTimeOffRequest`, `approve`, `decline`) work as in `useTimeOff`, on the request picked from
+the list. The other keys:
 
 | Key                                               | Description                                                                                                       |
 | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -536,16 +581,27 @@ Neither can approve or decline: decisions go through the flows or their bags.
 
 ## Requests and authentication
 
-| Request                                                           | Sent when                                                                                                                           | Scope (generated API docs)        |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| `GET /v1/timeoff/{id}`                                            | The flow reaches `review`, `RetryButton`, `useTimeOffRequest`                                                                       | `timeoff:read` or `timeoff:write` |
-| `GET /v1/timeoff`                                                 | The list flow or `useTimeOffRequests` mounts, the page or status changes, and again after a decision (refetch through invalidation) | `timeoff:read` or `timeoff:write` |
-| `POST /v1/timeoff/{timeoff_id}/approve` with `{ approver_id }`    | `ApproveButton`, `approve`, `approveTimeOffRequest`                                                                                 | `timeoff:write`                   |
-| `POST /v1/timeoff/{timeoff_id}/decline` with `{ decline_reason }` | `DeclineButton`, `decline`, `declineTimeOffRequest`                                                                                 | `timeoff:write`                   |
+| Request                                                           | Sent when                                                                                                                           | Scope (generated API docs)                        |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `GET /v1/timeoff/{id}`                                            | The flow reaches `review`, `RetryButton`, `useTimeOffRequest`                                                                       | `timeoff:read` or `timeoff:write`                 |
+| `GET /v1/timeoff`                                                 | The list flow or `useTimeOffRequests` mounts, the page or status changes, and again after a decision (refetch through invalidation) | `timeoff:read` or `timeoff:write`                 |
+| `POST /v1/timeoff/{timeoff_id}/approve` with `{ approver_id }`    | `ApproveButton`, `approve`, `approveTimeOffRequest`                                                                                 | `timeoff:write`                                   |
+| `POST /v1/timeoff/{timeoff_id}/decline` with `{ decline_reason }` | `DeclineButton`, `decline`, `declineTimeOffRequest`                                                                                 | `timeoff:write`                                   |
+| `GET /v1/employments/{employment_id}`                             | Once per employment behind a listed or reviewed request, for the session                                                            | `employment:read` or `employment:write`           |
+| `GET /v1/company-managers`, every page of 100                     | Once per `RemoteFlows` mount, when the list flow mounts or a request is first reviewed                                              | `company_manager:read` or `company_manager:write` |
 
 The list sends only `status`, `page` (once the user changes page) and `page_size` (when you
 pass `pageSize`). According to the generated API docs, a token with only `timeoff:read` can load
 requests but not approve or decline them.
+
+The time-off routes don't return names, so the SDK resolves them. The team member's name and
+employment type come from the employment behind each request. Who entered a request
+(`created_by_id`) and who approved it (`approver_id`) are matched against the `user_id` of the
+company managers. Rows and the review render from the time-off data alone and the names fill in
+when they arrive. If a name can't be loaded, for example with a token that lacks
+`employment:read` or `company_manager:read`, the rows that need it are left out and everything
+else works as before: no error is reported and the request is not retried. "Requested by" needs
+the company managers, so it is left out whenever they can't be loaded.
 
 The requests carry the token your `auth` function returns, like every flow. The generated API
 docs accept two token types on these routes: a company-scoped access token (Authorization Code
@@ -578,8 +634,10 @@ token types come from the client generated from the API's published OpenAPI desc
 
 - `approver_id` and `decline_reason` are required keys whose value may be `null`. The meaning of
   `approver_id: null` is not documented.
-- A request has the six statuses listed in [Outcomes](#outcomes). It has no field that holds the
-  decline reason.
+- A request has the six statuses listed in [Outcomes](#outcomes). It carries `decline_reason`,
+  `edit_reason`, `inserted_at`, `updated_at` and `created_by_id`, which the API returns once the
+  change that adds these fields to time-off responses is live. Until then the rows that need them
+  are left out.
 - The approve and decline routes declare `400`, `401`, `404`, `422` and `429`. No route here
   declares `403` or `409`.
 - The decline route documents that only `requested` requests can be declined.
@@ -598,6 +656,10 @@ the sandbox yet. Until it is, these points are expected but unconfirmed:
 - What `approver_id: null` does, and whether the API records the `approver_id` you send or the
   user behind the token.
 - Which requests a token can see. A request outside it is expected to answer `404`.
+- What `GET /v1/employments/{employment_id}` and `GET /v1/company-managers` answer for a token
+  without `employment:read` or `company_manager:read`, and whether every employment behind a
+  listed request can be loaded with the same token. The SDK leaves the names out whatever the
+  failure.
 - The default and largest `page_size`, and whether a Customer API token works on the read routes,
   whose generated header description names only the company-scoped access token.
 - The `field_errors` codes a `422` carries.
@@ -609,8 +671,12 @@ the sandbox yet. Until it is, these points are expected but unconfirmed:
 - **Review and decide only.** Creating, editing or cancelling a request, and deciding on a
   cancellation request (`cancel_requested`), are not part of these flows. Such requests can be
   loaded, listed and shown, but no action is offered on them.
-- **No decline reason afterwards.** The API does not return the reason, so it can't be shown
-  once the request is declined.
+- **Not shown.** The API does not return the approvers a request still waits for ("Pending
+  approval from"), attachments, payroll periods, or who declined a request and when, so the
+  details leave them out.
+- **Departed managers show as the team member.** A request entered by a company manager who
+  has since left the company shows the team member as the person who requested it, because
+  the API no longer lists that manager.
 - **Status is the only filter.** The list can't be filtered by employee, dates or type, or
   sorted.
 - **No ID check before review.** Any non-blank ID moves on; an unknown one shows as `not_found`
