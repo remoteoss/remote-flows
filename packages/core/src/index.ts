@@ -60,6 +60,8 @@ export { ENVIRONMENTS, defaultEnvironment } from './environments';
 export type { Environment } from './environments';
 export { createClient } from './createClient';
 export type { AuthResponse, CreateClientOptions } from './createClient';
+export { identityOptions, selectIdentity, selectUserId } from './api/identity';
+export { createMagicLinkMutation, selectMagicLinkUrl } from './api/magicLink';
 export {
   contractorInvoiceSequenceOptions,
   selectInvoiceNumberSequenceText,
