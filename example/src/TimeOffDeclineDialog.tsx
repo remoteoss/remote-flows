@@ -19,15 +19,17 @@ type TimeOffDeclineDialogProps = Pick<
 > & {
   DeclineButton: ComponentType<TimeOffDeclineButtonProps>;
   disabled?: boolean;
+  isCancellationRequest?: boolean;
   trigger?: ReactElement;
 };
 
 export function TimeOffDeclineDialog({
   DeclineButton,
   disabled,
+  isCancellationRequest = false,
   trigger = (
     <Button type='button' className='back-button'>
-      Decline
+      {isCancellationRequest ? 'Decline cancellation' : 'Decline'}
     </Button>
   ),
   onClick,
@@ -51,9 +53,15 @@ export function TimeOffDeclineDialog({
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Decline time-off request</DialogTitle>
+          <DialogTitle>
+            {isCancellationRequest
+              ? 'Decline cancellation request'
+              : 'Decline time-off request'}
+          </DialogTitle>
           <DialogDescription>
-            Add an optional reason before declining this request.
+            {isCancellationRequest
+              ? 'Add an optional reason before declining this cancellation request. The time off stays approved.'
+              : 'Add an optional reason before declining this request.'}
           </DialogDescription>
         </DialogHeader>
         <div>
@@ -88,7 +96,7 @@ export function TimeOffDeclineDialog({
               onError?.(error);
             }}
           >
-            Decline
+            {isCancellationRequest ? 'Decline cancellation' : 'Decline'}
           </DeclineButton>
         </DialogFooter>
       </DialogContent>

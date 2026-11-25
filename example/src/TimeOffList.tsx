@@ -29,12 +29,39 @@ const REQUEST_ERROR_MESSAGES: Record<TimeOffRequestError['reason'], string> = {
   request_failed: 'The time-off request could not be loaded.',
 };
 
-type Decision = 'approve' | 'decline';
+type RequestDecision = 'approve' | 'decline';
+
+type Decision =
+  | RequestDecision
+  | 'approve_cancellation'
+  | 'decline_cancellation';
 
 const DECISION_LABELS: Record<Decision, string> = {
   approve: 'Approved',
   decline: 'Declined',
+  approve_cancellation: 'Cancellation approved',
+  decline_cancellation: 'Cancellation declined',
 };
+
+const CANCELLATION_DECISIONS: Record<RequestDecision, Decision> = {
+  approve: 'approve_cancellation',
+  decline: 'decline_cancellation',
+};
+
+const isCancellationRequest = (timeOffRequest: TimeOffRequest | undefined) =>
+  timeOffRequest?.status === 'cancel_requested';
+
+const canDecide = (timeOffRequest: TimeOffRequest | undefined) =>
+  timeOffRequest?.status === 'requested' ||
+  isCancellationRequest(timeOffRequest);
+
+const getDecision = (
+  decision: RequestDecision,
+  timeOffRequest: TimeOffRequest | undefined,
+) =>
+  isCancellationRequest(timeOffRequest)
+    ? CANCELLATION_DECISIONS[decision]
+    : decision;
 
 const getDecisionErrorMessage = (error: TimeOffDecisionError) =>
   error.reason === 'rejected'
@@ -115,7 +142,7 @@ export function TimeOffList() {
                     </Alert>
                   )}
                   <ListStep
-                    renderActions={({ canDecide }) => (
+                    renderActions={({ timeOffRequest, canDecide }) => (
                       <>
                         <ViewButton
                           aria-label='View'
@@ -129,11 +156,22 @@ export function TimeOffList() {
                             <TimeOffDeclineDialog
                               DeclineButton={DeclineButton}
                               disabled={timeOffListBag.isSubmitting}
+                              isCancellationRequest={isCancellationRequest(
+                                timeOffRequest,
+                              )}
                               trigger={
                                 <Button
                                   type='button'
-                                  aria-label='Decline'
-                                  title='Decline'
+                                  aria-label={
+                                    isCancellationRequest(timeOffRequest)
+                                      ? 'Decline cancellation'
+                                      : 'Decline'
+                                  }
+                                  title={
+                                    isCancellationRequest(timeOffRequest)
+                                      ? 'Decline cancellation'
+                                      : 'Decline'
+                                  }
                                 >
                                   <XIcon />
                                 </Button>
@@ -141,20 +179,34 @@ export function TimeOffList() {
                               onClick={clearDecision}
                               onSuccess={(declinedTimeOffRequest) =>
                                 setOutcome({
-                                  decision: 'decline',
+                                  decision: getDecision(
+                                    'decline',
+                                    timeOffRequest,
+                                  ),
                                   status: declinedTimeOffRequest.status,
                                 })
                               }
                               onError={setDecisionError}
                             />
                             <ApproveButton
-                              aria-label='Approve'
-                              title='Approve'
+                              aria-label={
+                                isCancellationRequest(timeOffRequest)
+                                  ? 'Approve cancellation'
+                                  : 'Approve'
+                              }
+                              title={
+                                isCancellationRequest(timeOffRequest)
+                                  ? 'Approve cancellation'
+                                  : 'Approve'
+                              }
                               approverId={null}
                               onClick={clearDecision}
                               onSuccess={(approvedTimeOffRequest) =>
                                 setOutcome({
-                                  decision: 'approve',
+                                  decision: getDecision(
+                                    'approve',
+                                    timeOffRequest,
+                                  ),
                                   status: approvedTimeOffRequest.status,
                                 })
                               }
@@ -226,15 +278,21 @@ export function TimeOffList() {
                         </AlertDescription>
                       </Alert>
                     )}
-                    {timeOffListBag.timeOffRequest?.status === 'requested' && (
+                    {canDecide(timeOffListBag.timeOffRequest) && (
                       <div className='buttons-container'>
                         <TimeOffDeclineDialog
                           DeclineButton={DeclineButton}
                           disabled={timeOffListBag.isSubmitting}
+                          isCancellationRequest={isCancellationRequest(
+                            timeOffListBag.timeOffRequest,
+                          )}
                           onClick={() => setDecisionError(null)}
                           onSuccess={(timeOffRequest) =>
                             setOutcome({
-                              decision: 'decline',
+                              decision: getDecision(
+                                'decline',
+                                timeOffListBag.timeOffRequest,
+                              ),
                               status: timeOffRequest.status,
                             })
                           }
@@ -246,13 +304,18 @@ export function TimeOffList() {
                           onClick={() => setDecisionError(null)}
                           onSuccess={(timeOffRequest) =>
                             setOutcome({
-                              decision: 'approve',
+                              decision: getDecision(
+                                'approve',
+                                timeOffListBag.timeOffRequest,
+                              ),
                               status: timeOffRequest.status,
                             })
                           }
                           onError={setDecisionError}
                         >
-                          Approve
+                          {isCancellationRequest(timeOffListBag.timeOffRequest)
+                            ? 'Approve cancellation'
+                            : 'Approve'}
                         </ApproveButton>
                       </div>
                     )}
