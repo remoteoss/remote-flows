@@ -10,6 +10,7 @@ import {
   contractorInvoiceSequenceOptions,
   createInvoiceScheduleMutation,
   type ContractorInvoicePreview,
+  type JSFModify,
   employmentOptions,
   isContractorOfRecord as isContractorOfRecordEmployment,
   previewContractorInvoiceMutation,
@@ -24,7 +25,8 @@ import { createFormStore } from '../../forms/form-store';
 
 type InvoiceScheduleOptions = {
   employmentId: Signal<string>;
-  defaultValues?: Record<string, unknown>;
+  defaultValues?: Signal<Record<string, unknown> | undefined>;
+  jsfModify?: Signal<JSFModify | undefined>;
 };
 
 function rejectOnError<T extends { error?: unknown; response?: Response }>(
@@ -59,6 +61,7 @@ function toSubmitError(thrown: unknown, fallback = CREATE_FAILED_MESSAGE) {
 export function injectInvoiceSchedule({
   employmentId,
   defaultValues,
+  jsfModify,
 }: InvoiceScheduleOptions) {
   const client = inject(REMOTE_CLIENT);
 
@@ -119,7 +122,10 @@ export function injectInvoiceSchedule({
     schema: schema as Signal<Record<string, unknown> | undefined>,
     defaultValues,
     options: computed(() => ({
-      jsfModify: buildInvoiceNumberSequenceModify(invoiceNumberSequence()),
+      jsfModify: buildInvoiceNumberSequenceModify(
+        invoiceNumberSequence(),
+        jsfModify?.(),
+      ),
     })),
   });
 

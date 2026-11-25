@@ -29,6 +29,7 @@ export type {
   HeadlessFormStrategy,
 } from './form/headlessForm';
 export { createHeadlessFormController } from './form/headlessFormController';
+export { isDeepEqual } from './equal';
 export type {
   $TSFixMe,
   Field,

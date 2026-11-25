@@ -26,14 +26,14 @@ const INVOICE_NUMBER_SEQUENCE_TITLE =
 const invoiceNumberSequenceDescription = (sequence: string) =>
   `Your current sequence is: <strong>${sequence}</strong>`;
 
-/**
- * Presentation for the invoice number that needs no custom component: the intro text under the
- * number input, or, when the company has a sequence, a statement showing it. Pass it as
- * `jsfModify` along with the same `invoiceNumberSequence` given to the schema builder.
- */
-export function buildInvoiceNumberSequenceModify(
-  invoiceNumberSequence?: string,
-): JSFModify {
+type FieldModify = {
+  presentation?: { statement?: Record<string, unknown> } & Record<
+    string,
+    unknown
+  >;
+} & Record<string, unknown>;
+
+function invoiceNumberModify(invoiceNumberSequence?: string): JSFModify {
   if (!invoiceNumberSequence) {
     return {
       fields: {
@@ -57,6 +57,54 @@ export function buildInvoiceNumberSequenceModify(
       },
     },
   };
+}
+
+function mergeFieldModify(own: FieldModify, partner: FieldModify): FieldModify {
+  return {
+    ...own,
+    ...partner,
+    presentation: {
+      ...own.presentation,
+      ...partner.presentation,
+      ...(own.presentation?.statement && partner.presentation?.statement
+        ? {
+            statement: {
+              ...own.presentation.statement,
+              ...partner.presentation.statement,
+            },
+          }
+        : {}),
+    },
+  };
+}
+
+/**
+ * The `jsfModify` for the invoice schedule form: the intro text under the invoice number input,
+ * or, when the company has a sequence, a statement showing it. Pass the same
+ * `invoiceNumberSequence` given to the schema builder. The partner's own `jsfModify`, if any,
+ * is merged on top, so what they set wins.
+ */
+export function buildInvoiceNumberSequenceModify(
+  invoiceNumberSequence?: string,
+  jsfModify?: JSFModify,
+): JSFModify {
+  const own = invoiceNumberModify(invoiceNumberSequence);
+  if (!jsfModify) {
+    return own;
+  }
+
+  const fields: Record<string, FieldModify> = { ...own.fields } as Record<
+    string,
+    FieldModify
+  >;
+  for (const [name, partnerField] of Object.entries(jsfModify.fields ?? {})) {
+    const ownField = fields[name];
+    fields[name] = ownField
+      ? mergeFieldModify(ownField, partnerField as FieldModify)
+      : (partnerField as FieldModify);
+  }
+
+  return { ...jsfModify, fields } as JSFModify;
 }
 
 function invoiceItemsProperty() {

@@ -1,3 +1,4 @@
+export type { JSFModify } from '@remoteoss/remote-flows-core';
 export { provideRemoteFlows } from './provide-remote-flows';
 export { FieldComponent } from './forms/field-contract';
 export type { FieldComponents } from './forms/field-contract';
