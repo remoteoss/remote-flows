@@ -34,7 +34,7 @@ export type FillFormOptions = {
   value?: string;
   name?: string;
   testId?: string;
-  options?: { nativeSelect?: boolean };
+  options?: { nativeSelect?: boolean; exact?: boolean };
   /** Only used for type: 'tel' — the country-code combobox's visible option text, e.g. "Germany +49". */
   countryLabel?: string;
   /** Only used for type: 'datepicker' with value 'auto' — `yyyy-MM-dd` days to skip, e.g. public holidays. */
@@ -159,7 +159,9 @@ export async function fillSelect(
   page: Page,
   value: string = '',
   name: string,
-  options: { nativeSelect?: boolean } = { nativeSelect: false },
+  options: { nativeSelect?: boolean; exact?: boolean } = {
+    nativeSelect: false,
+  },
 ) {
   if (options.nativeSelect) {
     const dropdown = page.locator(`[data-field="${name}"] select`);
@@ -168,7 +170,10 @@ export async function fillSelect(
   } else {
     const dropdown = page.locator(`[data-field="${name}"]`);
     await dropdown.click();
-    const option = page.getByRole('option', { name: value });
+    const option = page.getByRole('option', {
+      name: value,
+      exact: options.exact,
+    });
     await option.waitFor({ state: 'visible' });
     await option.dispatchEvent('click');
   }

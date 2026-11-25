@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { fillRadio, fillTextField } from './general';
+import { fillRadio, fillSelect, fillTextField } from './general';
 
 export const CREATE_SCHEDULE_PATH = '/v1/contractor-invoice-schedules';
 
@@ -27,8 +27,7 @@ export async function openInvoiceScheduleForm(
 }
 
 export async function selectCurrency(page: Page, code: string) {
-  await page.locator('[data-field="currency"]').click();
-  await page.getByRole('option', { name: code, exact: true }).click();
+  await fillSelect(page, code, 'currency', { exact: true });
 }
 
 export async function fillInvoiceItems(page: Page, items: InvoiceItem[]) {
@@ -45,8 +44,7 @@ export async function selectFrequency(
   page: Page,
   frequency: InvoiceScheduleFrequency,
 ) {
-  await page.locator('[data-field="periodicity"]').click();
-  await page.getByRole('option', { name: frequency, exact: true }).click();
+  await fillSelect(page, frequency, 'periodicity', { exact: true });
 }
 
 export async function selectEndType(page: Page, endType: EndType) {
@@ -75,15 +73,12 @@ export async function selectCustomCycle(page: Page, firstDay: number) {
     'custom_cycle',
     'semi_monthly_settings.invoicing_cycle',
   );
-  await page
-    .locator('[data-field="semi_monthly_settings.first_invoice_day"]')
-    .click();
-  await page
-    .getByRole('option', {
-      name: `${ordinal(firstDay)} of the month`,
-      exact: true,
-    })
-    .click();
+  await fillSelect(
+    page,
+    `${ordinal(firstDay)} of the month`,
+    'semi_monthly_settings.first_invoice_day',
+    { exact: true },
+  );
 }
 
 export function defaultCycleDays(today = new Date()) {
