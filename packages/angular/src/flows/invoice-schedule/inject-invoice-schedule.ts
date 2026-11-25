@@ -20,11 +20,21 @@ export type CreatedInvoiceSchedules = NonNullable<
   Parameters<typeof selectCreatedInvoiceSchedule>[0]
 >;
 
+export type InvoiceSchedulePayload = Record<string, unknown>;
+
+export type InvoiceScheduleSubmitOptions = {
+  beforeSubmit?: (payload: InvoiceSchedulePayload) => Promise<void> | void;
+};
+
+export type InvoiceScheduleSubmitResult =
+  | { status: 'skipped' }
+  | { status: 'invalid' }
+  | { status: 'created'; response: CreatedInvoiceSchedules }
+  | { status: 'failed'; error: Error };
+
 type InvoiceScheduleOptions = {
   employmentId: Signal<string>;
   defaultValues?: Record<string, unknown>;
-  onSuccess?: (response: CreatedInvoiceSchedules) => void;
-  onError?: (error: Error) => void;
 };
 
 function rejectOnError<T extends { error?: unknown; response?: Response }>(
@@ -60,8 +70,6 @@ function toSubmitError(thrown: unknown) {
 export function injectInvoiceSchedule({
   employmentId,
   defaultValues,
-  onSuccess,
-  onError,
 }: InvoiceScheduleOptions) {
   const client = inject(REMOTE_CLIENT);
 
@@ -126,15 +134,17 @@ export function injectInvoiceSchedule({
       (currencies.isPending() && !schema()),
   );
 
-  function fail(thrown: unknown) {
-    const failure = toSubmitError(thrown);
-    submitError.set(failure);
-    onError?.(failure);
+  function fail(thrown: unknown): InvoiceScheduleSubmitResult {
+    const error = toSubmitError(thrown);
+    submitError.set(error);
+    return { status: 'failed', error };
   }
 
-  async function onSubmit() {
+  async function onSubmit({
+    beforeSubmit,
+  }: InvoiceScheduleSubmitOptions = {}): Promise<InvoiceScheduleSubmitResult> {
     if (error() || !schema() || isValidating() || createSchedule.isPending()) {
-      return;
+      return { status: 'skipped' };
     }
     createdScheduleId.set(null);
     submitError.set(null);
@@ -142,30 +152,27 @@ export function injectInvoiceSchedule({
     try {
       const { hasErrors } = await store.submit();
       if (hasErrors) {
-        return;
+        return { status: 'invalid' };
       }
       const values = await store.parse();
+      await beforeSubmit?.(values);
       const response = await createSchedule.mutateAsync({
         employmentId: employmentId(),
         values,
       });
       if (response.error) {
-        fail(response.error);
-        return;
+        return fail(response.error);
       }
       const { id, hasFailures } = selectCreatedInvoiceSchedule(response.data);
-      if (hasFailures) {
-        fail(new Error(CREATE_FAILED_MESSAGE));
-        return;
+      if (hasFailures || !response.data) {
+        return fail(new Error(CREATE_FAILED_MESSAGE));
       }
       if (id) {
         createdScheduleId.set(id);
       }
-      if (response.data) {
-        onSuccess?.(response.data);
-      }
+      return { status: 'created', response: response.data };
     } catch (thrown) {
-      fail(thrown);
+      return fail(thrown);
     } finally {
       isValidating.set(false);
     }

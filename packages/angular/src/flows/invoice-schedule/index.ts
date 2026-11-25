@@ -14,4 +14,8 @@ export {
   InvoiceScheduleSubmitDirective,
 };
 
-export type { CreatedInvoiceSchedules } from './inject-invoice-schedule';
+export type {
+  CreatedInvoiceSchedules,
+  InvoiceSchedulePayload,
+  InvoiceScheduleSubmitResult,
+} from './inject-invoice-schedule';
