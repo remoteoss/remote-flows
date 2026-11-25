@@ -345,7 +345,7 @@ describe('createHeadlessFormController', () => {
     }
   });
 
-  it('ignores an out-of-order validation that finishes after a newer one', async () => {
+  it('returns its own result for a validation superseded by a newer one without touching state', async () => {
     let resolveFirst!: (value: unknown) => void;
     let callCount = 0;
     const convertFiles = vi.fn(() => {
@@ -381,20 +381,26 @@ describe('createHeadlessFormController', () => {
     resolveFirst([{ name: 'first.pdf' }]);
     const firstResult = await firstValidation;
 
-    expect(firstResult).toBeNull();
+    expect(firstResult).toMatchObject({
+      formErrors: { note: expect.any(String) },
+    });
     expect(findField(controller.getForm(), 'note')?.isVisible).toBe(false);
     expect(controller.getRevision()).toBe(1);
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
-  it('ignores an in-flight validation when sync replaces the form', async () => {
-    let resolveConversion!: (value: unknown) => void;
-    const convertFiles = vi.fn(
-      () =>
-        new Promise((resolve) => {
-          resolveConversion = resolve;
-        }),
-    );
+  it('validates against the new form when sync replaces it mid-validation', async () => {
+    let resolveFirst!: (value: unknown) => void;
+    let callCount = 0;
+    const convertFiles = vi.fn(() => {
+      callCount += 1;
+      if (callCount === 1) {
+        return new Promise((resolve) => {
+          resolveFirst = resolve;
+        });
+      }
+      return Promise.resolve([{ name: 'old.pdf' }]);
+    });
 
     const controller = createHeadlessFormController({ convertFiles });
     const listener = vi.fn();
@@ -407,12 +413,14 @@ describe('createHeadlessFormController', () => {
     });
 
     controller.sync({ schema: structuredClone(fileSchema) });
-    resolveConversion([{ name: 'old.pdf' }]);
+    resolveFirst([{ name: 'old.pdf' }]);
 
-    expect(await pendingValidation).toBeNull();
-    expect(findField(controller.getForm(), 'note')?.isVisible).toBe(false);
-    expect(controller.getRevision()).toBe(0);
-    expect(listener).not.toHaveBeenCalled();
+    expect(await pendingValidation).toMatchObject({
+      formErrors: { note: expect.any(String) },
+    });
+    expect(convertFiles).toHaveBeenCalledTimes(2);
+    expect(controller.getRevision()).toBe(1);
+    expect(listener).toHaveBeenCalledTimes(1);
   });
 
   it('leaves the caller schema untouched', async () => {

@@ -122,34 +122,49 @@ export function createHeadlessFormController(
   async function handleValidation(
     nextValues: FieldValues,
   ): Promise<ValidationResult | null> {
-    const activeForm = form;
-    const activeSchema = currentSchema;
-    if (!activeForm || !activeSchema) {
-      return null;
-    }
     const run = ++validationRun;
-    const parsedValues = await parseValuesForValidation(
-      activeForm,
-      'buildOnce',
-      nextValues,
-      convertFiles,
-    );
-    if (run !== validationRun || activeForm !== form) {
-      return null;
+    while (true) {
+      const activeForm = form;
+      const activeSchema = currentSchema;
+      if (!activeForm || !activeSchema) {
+        return null;
+      }
+      const parsedValues = await parseValuesForValidation(
+        activeForm,
+        'buildOnce',
+        nextValues,
+        convertFiles,
+      );
+      if (activeForm !== form) {
+        continue;
+      }
+      if (run !== validationRun) {
+        // Validating mutates the form's field state, so a run that a newer one
+        // replaced checks its own values on a throwaway form.
+        const isolatedForm = buildHeadlessForm(
+          activeSchema,
+          'buildOnce',
+          parsedValues,
+          resolveBuildOptions(currentOptions),
+        );
+        return isolatedForm.handleValidation(
+          withFieldsetObjects(parsedValues, isolatedForm.fields),
+        );
+      }
+      // An untouched fieldset has no value, so jsf v1 reports one error for the
+      // whole fieldset, which no input can display. An empty object makes it
+      // check the fields inside, so their own errors show up.
+      const result = activeForm.handleValidation(
+        withFieldsetObjects(parsedValues, activeForm.fields),
+      );
+      lastValidated = {
+        schema: activeSchema,
+        values: JSON.parse(JSON.stringify(parsedValues)),
+      };
+      revision += 1;
+      notify();
+      return result;
     }
-    lastValidated = {
-      schema: activeSchema,
-      values: JSON.parse(JSON.stringify(parsedValues)),
-    };
-    // An untouched fieldset has no value, so jsf v1 reports one error for the
-    // whole fieldset, which no input can display. An empty object makes it
-    // check the fields inside, so their own errors show up.
-    const result = activeForm.handleValidation(
-      withFieldsetObjects(parsedValues, activeForm.fields),
-    );
-    revision += 1;
-    notify();
-    return result;
   }
 
   async function onValuesChange(nextValues: FieldValues): Promise<void> {
