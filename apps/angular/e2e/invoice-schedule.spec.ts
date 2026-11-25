@@ -279,7 +279,11 @@ test.describe('Invoice schedule', () => {
       `POST contractor-invoices/preview returned ${previewed.status()}`,
     ).toBe(200);
 
-    await expect(page.locator('iframe[title="Invoice preview"]')).toBeVisible();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toContainText('Invoice preview');
+    await expect(
+      dialog.locator('iframe[title="Invoice preview"]'),
+    ).toBeVisible();
     await expect(page.getByText(/Invoice schedule created/)).toBeHidden();
     expect(submissions).toEqual([]);
     expect(pageErrors).toEqual([]);
