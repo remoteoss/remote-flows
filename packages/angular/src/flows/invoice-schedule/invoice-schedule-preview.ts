@@ -5,7 +5,7 @@ import { injectInvoiceScheduleFlow } from './invoice-schedule-flow';
   selector: 'button[rfInvoiceSchedulePreview]',
   host: {
     type: 'button',
-    '[disabled]': 'flow.bag.isPreviewing()',
+    '[disabled]': 'flow.bag.isPreviewing() || flow.bag.isSubmitting()',
     '(click)': 'flow.bag.previewInvoice()',
   },
 })
