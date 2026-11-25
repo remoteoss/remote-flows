@@ -45,6 +45,8 @@ export {
 } from './domains/invoice-schedule/constants';
 export {
   buildCreateInvoiceScheduleSchema,
+  buildInvoiceNumberSequenceModify,
+  INVOICE_NUMBER_INTRO,
   INVOICE_NUMBER_SEQUENCE_FIELD,
 } from './domains/invoice-schedule/jsonSchema';
 export {
@@ -58,6 +60,10 @@ export { ENVIRONMENTS, defaultEnvironment } from './environments';
 export type { Environment } from './environments';
 export { createClient } from './createClient';
 export type { AuthResponse, CreateClientOptions } from './createClient';
+export {
+  contractorInvoiceSequenceOptions,
+  selectInvoiceNumberSequenceText,
+} from './api/contractorInvoiceSequence';
 export {
   contractorCurrenciesOptions,
   selectContractorCurrencies,
