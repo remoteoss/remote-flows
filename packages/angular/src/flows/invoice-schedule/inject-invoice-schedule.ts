@@ -8,7 +8,9 @@ import {
   contractorCurrenciesOptions,
   createInvoiceScheduleMutation,
   employmentOptions,
+  isContractorOfRecord as isContractorOfRecordEmployment,
   selectContractorCurrencyCodes,
+  selectCreatedInvoiceSchedule,
   selectEmployment,
 } from '@remoteoss/remote-flows-core';
 import { REMOTE_CLIENT } from '../../provide-remote-flows';
@@ -31,6 +33,18 @@ function rejectOnError<T extends { error?: unknown; response?: Response }>(
     }
     return result;
   };
+}
+
+const CREATE_FAILED_MESSAGE = 'Failed to create invoice schedule';
+
+function toSubmitError(thrown: unknown) {
+  if (thrown instanceof Error) {
+    return thrown;
+  }
+  const message = (thrown as { message?: unknown } | null)?.message;
+  return new Error(
+    typeof message === 'string' ? message : CREATE_FAILED_MESSAGE,
+  );
 }
 
 export function injectInvoiceSchedule({
@@ -64,10 +78,8 @@ export function injectInvoiceSchedule({
     createInvoiceScheduleMutation(client),
   );
 
-  const isContractorOfRecord = computed(
-    () =>
-      (employment.data() as { contractor_type?: string } | undefined)
-        ?.contractor_type === 'cor',
+  const isContractorOfRecord = computed(() =>
+    isContractorOfRecordEmployment(employment.data()),
   );
 
   const schema = computed(() => {
@@ -88,6 +100,7 @@ export function injectInvoiceSchedule({
   });
 
   const createdScheduleId = signal<string | null>(null);
+  const submitError = signal<Error | null>(null);
   const isValidating = signal(false);
 
   const error = computed(
@@ -106,6 +119,7 @@ export function injectInvoiceSchedule({
       return;
     }
     createdScheduleId.set(null);
+    submitError.set(null);
     isValidating.set(true);
     try {
       const { hasErrors } = await store.submit();
@@ -117,10 +131,20 @@ export function injectInvoiceSchedule({
         employmentId: employmentId(),
         values,
       });
-      const id = response.data?.data?.successes?.[0]?.id;
+      if (response.error) {
+        submitError.set(toSubmitError(response.error));
+        return;
+      }
+      const { id, hasFailures } = selectCreatedInvoiceSchedule(response.data);
+      if (hasFailures) {
+        submitError.set(new Error(CREATE_FAILED_MESSAGE));
+        return;
+      }
       if (id) {
         createdScheduleId.set(id);
       }
+    } catch (thrown) {
+      submitError.set(toSubmitError(thrown));
     } finally {
       isValidating.set(false);
     }
@@ -133,6 +157,7 @@ export function injectInvoiceSchedule({
     error,
     isSubmitting: computed(() => isValidating() || createSchedule.isPending()),
     createdScheduleId,
+    submitError,
     onSubmit,
   };
 }

@@ -63,11 +63,16 @@ export {
   selectContractorCurrencies,
   selectContractorCurrencyCodes,
 } from './api/contractorCurrencies';
-export { employmentOptions, selectEmployment } from './api/employment';
+export {
+  employmentOptions,
+  isContractorOfRecord,
+  selectEmployment,
+} from './api/employment';
 export {
   createInvoiceScheduleMutation,
   invoiceSchedulesOptions,
   previewContractorInvoiceMutation,
+  selectCreatedInvoiceSchedule,
   selectExistingInvoiceSchedule,
   skipInvoiceScheduleMutation,
   updateInvoiceScheduleMutation,

@@ -6,6 +6,7 @@ import {
 } from '../client/sdk.gen';
 import type {
   BulkContractorInvoiceScheduleCreateParams,
+  BulkContractorInvoiceScheduleCreateResponse,
   ContractorInvoiceScheduleCreateParams,
   PreviewContractorInvoiceParams,
   UpdateScheduleContractorInvoiceParams,
@@ -95,6 +96,17 @@ export const updateInvoiceScheduleMutation = (client: Client) => ({
       body: payload,
     });
   },
+});
+
+/**
+ * Reads the outcome of a create-schedule call from the response body (`response.data` of the
+ * raw response). Only the first success is read because the flow creates one schedule at a time.
+ */
+export const selectCreatedInvoiceSchedule = (
+  body: BulkContractorInvoiceScheduleCreateResponse | undefined,
+) => ({
+  id: body?.data?.successes?.[0]?.id,
+  hasFailures: Boolean(body?.data?.failures?.length),
 });
 
 export const skipInvoiceScheduleMutation = (client: Client) => ({

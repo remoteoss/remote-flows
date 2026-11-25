@@ -31,6 +31,11 @@ import { InvoiceScheduleFlow } from '@remoteoss/remote-flows-angular';
               Create invoice schedule
             </button>
           </div>
+          @if (flow.bag.submitError(); as submitError) {
+            <p class="rf-statement" data-severity="error" role="alert">
+              Could not create the invoice schedule: {{ submitError.message }}
+            </p>
+          }
           @if (flow.bag.createdScheduleId(); as id) {
             <p class="rf-statement" data-severity="success">
               Invoice schedule created: {{ id }}
