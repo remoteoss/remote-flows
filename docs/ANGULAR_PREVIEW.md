@@ -106,7 +106,7 @@ export const MY_FIELD_COMPONENTS: FieldComponents = {
 };
 ```
 
-The map is keyed by the field's `inputType`. A flow throws if it meets a type with no component, so cover the types your flows use. The demo's [`material-fields.ts`](../apps/angular/src/app/fields/material-fields.ts) covers `text`, `email`, `number`, `money`, `date`, `textarea`, `select`, `radio`, `statement`, `fieldset`, `group-array` and `hidden`. Fieldsets and lists receive `children()` and `array()` and render each child with `<rf-field [view]="child" />`; see `FieldsetField` and `GroupArrayField` there.
+The map is keyed by the field's `inputType`. A flow throws if it meets a type with no component, so cover the types your flows use. The demo's [`material-fields.ts`](../apps/angular/src/app/fields/material-fields.ts) covers `text`, `email`, `number`, `money`, `date`, `textarea`, `select`, `radio`, `statement`, `fieldset` and `group-array`. Hidden fields are handled by the flow itself: their values are sent, but they never reach your components. Fieldsets and lists receive `children()` and `array()` and render each child with `<rf-field [view]="child" />`; see `FieldsetField` and `GroupArrayField` there.
 
 ### Authentication
 
