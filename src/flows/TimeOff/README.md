@@ -472,7 +472,8 @@ By default each row shows the team member's name, once their employment loads, t
 request's type, status, start date, end date and duration, then its actions: `ViewButton`, and
 for a `requested` or `cancel_requested` request `DeclineButton` and `ApproveButton`, which decide
 on the cancellation for a `cancel_requested` one. Each default action is labelled
-after its row ("Approve Jane Smith, Paid time off, Requested, …") for screen readers.
+after its row ("Approve Jane Smith, Paid time off, Requested, …", or "Approve cancellation of
+Jane Smith, …" for a `cancel_requested` one) for screen readers.
 **The default row actions send `declineReason: null` and `approverId: null`.** To send a reason
 or an approver, render your own actions with `renderActions`.
 

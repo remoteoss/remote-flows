@@ -18,27 +18,36 @@ export function ListStep({
 }: TimeOffListStepProps) {
   const { timeOffListBag } = useTimeOffListContext();
 
-  const rows = timeOffListBag.timeOffListItems.map((item) => ({
-    item,
-    requestLabel: item.listedDetails.map((detail) => detail.value).join(', '),
-    timeOffBag: {
-      ...timeOffListBag,
-      timeOffRequest: item.timeOffRequest,
-      teamMemberName: item.teamMemberName,
-      createdBy: item.createdBy,
-      approverName: item.approverName,
-      approve: ({ approverId }: TimeOffApproveOptions) =>
-        timeOffListBag.approveTimeOffRequest({
-          timeOffId: item.timeOffRequest.id,
-          approverId,
-        }),
-      decline: ({ declineReason }: TimeOffDeclineOptions) =>
-        timeOffListBag.declineTimeOffRequest({
-          timeOffId: item.timeOffRequest.id,
-          declineReason,
-        }),
-    },
-  }));
+  const rows = timeOffListBag.timeOffListItems.map((item) => {
+    const requestLabel = item.listedDetails
+      .map((detail) => detail.value)
+      .join(', ');
+    return {
+      item,
+      requestLabel,
+      decisionLabel:
+        item.timeOffRequest.status === 'cancel_requested'
+          ? `cancellation of ${requestLabel}`
+          : requestLabel,
+      timeOffBag: {
+        ...timeOffListBag,
+        timeOffRequest: item.timeOffRequest,
+        teamMemberName: item.teamMemberName,
+        createdBy: item.createdBy,
+        approverName: item.approverName,
+        approve: ({ approverId }: TimeOffApproveOptions) =>
+          timeOffListBag.approveTimeOffRequest({
+            timeOffId: item.timeOffRequest.id,
+            approverId,
+          }),
+        decline: ({ declineReason }: TimeOffDeclineOptions) =>
+          timeOffListBag.declineTimeOffRequest({
+            timeOffId: item.timeOffRequest.id,
+            declineReason,
+          }),
+      },
+    };
+  });
 
   if (rows.length === 0) {
     return null;
@@ -61,7 +70,7 @@ export function ListStep({
 
   return (
     <ul className='RemoteFlows__ListStep'>
-      {rows.map(({ item, requestLabel, timeOffBag }) => (
+      {rows.map(({ item, requestLabel, decisionLabel, timeOffBag }) => (
         <li
           key={item.timeOffRequest.id}
           className={`RemoteFlows__ListStep__Item RemoteFlows__ListStep__Item--${item.timeOffRequest.status}`}
@@ -89,12 +98,12 @@ export function ListStep({
                     <>
                       <DeclineButton
                         declineReason={null}
-                        aria-label={`Decline ${requestLabel}`}
+                        aria-label={`Decline ${decisionLabel}`}
                         className='RemoteFlows__ListStep__DeclineButton'
                       />
                       <ApproveButton
                         approverId={null}
-                        aria-label={`Approve ${requestLabel}`}
+                        aria-label={`Approve ${decisionLabel}`}
                         className='RemoteFlows__ListStep__ApproveButton'
                       />
                     </>

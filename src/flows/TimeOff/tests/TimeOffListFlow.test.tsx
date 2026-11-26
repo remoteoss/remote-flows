@@ -559,7 +559,7 @@ describe('TimeOffListFlow', () => {
     );
   });
 
-  it('names each listed action after its request', async () => {
+  it('names each listed action after its request, and after its cancellation for a cancellation request', async () => {
     mockTeamMembers({ [employmentId]: 'Jane Smith' });
     server.use(
       http.get('*/v1/timeoff', () =>
@@ -569,6 +569,10 @@ describe('TimeOffListFlow', () => {
             timeoffs: [
               listedTimeOff('timeoff-1', 'Paid leave'),
               listedTimeOff('timeoff-2', 'Sick leave'),
+              {
+                ...listedTimeOff('timeoff-3', 'Unpaid leave'),
+                status: 'cancel_requested',
+              },
             ],
           },
         }),
@@ -576,7 +580,7 @@ describe('TimeOffListFlow', () => {
     );
     renderFlow();
 
-    await screen.findByText('Sick leave');
+    await screen.findByText('Unpaid leave');
     await screen.findAllByText('Jane Smith');
 
     expect(
@@ -590,6 +594,9 @@ describe('TimeOffListFlow', () => {
       'View Jane Smith, Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
       'Decline Jane Smith, Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
       'Approve Jane Smith, Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'View Jane Smith, Unpaid leave, Cancellation requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Decline cancellation of Jane Smith, Unpaid leave, Cancellation requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Approve cancellation of Jane Smith, Unpaid leave, Cancellation requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
     ]);
   });
 
