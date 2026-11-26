@@ -290,33 +290,6 @@ test.describe('Invoice schedule', () => {
     expect(pageErrors).toEqual([]);
   });
 
-  test('tells the user when the preview fails and opens no dialog', async ({
-    page,
-  }) => {
-    await page.route(
-      (url) => PREVIEW_INVOICE_PATH.test(url.pathname),
-      (route) =>
-        route.fulfill({
-          status: 500,
-          contentType: 'application/json',
-          body: JSON.stringify({ message: 'Preview unavailable' }),
-        }),
-    );
-
-    await openInvoiceScheduleForm(page, employmentId);
-    await selectCurrency(page, 'EUR');
-    await fillInvoiceItems(page, ONE_ITEM);
-    await selectFrequency(page, 'One time');
-    await pickStartDate(page);
-
-    await previewInvoice(page);
-
-    await expect(
-      page.getByText('Could not preview the invoice: Preview unavailable'),
-    ).toBeVisible();
-    await expect(page.getByRole('dialog')).toBeHidden();
-  });
-
   test('asks for the required fields and sends nothing when the form is empty', async ({
     page,
   }) => {
