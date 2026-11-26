@@ -228,12 +228,16 @@ function mockCancellationRequest(
   statusAfterDecision: typeof timeOffRequestResponse.data.timeoff.status,
   decisionResponse: () => Response = () =>
     HttpResponse.json({ data: { status: 'ok' } }),
+  reloadResponse?: () => Response,
 ) {
   let status: typeof statusAfterDecision = 'cancel_requested';
   const requests: string[] = [];
   server.use(
     http.get('*/v1/timeoff/:id', ({ params }) => {
       requests.push(`GET ${params.id}`);
+      if (reloadResponse && status === statusAfterDecision) {
+        return reloadResponse();
+      }
       return HttpResponse.json({
         data: { timeoff: { ...timeOffRequestResponse.data.timeoff, status } },
       });
@@ -1051,6 +1055,58 @@ describe('TimeOffFlow', () => {
         'GET timeoff-123',
         'POST timeoff-123 decline {"decline_reason":null}',
       ]);
+    },
+  );
+
+  it.each([
+    ['approves', 404, 'not_found', 'cancelled', 'Not Found'],
+    ['declines', 500, 'request_failed', 'approved', 'Internal Server Error'],
+  ] as const)(
+    '%s a cancellation request, reports its failed %i reload as %s and still refreshes the lists',
+    async (decision, status, reason, statusAfterDecision, message) => {
+      const requests = mockCancellationRequest(
+        statusAfterDecision,
+        undefined,
+        () => HttpResponse.json({ message }, { status }),
+      );
+      const invalidateQueries = vi.spyOn(queryClient, 'invalidateQueries');
+      const onSuccess = vi.fn();
+      const onError = vi.fn();
+      if (decision === 'approves') {
+        renderApproval({ onSuccess, onError });
+      } else {
+        renderDecline({ onSuccess, onError });
+      }
+
+      fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+      await screen.findByText('Cancellation requested');
+      fireEvent.click(
+        screen.getByRole('button', {
+          name: decision === 'approves' ? 'Approve' : 'Decline',
+        }),
+      );
+
+      await waitFor(() =>
+        expect(onError).toHaveBeenCalledWith({
+          reason,
+          status,
+          message,
+          fieldErrors: [],
+        }),
+      );
+      expect(onSuccess).not.toHaveBeenCalled();
+      expect(invalidateQueries).toHaveBeenCalledWith({
+        queryKey: ['timeoff-requests'],
+      });
+      expect(screen.getByText('Cancellation requested')).toBeInTheDocument();
+      expect(requests).toEqual([
+        'GET timeoff-123',
+        decision === 'approves'
+          ? 'POST timeoff-123 approve'
+          : 'POST timeoff-123 decline {"decline_reason":null}',
+        'GET timeoff-123',
+      ]);
+      invalidateQueries.mockRestore();
     },
   );
 });

@@ -424,6 +424,75 @@ describe('TimeOffListFlow', () => {
     expect(requests).toHaveLength(4);
   });
 
+  it.each(['approve', 'decline'] as const)(
+    'rejects deciding to %s a listed cancellation request whose reload fails, and still refreshes the list',
+    async (decision) => {
+      const requests: string[] = [];
+      server.use(
+        http.get('*/v1/timeoff', () => {
+          requests.push('GET list');
+          return HttpResponse.json({
+            data: {
+              ...timeOffRequestsResponse.data,
+              timeoffs: [
+                {
+                  ...listedTimeOff('timeoff-1', 'Paid leave'),
+                  status: 'cancel_requested',
+                },
+              ],
+            },
+          });
+        }),
+        http.get('*/v1/timeoff/:id', ({ params }) => {
+          requests.push(`GET ${params.id}`);
+          return HttpResponse.json({ message: 'Not Found' }, { status: 404 });
+        }),
+        http.post('*/v1/timeoff/:id/cancel-request/:decision', ({ params }) => {
+          requests.push(`POST ${params.id} cancel-request/${params.decision}`);
+          return HttpResponse.json({ data: { status: 'ok' } });
+        }),
+      );
+      const { result } = renderHook(() => useTimeOffList(), {
+        wrapper: TestProviders,
+      });
+      await waitFor(() => {
+        expect(result.current.timeOffRequests).toHaveLength(1);
+      });
+
+      let decisionError: unknown;
+      await act(async () => {
+        decisionError = await (
+          decision === 'approve'
+            ? result.current.approveTimeOffRequest({
+                timeOffId: 'timeoff-1',
+                approverId: null,
+              })
+            : result.current.declineTimeOffRequest({
+                timeOffId: 'timeoff-1',
+                declineReason: null,
+              })
+        ).catch((error: unknown) => error);
+      });
+
+      expect(decisionError).toEqual({
+        reason: 'not_found',
+        status: 404,
+        message: 'Not Found',
+        fieldErrors: [],
+      });
+      await waitFor(() => {
+        expect(requests).toHaveLength(4);
+      });
+      expect(requests.slice(0, 2)).toEqual([
+        'GET list',
+        `POST timeoff-1 cancel-request/${decision}`,
+      ]);
+      expect(new Set(requests.slice(2))).toEqual(
+        new Set(['GET timeoff-1', 'GET list']),
+      );
+    },
+  );
+
   it('shows the team member of each listed request once their employment loads', async () => {
     mockTimeOffRequests();
     let respond: (response: Response) => void = () => {};
