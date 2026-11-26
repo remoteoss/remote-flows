@@ -23,6 +23,11 @@ export type HeadlessFormControllerConfig = {
   logModifyWarnings?: boolean;
 };
 
+export type HeadlessFormValidation = {
+  result: ValidationResult;
+  isCurrent: boolean;
+};
+
 export type HeadlessFormController = {
   sync: (
     input: HeadlessFormControllerInput,
@@ -30,6 +35,7 @@ export type HeadlessFormController = {
   getForm: () => JSONSchemaFormResultWithFieldsets | null;
   getRevision: () => number;
   subscribe: (listener: () => void) => () => void;
+  validate: (values: FieldValues) => Promise<HeadlessFormValidation | null>;
   handleValidation: (values: FieldValues) => Promise<ValidationResult | null>;
   onValuesChange: (values: FieldValues) => Promise<void>;
   parseFormValues: (values: FieldValues) => Promise<FieldValues>;
@@ -119,9 +125,9 @@ export function createHeadlessFormController(
     return form;
   }
 
-  async function handleValidation(
+  async function validate(
     nextValues: FieldValues,
-  ): Promise<ValidationResult | null> {
+  ): Promise<HeadlessFormValidation | null> {
     const activeForm = form;
     const activeSchema = currentSchema;
     const activeOptions = currentOptions;
@@ -144,9 +150,12 @@ export function createHeadlessFormController(
         parsedValues,
         resolveBuildOptions(activeOptions),
       );
-      return isolatedForm.handleValidation(
-        withFieldsetObjects(parsedValues, isolatedForm.fields),
-      );
+      return {
+        result: isolatedForm.handleValidation(
+          withFieldsetObjects(parsedValues, isolatedForm.fields),
+        ),
+        isCurrent: false,
+      };
     }
     // An untouched fieldset has no value, so jsf v1 reports one error for the
     // whole fieldset, which no input can display. An empty object makes it
@@ -160,7 +169,13 @@ export function createHeadlessFormController(
     };
     revision += 1;
     notify();
-    return result;
+    return { result, isCurrent: true };
+  }
+
+  async function handleValidation(
+    nextValues: FieldValues,
+  ): Promise<ValidationResult | null> {
+    return (await validate(nextValues))?.result ?? null;
   }
 
   async function onValuesChange(nextValues: FieldValues): Promise<void> {
@@ -187,6 +202,7 @@ export function createHeadlessFormController(
     getForm: () => form,
     getRevision: () => revision,
     subscribe,
+    validate,
     handleValidation,
     onValuesChange,
     parseFormValues,

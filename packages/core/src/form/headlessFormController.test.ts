@@ -389,6 +389,39 @@ describe('createHeadlessFormController', () => {
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
+  it('reports whether a validation result is current so callers can skip a stale one', async () => {
+    let resolveFirst!: (value: unknown) => void;
+    let callCount = 0;
+    const convertFiles = vi.fn(() => {
+      callCount += 1;
+      if (callCount === 1) {
+        return new Promise((resolve) => {
+          resolveFirst = resolve;
+        });
+      }
+      return Promise.resolve([{ name: 'second.pdf' }]);
+    });
+
+    const controller = createHeadlessFormController({ convertFiles });
+    controller.sync({ schema: structuredClone(fileSchema) });
+
+    const first = controller.validate({
+      has_attachment: 'yes',
+      contract: [{ name: 'first.pdf' }],
+    });
+    const second = controller.validate({
+      has_attachment: 'no',
+      contract: [{ name: 'second.pdf' }],
+    });
+
+    expect(await second).toMatchObject({ isCurrent: true });
+    resolveFirst([{ name: 'first.pdf' }]);
+    expect(await first).toMatchObject({
+      isCurrent: false,
+      result: { formErrors: { note: expect.any(String) } },
+    });
+  });
+
   it('returns a real result for a validation whose form sync replaced mid-validation', async () => {
     let resolveConversion!: (value: unknown) => void;
     const convertFiles = vi.fn(

@@ -45,10 +45,12 @@ export function createFormEngine(options?: HeadlessFormOptions): FormEngine {
       };
     },
     validate: async (values) => {
-      const result = (await controller.handleValidation(values)) as {
-        formErrors?: FormErrors;
-      } | null;
-      return result ? (result.formErrors ?? {}) : null;
+      const outcome = await controller.validate(values);
+      if (!outcome?.isCurrent) {
+        return null;
+      }
+      const result = outcome.result as { formErrors?: FormErrors };
+      return result.formErrors ?? {};
     },
     parse: (values) => controller.parseFormValues(values),
   };
