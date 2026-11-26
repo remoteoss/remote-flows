@@ -31,7 +31,8 @@
             "importNames": [
               "createHeadlessForm",
               "buildHeadlessForm",
-              "parseValuesForValidation"
+              "parseValuesForValidation",
+              "createHeadlessFormController"
             ],
             "message": "Build JSON Schema forms with useHeadlessForm from @/src/common/useHeadlessForm. The engine in @remoteoss/remote-flows-core is wrapped by it and shared only with the schema scripts under scripts/. See docs/USE_HEADLESS_FORM_ROLLOUT.md."
           }
