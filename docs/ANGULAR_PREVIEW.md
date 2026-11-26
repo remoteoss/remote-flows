@@ -65,7 +65,7 @@ Each field component receives a real Angular `FormControl` (a `FormGroup` for a 
 
 ### Authentication
 
-The browser never holds Remote credentials. Your frontend talks to a small backend proxy that you own, and the proxy calls Remote with a token. The demo includes a minimal proxy in [`apps/angular/api`](../apps/angular/api). Point `proxy.url` at your own.
+The browser never holds Remote credentials. Your frontend talks to a small backend proxy that you own, and the proxy calls Remote with a token. The demo includes a minimal proxy in [`apps/angular/api`](../apps/angular/api). Point `proxy.url` at your own, and see [Securing authentication](./AUTHENTICATION_SECURITY.md) for what it must check.
 
 ## Philosophy
 
