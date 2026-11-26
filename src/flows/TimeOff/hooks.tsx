@@ -4,10 +4,15 @@ import { TimeoffStatus } from '@/src/client';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import {
   getTimeOffDecisionError,
+  useApproveTimeOffCancellationRequest,
   useApproveTimeOffRequest,
+  useDeclineTimeOffCancellationRequest,
   useDeclineTimeOffRequest,
+  useGetCompanyManagerNames,
+  useGetTeamMembers,
   useGetTimeOffRequest,
   useGetTimeOffRequests,
+  useReloadTimeOffRequest,
 } from '@/src/flows/TimeOff/api';
 import { requestIdSchema } from '@/src/flows/TimeOff/json-schemas/requestId';
 import { statusFilterSchema } from '@/src/flows/TimeOff/json-schemas/statusFilter';
@@ -16,6 +21,7 @@ import {
   TimeOffDeclineOptions,
   TimeOffListStepKeys,
   TimeOffRequestIdFormValues,
+  TimeOffRequestPeople,
   TimeOffStatusFilterFormValues,
   TimeOffStepKeys,
   UseTimeOffListOptions,
@@ -25,6 +31,7 @@ import {
 } from '@/src/flows/TimeOff/types';
 import {
   getTimeOffListItems,
+  getTimeOffRequestPeople,
   LIST_STEPS,
   LIST_STEPS_ARRAY,
   STEPS,
@@ -33,20 +40,50 @@ import {
 import { useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 
+type TimeOffDecisionTarget = {
+  timeOffId: string | undefined;
+  status: TimeoffStatus | undefined;
+};
+
 const useTimeOffDecisions = () => {
+  const reloadTimeOffRequestMutation = useReloadTimeOffRequest();
+  const { mutateAsyncOrThrow: reloadTimeOffRequestAsync } = mutationToPromise(
+    reloadTimeOffRequestMutation,
+  );
+
+  const reloadTimeOffRequest = useCallback(
+    async (timeOffId: string) => {
+      const response = await reloadTimeOffRequestAsync({ timeOffId });
+      if (!response) {
+        throw new Error('The time-off request could not be reloaded.');
+      }
+      return response.data.timeoff;
+    },
+    [reloadTimeOffRequestAsync],
+  );
+
   const approveTimeOffRequestMutation = useApproveTimeOffRequest();
   const { mutateAsyncOrThrow: approveTimeOffRequestAsync } = mutationToPromise(
     approveTimeOffRequestMutation,
   );
+  const approveTimeOffCancellationRequestMutation =
+    useApproveTimeOffCancellationRequest();
+  const { mutateAsyncOrThrow: approveTimeOffCancellationRequestAsync } =
+    mutationToPromise(approveTimeOffCancellationRequestMutation);
 
   const approveTimeOffRequest = useCallback(
     async ({
       timeOffId,
+      status,
       approverId,
-    }: TimeOffApproveOptions & { timeOffId: string | undefined }) => {
+    }: TimeOffApproveOptions & TimeOffDecisionTarget) => {
       try {
         if (!timeOffId) {
           throw new Error('No time-off request to approve.');
+        }
+        if (status === 'cancel_requested') {
+          await approveTimeOffCancellationRequestAsync({ timeOffId });
+          return await reloadTimeOffRequest(timeOffId);
         }
         const response = await approveTimeOffRequestAsync({
           timeOffId,
@@ -60,22 +97,38 @@ const useTimeOffDecisions = () => {
         throw getTimeOffDecisionError(error);
       }
     },
-    [approveTimeOffRequestAsync],
+    [
+      approveTimeOffCancellationRequestAsync,
+      approveTimeOffRequestAsync,
+      reloadTimeOffRequest,
+    ],
   );
 
   const declineTimeOffRequestMutation = useDeclineTimeOffRequest();
   const { mutateAsyncOrThrow: declineTimeOffRequestAsync } = mutationToPromise(
     declineTimeOffRequestMutation,
   );
+  const declineTimeOffCancellationRequestMutation =
+    useDeclineTimeOffCancellationRequest();
+  const { mutateAsyncOrThrow: declineTimeOffCancellationRequestAsync } =
+    mutationToPromise(declineTimeOffCancellationRequestMutation);
 
   const declineTimeOffRequest = useCallback(
     async ({
       timeOffId,
+      status,
       declineReason,
-    }: TimeOffDeclineOptions & { timeOffId: string | undefined }) => {
+    }: TimeOffDeclineOptions & TimeOffDecisionTarget) => {
       try {
         if (!timeOffId) {
           throw new Error('No time-off request to decline.');
+        }
+        if (status === 'cancel_requested') {
+          await declineTimeOffCancellationRequestAsync({
+            timeOffId,
+            declineReason,
+          });
+          return await reloadTimeOffRequest(timeOffId);
         }
         const response = await declineTimeOffRequestAsync({
           timeOffId,
@@ -89,7 +142,11 @@ const useTimeOffDecisions = () => {
         throw getTimeOffDecisionError(error);
       }
     },
-    [declineTimeOffRequestAsync],
+    [
+      declineTimeOffCancellationRequestAsync,
+      declineTimeOffRequestAsync,
+      reloadTimeOffRequest,
+    ],
   );
 
   return {
@@ -97,7 +154,10 @@ const useTimeOffDecisions = () => {
     declineTimeOffRequest,
     isSubmitting:
       approveTimeOffRequestMutation.isPending ||
-      declineTimeOffRequestMutation.isPending,
+      approveTimeOffCancellationRequestMutation.isPending ||
+      declineTimeOffRequestMutation.isPending ||
+      declineTimeOffCancellationRequestMutation.isPending ||
+      reloadTimeOffRequestMutation.isPending,
   };
 };
 
@@ -111,19 +171,33 @@ export const useTimeOffRequestReview = ({
   const { timeOffRequest, isLoading, error, refetch } = useTimeOffRequest({
     timeOffId: isReviewing ? timeOffId : undefined,
   });
+  const teamMembers = useGetTeamMembers(
+    timeOffRequest ? [timeOffRequest.employment_id] : [],
+  );
+  const { data: companyManagerNames } = useGetCompanyManagerNames(isReviewing);
+  const { teamMemberName, createdBy, approverName }: TimeOffRequestPeople =
+    timeOffRequest
+      ? getTimeOffRequestPeople(
+          timeOffRequest,
+          teamMembers[timeOffRequest.employment_id],
+          companyManagerNames,
+        )
+      : {};
   const { approveTimeOffRequest, declineTimeOffRequest, isSubmitting } =
     useTimeOffDecisions();
 
+  const status = timeOffRequest?.status;
+
   const approve = useCallback(
     ({ approverId }: TimeOffApproveOptions) =>
-      approveTimeOffRequest({ timeOffId, approverId }),
-    [approveTimeOffRequest, timeOffId],
+      approveTimeOffRequest({ timeOffId, status, approverId }),
+    [approveTimeOffRequest, timeOffId, status],
   );
 
   const decline = useCallback(
     ({ declineReason }: TimeOffDeclineOptions) =>
-      declineTimeOffRequest({ timeOffId, declineReason }),
-    [declineTimeOffRequest, timeOffId],
+      declineTimeOffRequest({ timeOffId, status, declineReason }),
+    [declineTimeOffRequest, timeOffId, status],
   );
 
   return {
@@ -131,6 +205,21 @@ export const useTimeOffRequestReview = ({
      * The time-off request under review, loaded once the flow reaches the review step.
      */
     timeOffRequest,
+    /**
+     * The full name of the team member the time off under review is for. `undefined` until it
+     * loads, or when it can't be loaded, e.g. for a token without the `employment:read` scope.
+     */
+    teamMemberName,
+    /**
+     * Who entered the time off under review. `undefined` until the names it needs load, when they
+     * can't be loaded, or when no creator is recorded.
+     */
+    createdBy,
+    /**
+     * The name of the company manager who approved the time off under review, for an `approved` or
+     * `taken` request. `undefined` until the company managers load, or when they can't be loaded.
+     */
+    approverName,
     /**
      * Whether the time-off request under review is loading for the first time.
      */
@@ -144,13 +233,15 @@ export const useTimeOffRequestReview = ({
      */
     refetchTimeOffRequest: refetch,
     /**
-     * Approves the time-off request under review. Resolves with the request as the API returns
-     * it, so read the outcome from its `status`. Rejects with a `TimeOffDecisionError`.
+     * Approves the time-off request under review, or its cancellation when it is `cancel_requested`.
+     * Resolves with the request as the API returns it, or reloads it after a cancellation
+     * decision, so read the outcome from its `status`. Rejects with a `TimeOffDecisionError`.
      */
     approve,
     /**
-     * Declines the time-off request under review. Resolves with the request as the API returns
-     * it, so read the outcome from its `status`. Rejects with a `TimeOffDecisionError`.
+     * Declines the time-off request under review, or its cancellation when it is `cancel_requested`.
+     * Resolves with the request as the API returns it, or reloads it after a cancellation
+     * decision, so read the outcome from its `status`. Rejects with a `TimeOffDecisionError`.
      */
     decline,
     /**
@@ -271,9 +362,14 @@ export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
     error: timeOffRequestsError,
     refetch: refetchTimeOffRequests,
   } = useTimeOffRequests({ status, page, pageSize });
+  const teamMembers = useGetTeamMembers([
+    ...new Set(timeOffRequests.map(({ employment_id }) => employment_id)),
+  ]);
+  const { data: companyManagerNames } = useGetCompanyManagerNames(true);
   const timeOffListItems = useMemo(
-    () => getTimeOffListItems(timeOffRequests),
-    [timeOffRequests],
+    () =>
+      getTimeOffListItems(timeOffRequests, teamMembers, companyManagerNames),
+    [timeOffRequests, teamMembers, companyManagerNames],
   );
 
   if (isEmpty && page && totalPages !== undefined && page > totalPages) {
@@ -285,6 +381,8 @@ export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
     isReviewing: stepState.currentStep.name === 'review',
   });
   const listedTimeOffDecisions = useTimeOffDecisions();
+  const getListedStatus = (listedTimeOffId: string | undefined) =>
+    timeOffRequests.find(({ id }) => id === listedTimeOffId)?.status;
 
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
@@ -402,15 +500,37 @@ export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
     timeOffId,
     ...timeOffRequestReview,
     /**
-     * Approves one of the listed time-off requests without opening it. Resolves with the request
-     * as the API returns it. Rejects with a `TimeOffDecisionError`.
+     * Approves one of the listed time-off requests without opening it, or its cancellation when it
+     * is listed as `cancel_requested`. Resolves with the request as the API returns it, or reloads
+     * it after a cancellation decision. Rejects with a `TimeOffDecisionError`.
+     * The status is looked up in the loaded page only: a `timeOffId` that isn't on that page goes
+     * to the regular approve route, not the cancellation one.
      */
-    approveTimeOffRequest: listedTimeOffDecisions.approveTimeOffRequest,
+    approveTimeOffRequest: ({
+      timeOffId: listedTimeOffId,
+      approverId,
+    }: TimeOffApproveOptions & { timeOffId: string | undefined }) =>
+      listedTimeOffDecisions.approveTimeOffRequest({
+        timeOffId: listedTimeOffId,
+        status: getListedStatus(listedTimeOffId),
+        approverId,
+      }),
     /**
-     * Declines one of the listed time-off requests without opening it. Resolves with the request
-     * as the API returns it. Rejects with a `TimeOffDecisionError`.
+     * Declines one of the listed time-off requests without opening it, or its cancellation when it
+     * is listed as `cancel_requested`. Resolves with the request as the API returns it, or reloads
+     * it after a cancellation decision. Rejects with a `TimeOffDecisionError`.
+     * The status is looked up in the loaded page only: a `timeOffId` that isn't on that page goes
+     * to the regular decline route, not the cancellation one.
      */
-    declineTimeOffRequest: listedTimeOffDecisions.declineTimeOffRequest,
+    declineTimeOffRequest: ({
+      timeOffId: listedTimeOffId,
+      declineReason,
+    }: TimeOffDeclineOptions & { timeOffId: string | undefined }) =>
+      listedTimeOffDecisions.declineTimeOffRequest({
+        timeOffId: listedTimeOffId,
+        status: getListedStatus(listedTimeOffId),
+        declineReason,
+      }),
     /**
      * Whether a decision on the request under review or on a listed request is being sent.
      */

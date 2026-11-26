@@ -10,6 +10,7 @@ import {
 import { http, HttpResponse } from 'msw';
 import { TimeOffListFlow, useTimeOffList } from '@/src/index';
 import {
+  companyManagersResponse,
   emptyTimeOffRequestsResponse,
   timeOffRequestResponse,
   timeOffRequestsResponse,
@@ -114,6 +115,24 @@ function mockTimeOffRequest() {
     }),
   );
   return requestedIds;
+}
+
+const employmentId = timeOffRequestResponse.data.timeoff.employment_id;
+
+function mockTeamMembers(fullNames: Record<string, string>) {
+  const requestedEmploymentIds: string[] = [];
+  server.use(
+    http.get('*/v1/employments/:id', ({ params }) => {
+      const id = params.id as string;
+      requestedEmploymentIds.push(id);
+      return fullNames[id]
+        ? HttpResponse.json({
+            data: { employment: { id, full_name: fullNames[id] } },
+          })
+        : HttpResponse.json({ message: 'Forbidden' }, { status: 403 });
+    }),
+  );
+  return requestedEmploymentIds;
 }
 
 describe('TimeOffListFlow', () => {
@@ -326,7 +345,201 @@ describe('TimeOffListFlow', () => {
     expect(requestedIds).toEqual(['timeoff-1']);
   });
 
-  it('names each listed action after its request', async () => {
+  it('decides on listed requested and cancellation requests only, through the route that fits each', async () => {
+    const statuses = [
+      'requested',
+      'cancel_requested',
+      'approved',
+      'declined',
+      'taken',
+      'cancelled',
+    ] as const;
+    let cancellationStatus: (typeof statuses)[number] = 'cancel_requested';
+    const requests: string[] = [];
+    server.use(
+      http.get('*/v1/timeoff', () => {
+        requests.push('GET list');
+        return HttpResponse.json({
+          data: {
+            ...timeOffRequestsResponse.data,
+            timeoffs: statuses.map((status) => ({
+              ...listedTimeOff(`timeoff-${status}`, `${status} leave`),
+              status:
+                status === 'cancel_requested' ? cancellationStatus : status,
+            })),
+          },
+        });
+      }),
+      http.get('*/v1/timeoff/:id', ({ params }) => {
+        requests.push(`GET ${params.id}`);
+        return HttpResponse.json({
+          data: {
+            timeoff: {
+              ...listedTimeOff(params.id as string, 'Reviewed leave'),
+              status: cancellationStatus,
+            },
+          },
+        });
+      }),
+      http.post('*/v1/timeoff/:id/cancel-request/approve', ({ params }) => {
+        requests.push(`POST ${params.id} cancel-request/approve`);
+        cancellationStatus = 'cancelled';
+        return HttpResponse.json({ data: { status: 'ok' } });
+      }),
+    );
+    renderFlow();
+
+    await screen.findByText('cancel_requested leave');
+    const actionsOf = (item: HTMLElement) =>
+      within(item)
+        .getAllByRole('button')
+        .map((button) => button.getAttribute('aria-label')?.split(' ')[0]);
+    expect(screen.getAllByRole('listitem').map(actionsOf)).toEqual([
+      ['View', 'Decline', 'Approve'],
+      ['View', 'Decline', 'Approve'],
+      ['View'],
+      ['View'],
+      ['View'],
+      ['View'],
+    ]);
+
+    fireEvent.click(
+      within(screen.getAllByRole('listitem')[1]).getByRole('button', {
+        name: /^Approve/,
+      }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('listitem').map(actionsOf)[1]).toEqual([
+        'View',
+      ]);
+    });
+    expect(requests.slice(0, 2)).toEqual([
+      'GET list',
+      'POST timeoff-cancel_requested cancel-request/approve',
+    ]);
+    expect(new Set(requests.slice(2))).toEqual(
+      new Set(['GET timeoff-cancel_requested', 'GET list']),
+    );
+    expect(requests).toHaveLength(4);
+  });
+
+  it.each(['approve', 'decline'] as const)(
+    'rejects deciding to %s a listed cancellation request whose reload fails, and still refreshes the list',
+    async (decision) => {
+      const requests: string[] = [];
+      server.use(
+        http.get('*/v1/timeoff', () => {
+          requests.push('GET list');
+          return HttpResponse.json({
+            data: {
+              ...timeOffRequestsResponse.data,
+              timeoffs: [
+                {
+                  ...listedTimeOff('timeoff-1', 'Paid leave'),
+                  status: 'cancel_requested',
+                },
+              ],
+            },
+          });
+        }),
+        http.get('*/v1/timeoff/:id', ({ params }) => {
+          requests.push(`GET ${params.id}`);
+          return HttpResponse.json({ message: 'Not Found' }, { status: 404 });
+        }),
+        http.post('*/v1/timeoff/:id/cancel-request/:decision', ({ params }) => {
+          requests.push(`POST ${params.id} cancel-request/${params.decision}`);
+          return HttpResponse.json({ data: { status: 'ok' } });
+        }),
+      );
+      const { result } = renderHook(() => useTimeOffList(), {
+        wrapper: TestProviders,
+      });
+      await waitFor(() => {
+        expect(result.current.timeOffRequests).toHaveLength(1);
+      });
+
+      let decisionError: unknown;
+      await act(async () => {
+        decisionError = await (
+          decision === 'approve'
+            ? result.current.approveTimeOffRequest({
+                timeOffId: 'timeoff-1',
+                approverId: null,
+              })
+            : result.current.declineTimeOffRequest({
+                timeOffId: 'timeoff-1',
+                declineReason: null,
+              })
+        ).catch((error: unknown) => error);
+      });
+
+      expect(decisionError).toEqual({
+        reason: 'not_found',
+        status: 404,
+        message: 'Not Found',
+        fieldErrors: [],
+      });
+      await waitFor(() => {
+        expect(requests).toHaveLength(4);
+      });
+      expect(requests.slice(0, 2)).toEqual([
+        'GET list',
+        `POST timeoff-1 cancel-request/${decision}`,
+      ]);
+      expect(new Set(requests.slice(2))).toEqual(
+        new Set(['GET timeoff-1', 'GET list']),
+      );
+    },
+  );
+
+  it('shows the team member of each listed request once their employment loads', async () => {
+    mockTimeOffRequests();
+    let respond: (response: Response) => void = () => {};
+    server.use(
+      http.get(
+        '*/v1/employments/:id',
+        () =>
+          new Promise<Response>((resolve) => {
+            respond = resolve;
+          }),
+      ),
+    );
+    render(
+      <TimeOffListFlow
+        render={({ components: { ListStep } }) => (
+          <ListStep
+            render={({ listedDetails }) =>
+              listedDetails
+                .map(({ label, value }) => `${label}: ${value}`)
+                .join(' | ')
+            }
+          />
+        )}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    expect(
+      await screen.findByText(
+        'Type: requested leave, page 1 | Status: Requested | Start date: Nov 16, 2026 | End date: Nov 17, 2026 | Duration: 16 hours',
+      ),
+    ).toBeInTheDocument();
+
+    respond(
+      HttpResponse.json({
+        data: { employment: { id: employmentId, full_name: 'Jane Smith' } },
+      }),
+    );
+
+    expect(
+      await screen.findByText(
+        'Team member: Jane Smith | Type: requested leave, page 1 | Status: Requested | Start date: Nov 16, 2026 | End date: Nov 17, 2026 | Duration: 16 hours',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('loads each employment and the company managers once, also when reviewing a listed request', async () => {
     server.use(
       http.get('*/v1/timeoff', () =>
         HttpResponse.json({
@@ -335,6 +548,100 @@ describe('TimeOffListFlow', () => {
             timeoffs: [
               listedTimeOff('timeoff-1', 'Paid leave'),
               listedTimeOff('timeoff-2', 'Sick leave'),
+              {
+                ...listedTimeOff('timeoff-3', 'Unpaid leave'),
+                employment_id: 'employment-2',
+              },
+            ],
+          },
+        }),
+      ),
+    );
+    mockTimeOffRequest();
+    let companyManagerRequests = 0;
+    server.use(
+      http.get('*/v1/company-managers', () => {
+        companyManagerRequests += 1;
+        return HttpResponse.json(companyManagersResponse);
+      }),
+    );
+    const requestedEmploymentIds = mockTeamMembers({
+      [employmentId]: 'Jane Smith',
+      'employment-2': 'John Doe',
+    });
+    const { container } = renderFlow();
+
+    expect(await screen.findByText('John Doe')).toBeInTheDocument();
+    expect(
+      [
+        ...container.querySelectorAll(
+          '.RemoteFlows__ListStep__Value__team_member',
+        ),
+      ].map((value) => value.textContent),
+    ).toEqual(['Jane Smith', 'Jane Smith', 'John Doe']);
+
+    fireEvent.click(screen.getAllByRole('button', { name: /^View/ })[0]);
+    expect(await screen.findByText('Reviewed leave')).toBeInTheDocument();
+    expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+    expect(await screen.findByText('John Doe')).toBeInTheDocument();
+
+    expect(requestedEmploymentIds).toHaveLength(2);
+    expect(new Set(requestedEmploymentIds)).toEqual(
+      new Set([employmentId, 'employment-2']),
+    );
+    expect(companyManagerRequests).toBe(1);
+  });
+
+  it('still lists and decides on requests whose team member fails to load', async () => {
+    server.use(
+      http.get('*/v1/timeoff', () =>
+        HttpResponse.json({
+          data: {
+            ...timeOffRequestsResponse.data,
+            timeoffs: [
+              listedTimeOff('timeoff-1', 'Paid leave'),
+              {
+                ...listedTimeOff('timeoff-2', 'Sick leave'),
+                employment_id: 'employment-2',
+              },
+            ],
+          },
+        }),
+      ),
+    );
+    const requestedEmploymentIds = mockTeamMembers({
+      'employment-2': 'Anne White',
+    });
+    renderFlow();
+
+    expect(await screen.findByText('Anne White')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {
+        name: 'Approve Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      }),
+    ).toBeEnabled();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(requestedEmploymentIds).toHaveLength(2);
+    expect(new Set(requestedEmploymentIds)).toEqual(
+      new Set([employmentId, 'employment-2']),
+    );
+  });
+
+  it('names each listed action after its request, and after its cancellation for a cancellation request', async () => {
+    mockTeamMembers({ [employmentId]: 'Jane Smith' });
+    server.use(
+      http.get('*/v1/timeoff', () =>
+        HttpResponse.json({
+          data: {
+            ...timeOffRequestsResponse.data,
+            timeoffs: [
+              listedTimeOff('timeoff-1', 'Paid leave'),
+              listedTimeOff('timeoff-2', 'Sick leave'),
+              {
+                ...listedTimeOff('timeoff-3', 'Unpaid leave'),
+                status: 'cancel_requested',
+              },
             ],
           },
         }),
@@ -342,19 +649,23 @@ describe('TimeOffListFlow', () => {
     );
     renderFlow();
 
-    await screen.findByText('Sick leave');
+    await screen.findByText('Unpaid leave');
+    await screen.findAllByText('Jane Smith');
 
     expect(
       within(screen.getByRole('list'))
         .getAllByRole('button')
         .map((button) => button.getAttribute('aria-label')),
     ).toEqual([
-      'View Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
-      'Decline Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
-      'Approve Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
-      'View Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
-      'Decline Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
-      'Approve Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'View Jane Smith, Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Decline Jane Smith, Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Approve Jane Smith, Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'View Jane Smith, Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Decline Jane Smith, Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Approve Jane Smith, Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'View Jane Smith, Unpaid leave, Cancellation requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Decline cancellation of Jane Smith, Unpaid leave, Cancellation requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Approve cancellation of Jane Smith, Unpaid leave, Cancellation requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
     ]);
   });
 
@@ -411,6 +722,7 @@ describe('TimeOffListFlow', () => {
 
   it('renders only the markup a partner gives each listed request', async () => {
     const approvedIds: string[] = [];
+    mockTeamMembers({ [employmentId]: 'Jane Smith' });
     server.use(
       http.get('*/v1/timeoff', () =>
         HttpResponse.json({
@@ -444,9 +756,10 @@ describe('TimeOffListFlow', () => {
           <table>
             <tbody>
               <ListStep
-                renderItem={({ listedDetails, canDecide }) => (
+                renderItem={({ timeOffRequest, teamMemberName, canDecide }) => (
                   <tr>
-                    <td>{listedDetails[0].value}</td>
+                    <td>{teamMemberName}</td>
+                    <td>{timeOffRequest.leave_policy.name}</td>
                     <td>
                       {canDecide && <ApproveButton approverId='manager-1' />}
                     </td>
@@ -466,6 +779,9 @@ describe('TimeOffListFlow', () => {
     expect(
       screen.getByRole('cell', { name: 'Paid leave' }),
     ).toBeInTheDocument();
+    expect(
+      await screen.findAllByRole('cell', { name: 'Jane Smith' }),
+    ).toHaveLength(2);
     expect(screen.queryByRole('list')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Approve' }));

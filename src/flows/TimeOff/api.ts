@@ -1,17 +1,26 @@
 import {
   queryOptions,
   useMutation,
+  useQueries,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 import {
+  employmentOptions,
+  selectEmployment,
+} from '@remoteoss/remote-flows-core';
+import {
+  DeclineCancelTimeoffParams,
   DeclineTimeoffParams,
+  getV1CompanyManagers,
   getV1Timeoff,
   GetV1TimeoffData,
   getV1TimeoffId,
   ListTimeoffResponse,
   NullableApproverId,
   postV1TimeoffTimeoffIdApprove,
+  postV1TimeoffTimeoffIdCancelRequestApprove,
+  postV1TimeoffTimeoffIdCancelRequestDecline,
   postV1TimeoffTimeoffIdDecline,
   TimeoffErrorResponse,
   TimeoffResponse,
@@ -19,9 +28,11 @@ import {
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 import {
+  CompanyManagerNames,
   TimeOffDecisionError,
   TimeOffRequestError,
   TimeOffRequestsError,
+  TimeOffTeamMember,
 } from '@/src/flows/TimeOff/types';
 import { isMutationError } from '@/src/lib/mutations';
 
@@ -130,6 +141,105 @@ export const useGetTimeOffRequests = (query: TimeOffRequestsQuery) => {
   });
 };
 
+/**
+ * The team members behind these employments, keyed by employment ID, from one
+ * `GET /v1/employments/{employment_id}` per employment, loaded once per session. An employment
+ * that fails to load is left out.
+ */
+export const useGetTeamMembers = (employmentIds: string[]) => {
+  const { client } = useClient();
+  return useQueries({
+    queries: employmentIds.map((employmentId) => ({
+      ...employmentOptions(client as Client, employmentId),
+      staleTime: Infinity,
+    })),
+    combine: (results): Partial<Record<string, TimeOffTeamMember>> =>
+      Object.fromEntries(
+        results.flatMap(({ data }, index) => {
+          const employment = data && selectEmployment(data);
+          return employment
+            ? [
+                [
+                  employmentIds[index],
+                  { full_name: employment.full_name, type: employment.type },
+                ] as const,
+              ]
+            : [];
+        }),
+      ),
+  });
+};
+
+const COMPANY_MANAGERS_PAGE_SIZE = 100;
+
+const getCompanyManagersPage = (client: Client, page: number) =>
+  getV1CompanyManagers({
+    client,
+    headers: {
+      Authorization: ``,
+    },
+    query: { page, page_size: COMPANY_MANAGERS_PAGE_SIZE },
+  });
+
+let lastRemoteFlowsMount = 0;
+const remoteFlowsMounts = new WeakMap<Client, number>();
+
+const getRemoteFlowsMount = (client: Client | null) => {
+  if (!client) {
+    return 0;
+  }
+  const mount = remoteFlowsMounts.get(client);
+  if (mount) {
+    return mount;
+  }
+  lastRemoteFlowsMount += 1;
+  remoteFlowsMounts.set(client, lastRemoteFlowsMount);
+  return lastRemoteFlowsMount;
+};
+
+/**
+ * The company managers' names, keyed by user ID, from every page of `GET /v1/company-managers`.
+ * Loaded once per `RemoteFlows` mount, so a remount, for example with another company's token,
+ * loads them again. `null` when a page fails to load, until the next mount.
+ */
+export const companyManagerNamesOptions = (client: Client) =>
+  queryOptions<CompanyManagerNames | null>({
+    queryKey: ['company-manager-names', getRemoteFlowsMount(client)] as const,
+    retry: false,
+    staleTime: Infinity,
+    queryFn: async () => {
+      const firstPage = await getCompanyManagersPage(client, 1);
+      const totalPages = firstPage.data?.data?.total_pages ?? 1;
+      const otherPages = await Promise.all(
+        Array.from({ length: totalPages - 1 }, (_, index) =>
+          getCompanyManagersPage(client, index + 2),
+        ),
+      );
+      const pages = [firstPage, ...otherPages];
+
+      if (pages.some((page) => page.error || !page.data)) {
+        return null;
+      }
+
+      return Object.fromEntries(
+        pages.flatMap((page) =>
+          (page.data?.data?.company_managers ?? []).map(
+            ({ user_id, user_name }) => [user_id, user_name] as const,
+          ),
+        ),
+      );
+    },
+  });
+
+export const useGetCompanyManagerNames = (enabled: boolean) => {
+  const { client } = useClient();
+  return useQuery({
+    ...companyManagerNamesOptions(client as Client),
+    enabled,
+    select: (names) => names ?? undefined,
+  });
+};
+
 export const getTimeOffDecisionError = (
   error: unknown,
 ): TimeOffDecisionError => {
@@ -230,6 +340,91 @@ export const useDeclineTimeOffRequest = () => {
         response.data,
       );
       void queryClient.invalidateQueries({ queryKey: ['timeoff-requests'] });
+    },
+  });
+};
+
+/**
+ * Approves the cancellation of one time-off request with
+ * `POST /v1/timeoff/{timeoff_id}/cancel-request/approve`. The API answers without the request.
+ */
+export const useApproveTimeOffCancellationRequest = () => {
+  const { client } = useClient();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ timeOffId }: { timeOffId: string }) =>
+      postV1TimeoffTimeoffIdCancelRequestApprove({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: { timeoff_id: timeOffId },
+      }),
+    onSuccess: (response) => {
+      if (response.error) {
+        return;
+      }
+      void queryClient.invalidateQueries({ queryKey: ['timeoff-requests'] });
+    },
+  });
+};
+
+/**
+ * Declines the cancellation of one time-off request with
+ * `POST /v1/timeoff/{timeoff_id}/cancel-request/decline`. The API answers without the request.
+ */
+export const useDeclineTimeOffCancellationRequest = () => {
+  const { client } = useClient();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      timeOffId,
+      declineReason,
+    }: {
+      timeOffId: string;
+      declineReason: DeclineCancelTimeoffParams['decline_reason'];
+    }) =>
+      postV1TimeoffTimeoffIdCancelRequestDecline({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: { timeoff_id: timeOffId },
+        body: { decline_reason: declineReason },
+      }),
+    onSuccess: (response) => {
+      if (response.error) {
+        return;
+      }
+      void queryClient.invalidateQueries({ queryKey: ['timeoff-requests'] });
+    },
+  });
+};
+
+/**
+ * Loads one time-off request again with `GET /v1/timeoff/{id}` after a decision that doesn't
+ * return it, then caches it so the request under review shows its new status.
+ */
+export const useReloadTimeOffRequest = () => {
+  const { client } = useClient();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ timeOffId }: { timeOffId: string }) =>
+      getV1TimeoffId({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: { id: timeOffId },
+      }),
+    onSuccess: (response, { timeOffId }) => {
+      if (!response.data) {
+        return;
+      }
+      queryClient.setQueryData(
+        timeOffRequestOptions(client as Client, timeOffId).queryKey,
+        response.data,
+      );
     },
   });
 };

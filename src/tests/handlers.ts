@@ -37,6 +37,7 @@ import {
   benefitOffersUpdatedResponse,
   conversionFromEURToUSD,
 } from '@/src/flows/Onboarding/tests/fixtures';
+import { companyManagersResponse } from '@/src/flows/TimeOff/tests/fixtures';
 import {
   preOnboardingRequirementsMock,
   generatedDocumentMock,
@@ -192,6 +193,10 @@ const employmentHandler = http.get('*/v1/employments/:id', ({ params }) => {
       },
     },
   });
+});
+
+const companyManagersHandler = http.get('*/v1/company-managers', () => {
+  return HttpResponse.json(companyManagersResponse);
 });
 
 const contractorContractDetailsSchemaHandler = http.get(
@@ -369,6 +374,7 @@ export const defaultHandlers = [
   signPreOnboardingDocumentHandler,
   contractEligibilityHandler,
   employmentHandler,
+  companyManagersHandler,
   createEmploymentHandler,
   basicInformationHandler,
   setContractOriginHandler,
