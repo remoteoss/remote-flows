@@ -5,7 +5,9 @@
 ## Status
 
 - **Prototype.** The API will change between alpha releases without a deprecation period.
-- **Narrow scope.** Only the create invoice schedule flow for contractors is covered. Previewing, updating and skipping schedules are not, and API errors are not surfaced yet.
+- **Narrow scope.** Two flows are covered:
+  - Create invoice schedule, for contractors. Previewing, updating and skipping schedules are not, and API errors are not surfaced yet.
+  - Global Payroll admin onboarding, as a proof of concept: basic information (creates the employment), contract details, administrative details and the invitation, for one country at a time. Going back a step, resuming an existing employment and the employee's own onboarding are not covered yet.
 - **Open for changes.** The shape of the package, the field components and the flow API are all still up for discussion. If something is awkward, missing or surprising, we want to hear it.
 - **Not for production yet.** Install it with the `alpha` tag and expect to adapt when we release.
 
@@ -62,6 +64,49 @@ provideRemoteFlows({
 The `flow.bag` is the Angular counterpart of the render prop in React. It exposes signals such as `isLoading()`, `error()` and `createdScheduleId()`.
 
 Each field component receives a real Angular `FormControl` (a `FormGroup` for a fieldset, a `FormArray` for a list of items) plus the field's metadata. Validation errors come back from the flow and show through your usual form error UI.
+
+### Writing a field component
+
+Extend `FieldComponent` and render the field with your own markup. It gives you:
+
+- `meta()`: the field's `label`, `description`, `required`, `disabled`, `options` (for selects and radios), `inputType` and `additionalProps` (for example the `currency` of a money field).
+- `formControl()`: the control to bind with `[formControl]`.
+- `visibleError()`: the error message once the field has been touched or the form submitted, otherwise `null`.
+
+```ts
+import { Component } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import {
+  FieldComponent,
+  FieldComponents,
+} from '@remoteoss/remote-flows-angular';
+
+@Component({
+  selector: 'my-select-field',
+  imports: [ReactiveFormsModule],
+  template: `
+    <label>
+      {{ meta().label }}
+      <select [formControl]="formControl()">
+        @for (option of meta().options; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </label>
+    @if (visibleError(); as error) {
+      <p class="my-error">{{ error }}</p>
+    }
+  `,
+})
+export class MySelectField extends FieldComponent {}
+
+export const MY_FIELD_COMPONENTS: FieldComponents = {
+  select: MySelectField,
+  // text: MyInputField, radio: MyRadioField, ...
+};
+```
+
+The map is keyed by the field's `inputType`. A flow throws if it meets a type with no component, so cover the types your flows use. The demo's [`material-fields.ts`](../apps/angular/src/app/fields/material-fields.ts) covers `text`, `email`, `number`, `money`, `date`, `textarea`, `select`, `radio`, `statement`, `fieldset`, `group-array` and `hidden`. Fieldsets and lists receive `children()` and `array()` and render each child with `<rf-field [view]="child" />`; see `FieldsetField` and `GroupArrayField` there.
 
 ### Authentication
 
