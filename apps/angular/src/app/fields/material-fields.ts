@@ -229,6 +229,12 @@ export class FieldsetField extends FieldComponent {}
 })
 export class GroupArrayField extends FieldComponent {}
 
+@Component({
+  selector: 'app-hidden-field',
+  template: ``,
+})
+export class HiddenField extends FieldComponent {}
+
 export const MATERIAL_FIELD_COMPONENTS: FieldComponents = {
   text: InputField,
   email: InputField,
@@ -241,4 +247,5 @@ export const MATERIAL_FIELD_COMPONENTS: FieldComponents = {
   statement: StatementField,
   fieldset: FieldsetField,
   'group-array': GroupArrayField,
+  hidden: HiddenField,
 };

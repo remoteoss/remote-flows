@@ -64,6 +64,18 @@ export {
 } from './api/contractorCurrencies';
 export { employmentOptions, selectEmployment } from './api/employment';
 export {
+  createGPEmploymentMutation,
+  gpFormSchemaOptions,
+  gpLegalEntitiesOptions,
+  GPRequestError,
+  inviteGPEmployeeMutation,
+  selectGPFormSchema,
+  selectGPLegalEntities,
+  updateGPAdministrativeDetailsMutation,
+  updateGPContractDetailsMutation,
+} from './api/gpAdminOnboarding';
+export type { GPAdminForm } from './api/gpAdminOnboarding';
+export {
   createInvoiceScheduleMutation,
   invoiceSchedulesOptions,
   previewContractorInvoiceMutation,
