@@ -1,6 +1,6 @@
 {
   "name": "@remoteoss/remote-flows-core",
-  "version": "0.0.1-alpha.2",
+  "version": "0.0.1-alpha.3",
   "description": "Internal framework-neutral logic shared by the Remote Flows React and Angular packages. Not a public API: it can break in any release.",
   "repository": {
     "type": "git",
