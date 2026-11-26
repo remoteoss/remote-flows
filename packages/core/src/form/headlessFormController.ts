@@ -23,6 +23,11 @@ export type HeadlessFormControllerConfig = {
   logModifyWarnings?: boolean;
 };
 
+export type HeadlessFormValidation = {
+  result: ValidationResult;
+  isCurrent: boolean;
+};
+
 export type HeadlessFormController = {
   sync: (
     input: HeadlessFormControllerInput,
@@ -30,6 +35,7 @@ export type HeadlessFormController = {
   getForm: () => JSONSchemaFormResultWithFieldsets | null;
   getRevision: () => number;
   subscribe: (listener: () => void) => () => void;
+  validate: (values: FieldValues) => Promise<HeadlessFormValidation | null>;
   handleValidation: (values: FieldValues) => Promise<ValidationResult | null>;
   onValuesChange: (values: FieldValues) => Promise<void>;
   parseFormValues: (values: FieldValues) => Promise<FieldValues>;
@@ -119,11 +125,12 @@ export function createHeadlessFormController(
     return form;
   }
 
-  async function handleValidation(
+  async function validate(
     nextValues: FieldValues,
-  ): Promise<ValidationResult | null> {
+  ): Promise<HeadlessFormValidation | null> {
     const activeForm = form;
     const activeSchema = currentSchema;
+    const activeOptions = currentOptions;
     if (!activeForm || !activeSchema) {
       return null;
     }
@@ -135,21 +142,40 @@ export function createHeadlessFormController(
       convertFiles,
     );
     if (run !== validationRun || activeForm !== form) {
-      return null;
+      // Validating mutates the form's field state, so a run that a newer one
+      // or a rebuild replaced checks its own values on a throwaway form.
+      const isolatedForm = buildHeadlessForm(
+        activeSchema,
+        'buildOnce',
+        parsedValues,
+        resolveBuildOptions(activeOptions),
+      );
+      return {
+        result: isolatedForm.handleValidation(
+          withFieldsetObjects(parsedValues, isolatedForm.fields),
+        ),
+        isCurrent: false,
+      };
     }
-    lastValidated = {
-      schema: activeSchema,
-      values: JSON.parse(JSON.stringify(parsedValues)),
-    };
     // An untouched fieldset has no value, so jsf v1 reports one error for the
     // whole fieldset, which no input can display. An empty object makes it
     // check the fields inside, so their own errors show up.
     const result = activeForm.handleValidation(
       withFieldsetObjects(parsedValues, activeForm.fields),
     );
+    lastValidated = {
+      schema: activeSchema,
+      values: JSON.parse(JSON.stringify(parsedValues)),
+    };
     revision += 1;
     notify();
-    return result;
+    return { result, isCurrent: true };
+  }
+
+  async function handleValidation(
+    nextValues: FieldValues,
+  ): Promise<ValidationResult | null> {
+    return (await validate(nextValues))?.result ?? null;
   }
 
   async function onValuesChange(nextValues: FieldValues): Promise<void> {
@@ -176,6 +202,7 @@ export function createHeadlessFormController(
     getForm: () => form,
     getRevision: () => revision,
     subscribe,
+    validate,
     handleValidation,
     onValuesChange,
     parseFormValues,

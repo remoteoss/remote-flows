@@ -1,10 +1,7 @@
 import {
-  buildHeadlessForm,
+  createHeadlessFormController,
   getInitialValues,
   type HeadlessFormOptions,
-  parseJSFToValidate,
-  parseValuesForValidation,
-  withFieldsetObjects,
 } from '@remoteoss/remote-flows-core';
 import { FieldNode, toFieldNodes } from './field-tree';
 
@@ -13,42 +10,48 @@ type Schema = Record<string, unknown>;
 type JsfFields = Parameters<typeof getInitialValues>[0];
 type FormErrors = Record<string, unknown>;
 
-const convertFiles = async (files: unknown[]) => files;
-
-export type FormEngine = {
+export type SyncedForm = {
   nodes: FieldNode[];
   initialValues: (defaults: Values) => Values;
-  validate: (values: Values) => Promise<FormErrors>;
+};
+
+export type FormEngine = {
+  sync: (
+    schema: Schema | undefined,
+    initialValues?: Values,
+  ) => SyncedForm | null;
+  validate: (values: Values) => Promise<FormErrors | null>;
   parse: (values: Values) => Promise<Values>;
 };
 
-export function createFormEngine(
-  schema: Schema,
-  options?: HeadlessFormOptions,
-): FormEngine {
-  const form = buildHeadlessForm(schema, 'buildOnce', {}, options);
-  const fields = form.fields as unknown as JsfFields;
+export function createFormEngine(options?: HeadlessFormOptions): FormEngine {
+  const controller = createHeadlessFormController();
 
   return {
-    nodes: toFieldNodes(
-      () =>
-        form.fields as unknown as ReturnType<
-          Parameters<typeof toFieldNodes>[0]
-        >,
-    ),
-    initialValues: (defaults) => getInitialValues(fields, defaults),
-    validate: async (values) => {
-      const parsed = await parseValuesForValidation(
-        form,
-        'buildOnce',
-        values,
-        convertFiles,
-      );
-      const result = form.handleValidation(
-        withFieldsetObjects(parsed, form.fields),
-      ) as { formErrors?: FormErrors } | undefined;
-      return result?.formErrors ?? {};
+    sync: (schema, initialValues) => {
+      const form = controller.sync({ schema, initialValues, options });
+      if (!form) {
+        return null;
+      }
+      const fields = form.fields as unknown as JsfFields;
+      return {
+        nodes: toFieldNodes(
+          () =>
+            form.fields as unknown as ReturnType<
+              Parameters<typeof toFieldNodes>[0]
+            >,
+        ),
+        initialValues: (defaults) => getInitialValues(fields, defaults),
+      };
     },
-    parse: (values) => parseJSFToValidate(values, fields, { convertFiles }),
+    validate: async (values) => {
+      const outcome = await controller.validate(values);
+      if (!outcome?.isCurrent) {
+        return null;
+      }
+      const result = outcome.result as { formErrors?: FormErrors };
+      return result.formErrors ?? {};
+    },
+    parse: (values) => controller.parseFormValues(values),
   };
 }
