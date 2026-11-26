@@ -7,9 +7,12 @@ import {
   buildCreateInvoiceScheduleSchema,
   contractorCurrenciesOptions,
   createInvoiceScheduleMutation,
+  type ContractorInvoicePreview,
   employmentOptions,
   isContractorOfRecord as isContractorOfRecordEmployment,
+  previewContractorInvoiceMutation,
   selectContractorCurrencyCodes,
+  selectContractorInvoicePreview,
   selectCreatedInvoiceSchedule,
   selectEmployment,
 } from '@remoteoss/remote-flows-core';
@@ -21,6 +24,14 @@ export type CreatedInvoiceSchedules = NonNullable<
 >;
 
 export type InvoiceSchedulePayload = Record<string, unknown>;
+
+export type InvoiceSchedulePreview = ContractorInvoicePreview;
+
+export type InvoiceSchedulePreviewResult =
+  | { status: 'skipped' }
+  | { status: 'invalid' }
+  | { status: 'previewed'; preview: InvoiceSchedulePreview }
+  | { status: 'failed'; error: Error };
 
 export type InvoiceScheduleSubmitOptions = {
   beforeSubmit?: (payload: InvoiceSchedulePayload) => Promise<void> | void;
@@ -52,8 +63,9 @@ function rejectOnError<T extends { error?: unknown; response?: Response }>(
 }
 
 const CREATE_FAILED_MESSAGE = 'Failed to create invoice schedule';
+const PREVIEW_FAILED_MESSAGE = 'Failed to preview invoice';
 
-function toSubmitError(thrown: unknown) {
+function toSubmitError(thrown: unknown, fallback = CREATE_FAILED_MESSAGE) {
   if (thrown instanceof Error) {
     return thrown;
   }
@@ -62,9 +74,7 @@ function toSubmitError(thrown: unknown) {
     error?: { message?: unknown };
   } | null;
   const message = body?.error?.message ?? body?.message;
-  return new Error(
-    typeof message === 'string' ? message : CREATE_FAILED_MESSAGE,
-  );
+  return new Error(typeof message === 'string' ? message : fallback);
 }
 
 export function injectInvoiceSchedule({
@@ -98,6 +108,10 @@ export function injectInvoiceSchedule({
     createInvoiceScheduleMutation(client),
   );
 
+  const previewSchedule = injectMutation(() =>
+    previewContractorInvoiceMutation(client),
+  );
+
   const isContractorOfRecord = computed(() =>
     isContractorOfRecordEmployment(employment.data()),
   );
@@ -121,6 +135,15 @@ export function injectInvoiceSchedule({
 
   const result = signal<InvoiceScheduleSubmitResult | null>(null);
   const isValidating = signal(false);
+  const previewResult = signal<InvoiceSchedulePreviewResult | null>(null);
+  const isPreviewValidating = signal(false);
+
+  const isSubmitting = computed(
+    () => isValidating() || createSchedule.isPending(),
+  );
+  const isPreviewing = computed(
+    () => isPreviewValidating() || previewSchedule.isPending(),
+  );
 
   const createdScheduleId = computed(() => {
     const current = result();
@@ -131,6 +154,16 @@ export function injectInvoiceSchedule({
 
   const submitError = computed(() => {
     const current = result();
+    return current?.status === 'failed' ? current.error : null;
+  });
+
+  const preview = computed(() => {
+    const current = previewResult();
+    return current?.status === 'previewed' ? current.preview : null;
+  });
+
+  const previewError = computed(() => {
+    const current = previewResult();
     return current?.status === 'failed' ? current.error : null;
   });
 
@@ -193,15 +226,65 @@ export function injectInvoiceSchedule({
     }
   }
 
+  async function requestPreview(): Promise<InvoiceSchedulePreviewResult> {
+    try {
+      const { hasErrors } = await store.submit();
+      if (hasErrors) {
+        return { status: 'invalid' };
+      }
+      const values = await store.parse();
+      const response = await previewSchedule.mutateAsync({
+        employmentId: employmentId(),
+        values,
+      });
+      if (response.error) {
+        return {
+          status: 'failed',
+          error: toSubmitError(response.error, PREVIEW_FAILED_MESSAGE),
+        };
+      }
+      const document = selectContractorInvoicePreview(response.data);
+      if (!document) {
+        return { status: 'failed', error: new Error(PREVIEW_FAILED_MESSAGE) };
+      }
+      return { status: 'previewed', preview: document };
+    } catch (thrown) {
+      return {
+        status: 'failed',
+        error: toSubmitError(thrown, PREVIEW_FAILED_MESSAGE),
+      };
+    }
+  }
+
+  async function previewInvoice(): Promise<InvoiceSchedulePreviewResult> {
+    if (error() || !schema() || isPreviewing() || isSubmitting()) {
+      return { status: 'skipped' };
+    }
+    previewResult.set(null);
+    isPreviewValidating.set(true);
+    try {
+      const outcome = await requestPreview();
+      previewResult.set(outcome);
+      return outcome;
+    } finally {
+      isPreviewValidating.set(false);
+    }
+  }
+
   return {
     fields: store.fields,
     isContractorOfRecord,
     isLoading,
     error,
-    isSubmitting: computed(() => isValidating() || createSchedule.isPending()),
+    isSubmitting,
     result: result.asReadonly(),
     createdScheduleId,
     submitError,
     onSubmit,
+    isPreviewing,
+    previewResult: previewResult.asReadonly(),
+    preview,
+    previewError,
+    previewInvoice,
   };
 }

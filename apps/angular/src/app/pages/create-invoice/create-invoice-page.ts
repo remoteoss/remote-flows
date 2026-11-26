@@ -1,12 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   CreatedInvoiceSchedules,
   InvoiceScheduleFlow,
   InvoiceSchedulePayload,
+  InvoiceSchedulePreview,
 } from '@remoteoss/remote-flows-angular';
 import { Alert } from '../../ui/alert';
+import { InvoicePreviewDialog } from './invoice-preview-dialog';
 
 @Component({
   selector: 'app-create-invoice-page',
@@ -41,6 +45,18 @@ import { Alert } from '../../ui/alert';
             (submitFailed)="onError($event)"
           />
           <div class="rf-actions">
+            <button
+              mat-stroked-button
+              rfInvoiceSchedulePreview
+              (previewed)="openPreview($event)"
+              (previewFailed)="onPreviewError($event)"
+            >
+              {{
+                flow.bag.isPreviewing()
+                  ? 'Generating preview…'
+                  : 'Preview invoice'
+              }}
+            </button>
             <button mat-flat-button rfInvoiceScheduleSubmit>
               Create invoice schedule
             </button>
@@ -63,6 +79,24 @@ import { Alert } from '../../ui/alert';
   `,
 })
 export class CreateInvoicePage {
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+
+  protected openPreview(preview: InvoiceSchedulePreview) {
+    this.dialog.open(InvoicePreviewDialog, {
+      data: preview,
+      width: '900px',
+      maxWidth: '95vw',
+    });
+  }
+
+  protected onPreviewError(error: Error) {
+    this.snackBar.open(
+      `Could not preview the invoice: ${error.message}`,
+      'Dismiss',
+    );
+  }
+
   protected readonly onSubmit = (payload: InvoiceSchedulePayload) => {
     console.log('onSubmit', payload);
   };

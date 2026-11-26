@@ -1,4 +1,5 @@
 import {
+  selectContractorInvoicePreview,
   selectCreatedInvoiceSchedule,
   selectExistingInvoiceSchedule,
 } from './invoiceSchedules';
@@ -52,5 +53,34 @@ describe('selectExistingInvoiceSchedule', () => {
       id: 'open',
       status: 'processing',
     });
+  });
+});
+
+describe('selectContractorInvoicePreview', () => {
+  const body = (content: string) =>
+    ({
+      data: { contractor_invoice_preview: { name: 'invoice.pdf', content } },
+    }) as unknown as Parameters<typeof selectContractorInvoicePreview>[0];
+
+  it('keeps the data URI prefix when the content already has it', () => {
+    expect(
+      selectContractorInvoicePreview(
+        body('data:application/pdf;base64,JVBERi0='),
+      ),
+    ).toEqual({
+      name: 'invoice.pdf',
+      content: 'data:application/pdf;base64,JVBERi0=',
+    });
+  });
+
+  it('adds the data URI prefix to bare base64 content', () => {
+    expect(selectContractorInvoicePreview(body(' JVBERi0= '))).toEqual({
+      name: 'invoice.pdf',
+      content: 'data:application/pdf;base64,JVBERi0=',
+    });
+  });
+
+  it('returns undefined when the response carries no preview', () => {
+    expect(selectContractorInvoicePreview(undefined)).toBeUndefined();
   });
 });

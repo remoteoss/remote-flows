@@ -6,10 +6,13 @@ export {
   InvoiceScheduleFlow,
   InvoiceScheduleFlowComponent,
   InvoiceScheduleFormComponent,
+  InvoiceSchedulePreviewDirective,
   InvoiceScheduleSubmitDirective,
 } from './flows/invoice-schedule';
 export type {
   CreatedInvoiceSchedules,
   InvoiceSchedulePayload,
+  InvoiceSchedulePreview,
+  InvoiceSchedulePreviewResult,
   InvoiceScheduleSubmitResult,
 } from './flows/invoice-schedule';

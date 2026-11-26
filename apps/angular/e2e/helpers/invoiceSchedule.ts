@@ -1,6 +1,8 @@
 import { expect, Page } from '@playwright/test';
 
 export const CREATE_SCHEDULE_PATH = '/v1/contractor-invoice-schedules';
+export const PREVIEW_INVOICE_PATH =
+  /^\/v1\/employments\/[^/]+\/contractor-invoices\/preview$/;
 
 export type InvoiceScheduleFrequency =
   | 'One time'
@@ -141,5 +143,15 @@ export async function submitSchedule(page: Page) {
       new URL(candidate.url()).pathname === CREATE_SCHEDULE_PATH,
   );
   await page.getByRole('button', { name: 'Create invoice schedule' }).click();
+  return response;
+}
+
+export async function previewInvoice(page: Page) {
+  const response = page.waitForResponse(
+    (candidate) =>
+      candidate.request().method() === 'POST' &&
+      PREVIEW_INVOICE_PATH.test(new URL(candidate.url()).pathname),
+  );
+  await page.getByRole('button', { name: 'Preview invoice' }).click();
   return response;
 }

@@ -7,6 +7,7 @@ import {
 import type {
   BulkContractorInvoiceScheduleCreateParams,
   BulkContractorInvoiceScheduleCreateResponse,
+  ContractorInvoicePreviewResponse,
   ContractorInvoiceScheduleCreateParams,
   PreviewContractorInvoiceParams,
   UpdateScheduleContractorInvoiceParams,
@@ -17,6 +18,8 @@ import {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
 } from '../domains/invoice-schedule/utils';
+import type { ContractorInvoicePreview } from '../domains/invoice-schedule/types';
+import { clearBase64Data } from '../format';
 import type { FieldValues } from '../types';
 
 export const invoiceSchedulesOptions = (
@@ -108,6 +111,25 @@ export const selectCreatedInvoiceSchedule = (
   id: body?.data?.successes?.[0]?.id,
   hasFailures: Boolean(body?.data?.failures?.length),
 });
+
+/**
+ * Reads the draft invoice PDF from the response body (`response.data` of the raw response).
+ * The API sends `content` as a `data:application/pdf;base64,…` string, not the `Blob | File`
+ * the generated type claims.
+ */
+export const selectContractorInvoicePreview = (
+  body: ContractorInvoicePreviewResponse | undefined,
+): ContractorInvoicePreview | undefined => {
+  const preview = body?.data?.contractor_invoice_preview as
+    | ContractorInvoicePreview
+    | undefined;
+
+  if (!preview) {
+    return undefined;
+  }
+
+  return { ...preview, content: clearBase64Data(preview.content) };
+};
 
 export const skipInvoiceScheduleMutation = (client: Client) => ({
   mutationFn: async ({ scheduleId }: { scheduleId: string }) => {

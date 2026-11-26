@@ -72,6 +72,7 @@ export {
   createInvoiceScheduleMutation,
   invoiceSchedulesOptions,
   previewContractorInvoiceMutation,
+  selectContractorInvoicePreview,
   selectCreatedInvoiceSchedule,
   selectExistingInvoiceSchedule,
   skipInvoiceScheduleMutation,
