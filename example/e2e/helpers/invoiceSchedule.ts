@@ -81,57 +81,32 @@ export async function selectCustomCycle(page: Page, firstDay: number) {
   );
 }
 
-export function defaultCycleDays(today = new Date()) {
-  const lastDay = new Date(
-    Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + 1, 0),
-  ).getUTCDate();
-  return [15, lastDay];
-}
-
-export function customCycleFirstDay(today = new Date()) {
-  const day = today.getUTCDate();
-  if (day <= 14) {
-    return day;
-  }
-
-  return day <= 28 ? day - 14 : 1;
-}
-
-async function showNextMonth(page: Page) {
-  await page
-    .locator('[role="dialog"]')
-    .getByRole('button', { name: /next month/i })
-    .click();
-}
+export const START_DATE_YEAR = 2030;
+export const START_DATE_MONTH = 0;
+export const DEFAULT_CYCLE_DAYS = [15, 31];
+export const CUSTOM_CYCLE_FIRST_DAY = 1;
 
 export async function pickStartDate(page: Page, allowedDays?: number[]) {
   await page.getByTestId('date-picker-button-start_date').click();
-  await page
-    .locator('[role="dialog"] button[role="gridcell"]')
-    .first()
-    .waitFor({ state: 'visible' });
-  const days = page.locator(
-    '[role="dialog"] button[role="gridcell"]:not([disabled])',
+  const dialog = page.locator('[role="dialog"]');
+  await dialog
+    .locator('select[name="years"]')
+    .selectOption(String(START_DATE_YEAR));
+  await dialog
+    .locator('select[name="months"]')
+    .selectOption(String(START_DATE_MONTH));
+
+  const days = dialog.locator(
+    'button[role="gridcell"]:not([disabled]):not(.day-outside)',
   );
-
-  const findIndex = async () => {
-    const labels = await days.allInnerTexts();
-    const index = allowedDays
-      ? labels.findIndex((label) => allowedDays.includes(Number(label)))
-      : labels.length > 0
-        ? 0
-        : -1;
-    return { index, labels };
-  };
-
-  let { index, labels } = await findIndex();
-  for (let attempt = 0; attempt < 2 && index === -1; attempt++) {
-    await showNextMonth(page);
-    ({ index, labels } = await findIndex());
-  }
+  await days.first().waitFor({ state: 'visible' });
+  const labels = await days.allInnerTexts();
+  const index = allowedDays
+    ? labels.findIndex((label) => allowedDays.includes(Number(label)))
+    : 0;
   if (index === -1) {
     throw new Error(
-      `The start date calendar has no selectable day${allowedDays ? ` matching [${allowedDays.join(', ')}]` : ''} (enabled: [${labels.join(', ')}])`,
+      `The start date calendar has no selectable day matching [${allowedDays?.join(', ')}] (enabled: [${labels.join(', ')}])`,
     );
   }
 
