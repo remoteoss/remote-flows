@@ -67,7 +67,6 @@ export {
   createGPEmploymentMutation,
   gpFormSchemaOptions,
   gpLegalEntitiesOptions,
-  GPRequestError,
   inviteGPEmployeeMutation,
   selectGPFormSchema,
   selectGPLegalEntities,

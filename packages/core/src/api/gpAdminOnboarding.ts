@@ -15,7 +15,7 @@ export type GPAdminForm =
 
 type Values = Record<string, unknown>;
 
-export class GPRequestError extends Error {
+class GPRequestError extends Error {
   constructor(
     readonly status: number | undefined,
     readonly body: unknown,
