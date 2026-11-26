@@ -19,16 +19,17 @@ export type FormEngine = {
   sync: (
     schema: Schema | undefined,
     initialValues?: Values,
+    options?: HeadlessFormOptions,
   ) => SyncedForm | null;
   validate: (values: Values) => Promise<FormErrors | null>;
   parse: (values: Values) => Promise<Values>;
 };
 
-export function createFormEngine(options?: HeadlessFormOptions): FormEngine {
+export function createFormEngine(): FormEngine {
   const controller = createHeadlessFormController();
 
   return {
-    sync: (schema, initialValues) => {
+    sync: (schema, initialValues, options) => {
       const form = controller.sync({ schema, initialValues, options });
       if (!form) {
         return null;

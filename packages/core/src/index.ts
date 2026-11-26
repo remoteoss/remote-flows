@@ -45,12 +45,13 @@ export {
 } from './domains/invoice-schedule/constants';
 export {
   buildCreateInvoiceScheduleSchema,
+  buildInvoiceNumberSequenceModify,
+  INVOICE_NUMBER_INTRO,
   INVOICE_NUMBER_SEQUENCE_FIELD,
 } from './domains/invoice-schedule/jsonSchema';
 export {
   buildInvoiceSchedulePayload,
   buildInvoiceScheduleFormValues,
-  describeInvoiceNumberSequence,
 } from './domains/invoice-schedule/utils';
 export type { ContractorInvoicePreview } from './domains/invoice-schedule/types';
 export { clearBase64Data, formatCurrency } from './format';
@@ -58,6 +59,10 @@ export { ENVIRONMENTS, defaultEnvironment } from './environments';
 export type { Environment } from './environments';
 export { createClient } from './createClient';
 export type { AuthResponse, CreateClientOptions } from './createClient';
+export {
+  contractorInvoiceSequenceOptions,
+  selectInvoiceNumberSequenceText,
+} from './api/contractorInvoiceSequence';
 export {
   contractorCurrenciesOptions,
   selectContractorCurrencies,

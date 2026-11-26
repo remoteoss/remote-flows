@@ -13,8 +13,51 @@ import {
   SEMI_MONTHLY_PERIODICITY,
 } from './constants';
 import { toOrdinal } from './utils';
+import type { JSFModify } from '../../types';
 
 export const INVOICE_NUMBER_SEQUENCE_FIELD = 'invoice_number_sequence';
+
+export const INVOICE_NUMBER_INTRO =
+  "We'll automatically number all invoices after the first one based on this number.";
+
+const INVOICE_NUMBER_SEQUENCE_TITLE =
+  'Contractor invoice numbers will follow your set invoice number sequence';
+
+const invoiceNumberSequenceDescription = (sequence: string) =>
+  `Your current sequence is: <strong>${sequence}</strong>`;
+
+/**
+ * Presentation for the invoice number that needs no custom component: the intro text under the
+ * number input, or, when the company has a sequence, a statement showing it. Pass it as
+ * `jsfModify` along with the same `invoiceNumberSequence` given to the schema builder.
+ */
+export function buildInvoiceNumberSequenceModify(
+  invoiceNumberSequence?: string,
+): JSFModify {
+  if (!invoiceNumberSequence) {
+    return {
+      fields: {
+        number: { presentation: { description: INVOICE_NUMBER_INTRO } },
+      },
+    };
+  }
+
+  return {
+    fields: {
+      [INVOICE_NUMBER_SEQUENCE_FIELD]: {
+        presentation: {
+          statement: {
+            title: INVOICE_NUMBER_SEQUENCE_TITLE,
+            description: invoiceNumberSequenceDescription(
+              invoiceNumberSequence,
+            ),
+            severity: 'info',
+          },
+        },
+      },
+    },
+  };
+}
 
 function invoiceItemsProperty() {
   return {
@@ -504,9 +547,8 @@ type CreateInvoiceScheduleSchemaOptions = {
 function invoiceNumberSequenceProperty(sequence: string) {
   return {
     type: 'null',
-    title:
-      'Contractor invoice numbers will follow your set invoice number sequence',
-    description: `Your current sequence is: <strong>${sequence}</strong>`,
+    title: INVOICE_NUMBER_SEQUENCE_TITLE,
+    description: invoiceNumberSequenceDescription(sequence),
     'x-jsf-presentation': {
       inputType: 'hidden',
       meta: {

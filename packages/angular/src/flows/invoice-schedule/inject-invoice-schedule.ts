@@ -5,7 +5,9 @@ import {
 } from '@tanstack/angular-query-experimental';
 import {
   buildCreateInvoiceScheduleSchema,
+  buildInvoiceNumberSequenceModify,
   contractorCurrenciesOptions,
+  contractorInvoiceSequenceOptions,
   createInvoiceScheduleMutation,
   type ContractorInvoicePreview,
   employmentOptions,
@@ -15,6 +17,7 @@ import {
   selectContractorInvoicePreview,
   selectCreatedInvoiceSchedule,
   selectEmployment,
+  selectInvoiceNumberSequenceText,
 } from '@remoteoss/remote-flows-core';
 import { REMOTE_CLIENT } from '../../provide-remote-flows';
 import { createFormStore } from '../../forms/form-store';
@@ -104,6 +107,11 @@ export function injectInvoiceSchedule({
     };
   });
 
+  const sequence = injectQuery(() => ({
+    ...contractorInvoiceSequenceOptions(client),
+    select: selectInvoiceNumberSequenceText,
+  }));
+
   const createSchedule = injectMutation(() =>
     createInvoiceScheduleMutation(client),
   );
@@ -116,21 +124,27 @@ export function injectInvoiceSchedule({
     isContractorOfRecordEmployment(employment.data()),
   );
 
+  const invoiceNumberSequence = computed(() => sequence.data() ?? undefined);
+
   const schema = computed(() => {
     const codes = currencies.data();
-    if (!codes) {
+    if (!codes || sequence.isPending()) {
       return undefined;
     }
     return buildCreateInvoiceScheduleSchema({
       currencies: codes,
       isContractorOfRecord: isContractorOfRecord(),
       includeFieldsets: false,
+      invoiceNumberSequence: invoiceNumberSequence(),
     });
   });
 
   const store = createFormStore({
     schema: schema as Signal<Record<string, unknown> | undefined>,
     defaultValues,
+    options: computed(() => ({
+      jsfModify: buildInvoiceNumberSequenceModify(invoiceNumberSequence()),
+    })),
   });
 
   const result = signal<InvoiceScheduleSubmitResult | null>(null);
@@ -175,6 +189,7 @@ export function injectInvoiceSchedule({
     () =>
       !employmentId() ||
       employment.isPending() ||
+      sequence.isPending() ||
       (currencies.isPending() && !schema()),
   );
 

@@ -1,5 +1,10 @@
 import { ONE_TIME_PERIODICITY } from './constants';
-import { buildCreateInvoiceScheduleSchema } from './jsonSchema';
+import {
+  buildCreateInvoiceScheduleSchema,
+  buildInvoiceNumberSequenceModify,
+  INVOICE_NUMBER_INTRO,
+  INVOICE_NUMBER_SEQUENCE_FIELD,
+} from './jsonSchema';
 import {
   buildCustomDays,
   buildInvoiceItems,
@@ -881,5 +886,40 @@ describe('buildInvoiceScheduleFormValues', () => {
     expect(values.periodicity).toBe(ONE_TIME_PERIODICITY);
     expect(values.end_type).toBeUndefined();
     expect(values.nr_occurrences).toBeUndefined();
+  });
+});
+
+describe('buildInvoiceNumberSequenceModify', () => {
+  const findField = (
+    form: ReturnType<typeof createHeadlessForm>,
+    name: string,
+  ) => (form.fields as $TSFixMe[]).find((field) => field.name === name);
+
+  it('shows the company sequence as a statement', () => {
+    const form = createHeadlessForm(
+      buildCreateInvoiceScheduleSchema({
+        invoiceNumberSequence: 'Text/Invoice count',
+      }) as $TSFixMe,
+      {},
+      { jsfModify: buildInvoiceNumberSequenceModify('Text/Invoice count') },
+    );
+
+    expect(findField(form, INVOICE_NUMBER_SEQUENCE_FIELD).statement).toEqual({
+      title:
+        'Contractor invoice numbers will follow your set invoice number sequence',
+      description:
+        'Your current sequence is: <strong>Text/Invoice count</strong>',
+      severity: 'info',
+    });
+  });
+
+  it('explains the invoice number input when there is no sequence', () => {
+    const form = createHeadlessForm(
+      buildCreateInvoiceScheduleSchema() as $TSFixMe,
+      {},
+      { jsfModify: buildInvoiceNumberSequenceModify() },
+    );
+
+    expect(findField(form, 'number').description).toBe(INVOICE_NUMBER_INTRO);
   });
 });

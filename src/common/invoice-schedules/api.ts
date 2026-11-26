@@ -1,8 +1,5 @@
 import { createElement, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getV1ContractorInvoiceSequence } from '@/src/client';
-import { Client } from '@/src/client/client';
-import { useClient } from '@/src/context';
 import { useDeepStable } from '@/src/common/hooks';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useContractorCurrenciesOptions } from '@/src/common/api/contractor-contract-details';
@@ -13,36 +10,28 @@ import { JSFModify } from '@/src/flows/types';
 import { createClientMutation, withClient } from '@/src/lib/withClient';
 import {
   buildCreateInvoiceScheduleSchema,
+  contractorInvoiceSequenceOptions,
   createInvoiceScheduleMutation,
-  describeInvoiceNumberSequence,
   INVOICE_NUMBER_SEQUENCE_FIELD,
   invoiceSchedulesOptions as invoiceSchedulesOptionsCore,
   previewContractorInvoiceMutation,
   selectContractorCurrencyCodes,
   selectExistingInvoiceSchedule,
+  selectInvoiceNumberSequenceText,
   skipInvoiceScheduleMutation,
   updateInvoiceScheduleMutation,
 } from '@remoteoss/remote-flows-core';
 
-/**
- * The company's invoice number sequence as text, or null when it has none or it is off.
- * A failed request counts as no sequence, so the form still renders.
- */
-const useInvoiceNumberSequenceText = ({ enabled }: { enabled?: boolean }) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['contractor-invoice-sequence'],
+const useContractorInvoiceSequenceOptions = withClient(
+  contractorInvoiceSequenceOptions,
+);
+
+const useInvoiceNumberSequenceText = ({ enabled }: { enabled?: boolean }) =>
+  useQuery({
+    ...useContractorInvoiceSequenceOptions(),
     enabled,
-    retry: false,
-    queryFn: () => getV1ContractorInvoiceSequence({ client: client as Client }),
-    select: (response) => {
-      const sequence = response.data?.data?.contractor_invoice_sequence;
-      return sequence?.enabled && sequence.fields.length
-        ? describeInvoiceNumberSequence(sequence.fields)
-        : null;
-    },
+    select: selectInvoiceNumberSequenceText,
   });
-};
 
 type UseGetCreateInvoiceScheduleSchemaParams = {
   enabled?: boolean;

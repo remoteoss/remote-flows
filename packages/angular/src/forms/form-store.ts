@@ -18,7 +18,7 @@ type Schema = Record<string, unknown>;
 type CreateFormStoreArgs = {
   schema: Signal<Schema | undefined>;
   defaultValues?: Values;
-  options?: HeadlessFormOptions;
+  options?: Signal<HeadlessFormOptions | undefined>;
 };
 
 const asObject = (value: unknown): Values =>
@@ -123,12 +123,12 @@ export function createFormStore({
   defaultValues = {},
   options,
 }: CreateFormStoreArgs) {
-  const engine = createFormEngine(options);
+  const engine = createFormEngine();
 
   const revision = signal(0);
 
   const form = computed(() => {
-    const synced = engine.sync(schema(), defaultValues);
+    const synced = engine.sync(schema(), defaultValues, options?.());
     if (!synced) {
       return null;
     }
