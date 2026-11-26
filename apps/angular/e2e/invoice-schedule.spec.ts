@@ -14,7 +14,6 @@ import {
   isDefaultCycleDay,
   openInvoiceScheduleForm,
   pickStartDate,
-  PREVIEW_INVOICE_PATH,
   previewInvoice,
   selectCurrency,
   selectCustomCycle,
