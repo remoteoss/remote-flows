@@ -13,3 +13,9 @@ export {
   InvoiceScheduleFormComponent,
   InvoiceScheduleSubmitDirective,
 };
+
+export type {
+  CreatedInvoiceSchedules,
+  InvoiceSchedulePayload,
+  InvoiceScheduleSubmitResult,
+} from './inject-invoice-schedule';

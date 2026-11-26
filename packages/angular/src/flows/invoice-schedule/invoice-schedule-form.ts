@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { FieldOutlet } from '../../forms/field-outlet';
+import {
+  CreatedInvoiceSchedules,
+  InvoiceSchedulePayload,
+} from './inject-invoice-schedule';
 import { injectInvoiceScheduleFlow } from './invoice-schedule-flow';
 
 @Component({
@@ -21,8 +25,21 @@ import { injectInvoiceScheduleFlow } from './invoice-schedule-flow';
 export class InvoiceScheduleFormComponent {
   protected readonly flow = injectInvoiceScheduleFlow();
 
-  protected submit(event: Event) {
+  readonly beforeSubmit =
+    input<(payload: InvoiceSchedulePayload) => Promise<void> | void>();
+  readonly created = output<CreatedInvoiceSchedules>();
+  readonly submitFailed = output<Error>();
+
+  protected async submit(event: Event) {
     event.preventDefault();
-    void this.flow.bag.onSubmit();
+    const result = await this.flow.bag.onSubmit({
+      beforeSubmit: this.beforeSubmit(),
+    });
+    if (result.status === 'created') {
+      this.created.emit(result.response);
+    }
+    if (result.status === 'failed') {
+      this.submitFailed.emit(result.error);
+    }
   }
 }

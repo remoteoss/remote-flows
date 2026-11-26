@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { InvoiceScheduleFlow } from '@remoteoss/remote-flows-angular';
+import {
+  CreatedInvoiceSchedules,
+  InvoiceScheduleFlow,
+  InvoiceSchedulePayload,
+} from '@remoteoss/remote-flows-angular';
 import { Alert } from '../../ui/alert';
 
 @Component({
@@ -31,7 +35,11 @@ import { Alert } from '../../ui/alert';
               Contractor of Record invoices are limited to one-off schedules.
             </app-alert>
           }
-          <rf-invoice-schedule-form />
+          <rf-invoice-schedule-form
+            [beforeSubmit]="onSubmit"
+            (created)="onSuccess($event)"
+            (submitFailed)="onError($event)"
+          />
           <div class="rf-actions">
             <button mat-flat-button rfInvoiceScheduleSubmit>
               Create invoice schedule
@@ -55,6 +63,18 @@ import { Alert } from '../../ui/alert';
   `,
 })
 export class CreateInvoicePage {
+  protected readonly onSubmit = (payload: InvoiceSchedulePayload) => {
+    console.log('onSubmit', payload);
+  };
+
+  protected onSuccess(response: CreatedInvoiceSchedules) {
+    console.log('onSuccess', response);
+  }
+
+  protected onError(error: Error) {
+    console.log('onError', error);
+  }
+
   protected readonly employmentId =
     new URLSearchParams(window.location.search).get('employmentId') ?? '';
 }

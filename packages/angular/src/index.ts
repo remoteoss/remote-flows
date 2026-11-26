@@ -8,3 +8,8 @@ export {
   InvoiceScheduleFormComponent,
   InvoiceScheduleSubmitDirective,
 } from './flows/invoice-schedule';
+export type {
+  CreatedInvoiceSchedules,
+  InvoiceSchedulePayload,
+  InvoiceScheduleSubmitResult,
+} from './flows/invoice-schedule';
