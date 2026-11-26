@@ -55,7 +55,9 @@ export class MagicLinkPage {
   protected readonly error = computed(() =>
     this.missingUser()
       ? 'The token has no user, so there is nobody to log in as'
-      : (this.magicLink.error()?.message ?? null),
+      : (this.identity.error()?.message ??
+        this.magicLink.error()?.message ??
+        null),
   );
 
   protected generate() {
@@ -65,9 +67,22 @@ export class MagicLinkPage {
     if (!userId) {
       return;
     }
+    const tab = window.open('', '_blank');
+    if (tab) {
+      tab.opener = null;
+    }
     this.magicLink.mutate(
       { path: this.path(), user_id: userId },
-      { onSuccess: (url) => window.open(url, '_blank', 'noopener,noreferrer') },
+      {
+        onSuccess: (url) => {
+          if (tab) {
+            tab.location.href = url;
+          } else {
+            window.open(url, '_blank', 'noopener,noreferrer');
+          }
+        },
+        onError: () => tab?.close(),
+      },
     );
   }
 }
