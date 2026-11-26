@@ -1,14 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InvoiceScheduleFlow } from '@remoteoss/remote-flows-angular';
 
 @Component({
   selector: 'app-create-invoice-page',
-  imports: [InvoiceScheduleFlow, MatButtonModule, MatProgressSpinnerModule],
+  imports: [
+    FormsModule,
+    InvoiceScheduleFlow,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+  ],
   template: `
     <h1>Create invoice schedule</h1>
-    @if (employmentId) {
+    @if (employmentId(); as employmentId) {
       <rf-invoice-schedule-flow
         #flow="rfInvoiceScheduleFlow"
         [employmentId]="employmentId"
@@ -39,11 +49,39 @@ import { InvoiceScheduleFlow } from '@remoteoss/remote-flows-angular';
         }
       </rf-invoice-schedule-flow>
     } @else {
-      <p>Add ?employmentId=&lt;id&gt; to the URL.</p>
+      <form class="rf-form" (ngSubmit)="submit()">
+        <mat-form-field class="rf-full">
+          <mat-label>Employment ID</mat-label>
+          <input
+            matInput
+            name="employmentId"
+            [(ngModel)]="draft"
+            placeholder="Enter employment ID"
+          />
+        </mat-form-field>
+        <div class="rf-actions">
+          <button mat-flat-button type="submit" [disabled]="!draft().trim()">
+            Create invoice schedule
+          </button>
+        </div>
+      </form>
     }
   `,
 })
 export class CreateInvoicePage {
-  protected readonly employmentId =
-    new URLSearchParams(window.location.search).get('employmentId') ?? '';
+  protected readonly employmentId = signal(
+    new URLSearchParams(window.location.search).get('employmentId') ?? '',
+  );
+  protected readonly draft = signal('');
+
+  protected submit() {
+    const id = this.draft().trim();
+    if (!id) {
+      return;
+    }
+    const url = new URL(window.location.href);
+    url.searchParams.set('employmentId', id);
+    window.history.replaceState(null, '', url);
+    this.employmentId.set(id);
+  }
 }

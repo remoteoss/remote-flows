@@ -8,3 +8,7 @@ export {
   InvoiceScheduleFormComponent,
   InvoiceScheduleSubmitDirective,
 } from './flows/invoice-schedule';
+export {
+  injectIdentity,
+  injectMagicLink,
+} from './magic-link/inject-magic-link';
