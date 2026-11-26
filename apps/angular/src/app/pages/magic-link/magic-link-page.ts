@@ -48,22 +48,24 @@ export class MagicLinkPage {
   protected readonly identity = injectIdentity();
   protected readonly magicLink = injectMagicLink();
   protected readonly path = signal('/dashboard/company-settings/payments');
+  private readonly userId = computed(() => {
+    const data = this.identity.data();
+    return data && 'user' in data ? data.user.id : undefined;
+  });
   protected readonly disabled = computed(
-    () => this.magicLink.isPending() || this.identity.isPending(),
+    () => this.magicLink.isPending() || !this.userId(),
   );
-  private readonly missingUser = signal(false);
-  protected readonly error = computed(() =>
-    this.missingUser()
-      ? 'The token has no user, so there is nobody to log in as'
-      : (this.identity.error()?.message ??
-        this.magicLink.error()?.message ??
-        null),
-  );
+  protected readonly error = computed(() => {
+    if (this.identity.isSuccess() && !this.userId()) {
+      return 'The token has no user, so there is nobody to log in as';
+    }
+    return (
+      this.identity.error()?.message ?? this.magicLink.error()?.message ?? null
+    );
+  });
 
   protected generate() {
-    const data = this.identity.data();
-    const userId = data && 'user' in data ? data.user.id : '';
-    this.missingUser.set(!userId);
+    const userId = this.userId();
     if (!userId) {
       return;
     }
