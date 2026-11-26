@@ -98,17 +98,10 @@ export function customCycleFirstDay(today = new Date()) {
 }
 
 async function showNextMonth(page: Page) {
-  const monthSelect = page.locator('[role="dialog"] select[name="months"]');
-  const yearSelect = page.locator('[role="dialog"] select[name="years"]');
-  const month = Number(await monthSelect.inputValue());
-  if (month === 11) {
-    const year = Number(await yearSelect.inputValue());
-    await yearSelect.selectOption(String(year + 1));
-    await monthSelect.selectOption('0');
-    return;
-  }
-
-  await monthSelect.selectOption(String(month + 1));
+  await page
+    .locator('[role="dialog"]')
+    .getByRole('button', { name: /next month/i })
+    .click();
 }
 
 export async function pickStartDate(page: Page, allowedDays?: number[]) {
@@ -132,7 +125,7 @@ export async function pickStartDate(page: Page, allowedDays?: number[]) {
   };
 
   let { index, labels } = await findIndex();
-  if (index === -1) {
+  for (let attempt = 0; attempt < 2 && index === -1; attempt++) {
     await showNextMonth(page);
     ({ index, labels } = await findIndex());
   }
