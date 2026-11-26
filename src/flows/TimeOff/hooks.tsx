@@ -503,6 +503,8 @@ export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
      * Approves one of the listed time-off requests without opening it, or its cancellation when it
      * is listed as `cancel_requested`. Resolves with the request as the API returns it, or reloads
      * it after a cancellation decision. Rejects with a `TimeOffDecisionError`.
+     * The status is looked up in the loaded page only: a `timeOffId` that isn't on that page goes
+     * to the regular approve route, not the cancellation one.
      */
     approveTimeOffRequest: ({
       timeOffId: listedTimeOffId,
@@ -517,6 +519,8 @@ export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
      * Declines one of the listed time-off requests without opening it, or its cancellation when it
      * is listed as `cancel_requested`. Resolves with the request as the API returns it, or reloads
      * it after a cancellation decision. Rejects with a `TimeOffDecisionError`.
+     * The status is looked up in the loaded page only: a `timeOffId` that isn't on that page goes
+     * to the regular decline route, not the cancellation one.
      */
     declineTimeOffRequest: ({
       timeOffId: listedTimeOffId,
