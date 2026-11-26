@@ -26,3 +26,7 @@ type EmploymentResponse = Awaited<
 
 export const selectEmployment = (response: EmploymentResponse) =>
   response.data?.data?.employment;
+
+export const isContractorOfRecord = (
+  employment: ReturnType<typeof selectEmployment>,
+) => employment?.contractor_type === 'cor';

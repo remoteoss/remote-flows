@@ -8,6 +8,8 @@ import {
 import {
   buildInvoiceSchedulePayload,
   type ContractorInvoicePreview,
+  isContractorOfRecord,
+  selectCreatedInvoiceSchedule,
 } from '@remoteoss/remote-flows-core';
 import { useEmploymentQuery } from '@/src/common/api/employment';
 import { useDeepStable } from '@/src/common/hooks';
@@ -18,7 +20,6 @@ import {
   UseInvoiceScheduleOptions,
 } from '@/src/flows/InvoiceSchedule/types';
 import { clearBase64Data, createStructuredError } from '@/src/lib/utils';
-import { $TSFixMe } from '@/src/types/remoteFlows';
 import { Fields } from '@remoteoss/remote-json-schema-form-kit';
 
 /**
@@ -41,8 +42,7 @@ export const useInvoiceSchedule = ({
       enabled: Boolean(employmentId),
     });
 
-  const isContractorOfRecord =
-    (employment as $TSFixMe)?.contractor_type === 'cor';
+  const isContractorOfRecordEmployment = isContractorOfRecord(employment);
 
   const {
     data: schemaForm,
@@ -54,7 +54,7 @@ export const useInvoiceSchedule = ({
     enabled: true,
     employmentId,
     jsfModify,
-    isContractorOfRecord,
+    isContractorOfRecord: isContractorOfRecordEmployment,
   });
 
   const fields = useMemo(
@@ -164,7 +164,7 @@ export const useInvoiceSchedule = ({
         values: parsed,
       });
 
-      if (response?.data?.failures?.length) {
+      if (selectCreatedInvoiceSchedule(response).hasFailures) {
         throw createStructuredError('Failed to create invoice schedule');
       }
 
@@ -249,7 +249,7 @@ export const useInvoiceSchedule = ({
      * Whether the contractor is a Contractor of Record, which the platform restricts
      * to one-off invoicing.
      */
-    isContractorOfRecord,
+    isContractorOfRecord: isContractorOfRecordEmployment,
     /**
      * Field metadata, for building error messages.
      */

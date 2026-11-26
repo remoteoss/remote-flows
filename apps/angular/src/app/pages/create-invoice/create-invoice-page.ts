@@ -2,10 +2,16 @@ import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InvoiceScheduleFlow } from '@remoteoss/remote-flows-angular';
+import { Alert } from '../../ui/alert';
 
 @Component({
   selector: 'app-create-invoice-page',
-  imports: [InvoiceScheduleFlow, MatButtonModule, MatProgressSpinnerModule],
+  imports: [
+    Alert,
+    InvoiceScheduleFlow,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+  ],
   template: `
     <h1>Create invoice schedule</h1>
     @if (employmentId) {
@@ -16,14 +22,14 @@ import { InvoiceScheduleFlow } from '@remoteoss/remote-flows-angular';
         @if (flow.bag.isLoading()) {
           <mat-spinner diameter="32" />
         } @else if (flow.bag.error(); as error) {
-          <p class="rf-statement" data-severity="error" role="alert">
+          <app-alert severity="error">
             Could not load the invoice schedule form: {{ error.message }}
-          </p>
+          </app-alert>
         } @else {
           @if (flow.bag.isContractorOfRecord()) {
-            <p class="rf-statement" data-severity="info">
+            <app-alert severity="info">
               Contractor of Record invoices are limited to one-off schedules.
-            </p>
+            </app-alert>
           }
           <rf-invoice-schedule-form />
           <div class="rf-actions">
@@ -31,10 +37,15 @@ import { InvoiceScheduleFlow } from '@remoteoss/remote-flows-angular';
               Create invoice schedule
             </button>
           </div>
+          @if (flow.bag.submitError(); as submitError) {
+            <app-alert severity="error">
+              Could not create the invoice schedule: {{ submitError.message }}
+            </app-alert>
+          }
           @if (flow.bag.createdScheduleId(); as id) {
-            <p class="rf-statement" data-severity="success">
+            <app-alert severity="success">
               Invoice schedule created: {{ id }}
-            </p>
+            </app-alert>
           }
         }
       </rf-invoice-schedule-flow>
