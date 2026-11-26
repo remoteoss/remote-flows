@@ -1,4 +1,5 @@
 import {
+  buildCreateInvoiceSchedulePayload,
   selectCreatedInvoiceSchedule,
   selectExistingInvoiceSchedule,
 } from './invoiceSchedules';
@@ -51,6 +52,25 @@ describe('selectExistingInvoiceSchedule', () => {
     expect(selectExistingInvoiceSchedule(response)).toEqual({
       id: 'open',
       status: 'processing',
+    });
+  });
+});
+
+describe('buildCreateInvoiceSchedulePayload', () => {
+  it('adds the employment id to the API payload built from the form values', () => {
+    expect(
+      buildCreateInvoiceSchedulePayload('employment-1', {
+        currency: 'EUR',
+        periodicity: 'weekly',
+        start_date: '2026-12-01',
+        nr_occurrences: '3',
+      }),
+    ).toMatchObject({
+      employment_id: 'employment-1',
+      currency: 'EUR',
+      periodicity: 'weekly',
+      start_date: '2026-12-01',
+      nr_occurrences: 3,
     });
   });
 });

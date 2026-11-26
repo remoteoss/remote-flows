@@ -41,6 +41,7 @@ import {
 } from '@/src/common/invoice-schedules/api';
 import { useCompanyOpenTasks } from '@/src/common/api/companies';
 import {
+  buildCreateInvoiceSchedulePayload,
   buildInvoiceScheduleFormValues,
   type ContractorInvoicePreview,
 } from '@remoteoss/remote-flows-core';
@@ -1606,8 +1607,10 @@ export const useContractorOnboarding = ({
         }
 
         const response = await createInvoiceScheduleMutationAsync({
-          employmentId: internalEmploymentId,
-          values: parsedValues,
+          payload: buildCreateInvoiceSchedulePayload(
+            internalEmploymentId,
+            parsedValues,
+          ),
         });
 
         const failures = response?.data?.failures;

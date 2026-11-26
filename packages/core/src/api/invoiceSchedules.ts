@@ -55,26 +55,28 @@ export const selectExistingInvoiceSchedule = (
     EDITABLE_STATUSES.includes(schedule.status),
   );
 
+export const buildCreateInvoiceSchedulePayload = (
+  employmentId: string,
+  values: FieldValues,
+) =>
+  ({
+    employment_id: employmentId,
+    ...buildInvoiceSchedulePayload(values),
+  }) as ContractorInvoiceScheduleCreateParams;
+
 export const createInvoiceScheduleMutation = (client: Client) => ({
   mutationFn: async ({
-    employmentId,
-    values,
+    payload,
   }: {
-    employmentId: string;
-    values: FieldValues;
+    payload: ContractorInvoiceScheduleCreateParams;
   }) => {
-    const payload: BulkContractorInvoiceScheduleCreateParams = {
-      contractor_invoice_schedules: [
-        {
-          employment_id: employmentId,
-          ...buildInvoiceSchedulePayload(values),
-        } as ContractorInvoiceScheduleCreateParams,
-      ],
+    const body: BulkContractorInvoiceScheduleCreateParams = {
+      contractor_invoice_schedules: [payload],
     };
 
     return postV1ContractorInvoiceSchedules({
       client,
-      body: payload,
+      body,
     });
   },
 });

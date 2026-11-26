@@ -5,7 +5,7 @@ import {
 } from '@tanstack/angular-query-experimental';
 import {
   buildCreateInvoiceScheduleSchema,
-  buildInvoiceSchedulePayload,
+  buildCreateInvoiceSchedulePayload,
   contractorCurrenciesOptions,
   createInvoiceScheduleMutation,
   employmentOptions,
@@ -159,14 +159,9 @@ export function injectInvoiceSchedule({
         return { status: 'invalid' };
       }
       const values = await store.parse();
-      await beforeSubmit?.({
-        employment_id: employmentId(),
-        ...buildInvoiceSchedulePayload(values),
-      });
-      const response = await createSchedule.mutateAsync({
-        employmentId: employmentId(),
-        values,
-      });
+      const payload = buildCreateInvoiceSchedulePayload(employmentId(), values);
+      await beforeSubmit?.(payload);
+      const response = await createSchedule.mutateAsync({ payload });
       if (response.error) {
         return fail(response.error);
       }
