@@ -6,7 +6,7 @@ import {
   usePreviewContractorInvoice,
 } from '@/src/common/invoice-schedules/api';
 import {
-  buildInvoiceSchedulePayload,
+  buildCreateInvoiceSchedulePayload,
   type ContractorInvoicePreview,
   isContractorOfRecord,
   selectCreatedInvoiceSchedule,
@@ -98,10 +98,10 @@ export const useInvoiceSchedule = ({
     async (values: InvoiceScheduleFormValues) => {
       const parsed = await parseValues(values);
 
-      return {
-        employment_id: employmentId,
-        ...buildInvoiceSchedulePayload(parsed),
-      } as InvoiceSchedulePayload;
+      return buildCreateInvoiceSchedulePayload(
+        employmentId,
+        parsed,
+      ) as InvoiceSchedulePayload;
     },
     [employmentId, parseValues],
   );
@@ -160,8 +160,7 @@ export const useInvoiceSchedule = ({
       const parsed = await parseValues(values);
 
       const response = await mutateAsyncOrThrow({
-        employmentId,
-        values: parsed,
+        payload: buildCreateInvoiceSchedulePayload(employmentId, parsed),
       });
 
       if (selectCreatedInvoiceSchedule(response).hasFailures) {
