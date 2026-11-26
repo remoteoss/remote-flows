@@ -48,7 +48,6 @@ export {
   INVOICE_NUMBER_SEQUENCE_FIELD,
 } from './domains/invoice-schedule/jsonSchema';
 export {
-  buildInvoiceSchedulePayload,
   buildInvoiceScheduleFormValues,
   describeInvoiceNumberSequence,
 } from './domains/invoice-schedule/utils';
