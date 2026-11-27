@@ -22,7 +22,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.22.3'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -54,7 +54,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.22.3'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -83,7 +83,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.22.3'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -163,7 +163,7 @@ jobs:
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.22.3'
 
       - name: Install dependencies
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
@@ -214,7 +214,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.22.3'
           cache: 'pnpm'
           cache-dependency-path: |
             pnpm-lock.yaml
@@ -256,7 +256,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.22.3'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -463,7 +463,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.22.3'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -520,7 +520,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.22.3'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -622,7 +622,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.22.3'
           cache: 'pnpm'
           cache-dependency-path: |
             pnpm-lock.yaml
