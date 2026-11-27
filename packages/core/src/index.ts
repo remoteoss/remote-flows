@@ -63,6 +63,8 @@ export {
   selectContractorCurrencyCodes,
 } from './api/contractorCurrencies';
 export { employmentOptions, selectEmployment } from './api/employment';
+export { identityOptions, selectIdentity } from './api/identity';
+export { magicLinkMutation, selectMagicLinkUrl } from './api/magicLink';
 export {
   createGPEmploymentMutation,
   gpFormSchemaOptions,
