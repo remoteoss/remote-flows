@@ -275,6 +275,8 @@ export const useTermination = ({
                   zendeskArticles.involuntaryOffboardingServiceCharge,
                 reconciliationInvoiceZendeskId:
                   zendeskArticles.reconciliationInvoice,
+                isOffboardingServiceChargeWaived:
+                  employment?.is_offboarding_service_charge_waived,
               };
 
               const CustomComponent = (
