@@ -13,25 +13,12 @@ import {
 } from '@remoteoss/remote-flows-core';
 import { REMOTE_CLIENT } from '../../provide-remote-flows';
 import { createFormStore } from '../../forms/form-store';
+import { rejectOnError } from '../../core/reject-on-error';
 
 type InvoiceScheduleOptions = {
   employmentId: Signal<string>;
   defaultValues?: Record<string, unknown>;
 };
-
-function rejectOnError<T extends { error?: unknown; response?: Response }>(
-  queryFn: () => Promise<T>,
-) {
-  return async () => {
-    const result = await queryFn();
-    if (result.error) {
-      throw new Error(
-        `Request failed with status ${result.response?.status ?? 'unknown'}`,
-      );
-    }
-    return result;
-  };
-}
 
 export function injectInvoiceSchedule({
   employmentId,

@@ -105,7 +105,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ESP: {
     // Spain
-    contract_details: 8,
+    contract_details: 9,
   },
   EST: {
     // Estonia

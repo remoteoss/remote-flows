@@ -311,7 +311,7 @@ interface fillOnboardingStep3SpainFormOptions {
   cba_area?: string;
   cba_group?: string;
   cba_level?: string;
-  has_social_security_number?: string;
+  social_security_number_ack?: boolean;
   work_equipment?: string;
   compensation_expenses_ack?: boolean;
 }
@@ -460,9 +460,9 @@ export async function fillOnboardingStep3SpainForm(
       name: 'cba_categories.cba_level',
     },
     {
-      type: 'radio',
-      value: options.has_social_security_number,
-      name: 'has_social_security_number',
+      type: 'checkbox',
+      value: options.social_security_number_ack ? 'yes' : '',
+      name: 'social_security_number_ack',
     },
     {
       type: 'textField',
