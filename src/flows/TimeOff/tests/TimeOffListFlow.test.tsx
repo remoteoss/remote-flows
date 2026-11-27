@@ -10,6 +10,7 @@ import {
 import { http, HttpResponse } from 'msw';
 import { TimeOffListFlow, useTimeOffList } from '@/src/index';
 import {
+  companyManagersResponse,
   emptyTimeOffRequestsResponse,
   timeOffRequestResponse,
   timeOffRequestsResponse,
@@ -114,6 +115,24 @@ function mockTimeOffRequest() {
     }),
   );
   return requestedIds;
+}
+
+const employmentId = timeOffRequestResponse.data.timeoff.employment_id;
+
+function mockTeamMembers(fullNames: Record<string, string>) {
+  const requestedEmploymentIds: string[] = [];
+  server.use(
+    http.get('*/v1/employments/:id', ({ params }) => {
+      const id = params.id as string;
+      requestedEmploymentIds.push(id);
+      return fullNames[id]
+        ? HttpResponse.json({
+            data: { employment: { id, full_name: fullNames[id] } },
+          })
+        : HttpResponse.json({ message: 'Forbidden' }, { status: 403 });
+    }),
+  );
+  return requestedEmploymentIds;
 }
 
 describe('TimeOffListFlow', () => {
@@ -326,7 +345,143 @@ describe('TimeOffListFlow', () => {
     expect(requestedIds).toEqual(['timeoff-1']);
   });
 
+  it('shows the team member of each listed request once their employment loads', async () => {
+    mockTimeOffRequests();
+    let respond: (response: Response) => void = () => {};
+    server.use(
+      http.get(
+        '*/v1/employments/:id',
+        () =>
+          new Promise<Response>((resolve) => {
+            respond = resolve;
+          }),
+      ),
+    );
+    render(
+      <TimeOffListFlow
+        render={({ components: { ListStep } }) => (
+          <ListStep
+            render={({ listedDetails }) =>
+              listedDetails
+                .map(({ label, value }) => `${label}: ${value}`)
+                .join(' | ')
+            }
+          />
+        )}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    expect(
+      await screen.findByText(
+        'Type: requested leave, page 1 | Status: Requested | Start date: Nov 16, 2026 | End date: Nov 17, 2026 | Duration: 16 hours',
+      ),
+    ).toBeInTheDocument();
+
+    respond(
+      HttpResponse.json({
+        data: { employment: { id: employmentId, full_name: 'Jane Smith' } },
+      }),
+    );
+
+    expect(
+      await screen.findByText(
+        'Team member: Jane Smith | Type: requested leave, page 1 | Status: Requested | Start date: Nov 16, 2026 | End date: Nov 17, 2026 | Duration: 16 hours',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('loads each employment and the company managers once, also when reviewing a listed request', async () => {
+    server.use(
+      http.get('*/v1/timeoff', () =>
+        HttpResponse.json({
+          data: {
+            ...timeOffRequestsResponse.data,
+            timeoffs: [
+              listedTimeOff('timeoff-1', 'Paid leave'),
+              listedTimeOff('timeoff-2', 'Sick leave'),
+              {
+                ...listedTimeOff('timeoff-3', 'Unpaid leave'),
+                employment_id: 'employment-2',
+              },
+            ],
+          },
+        }),
+      ),
+    );
+    mockTimeOffRequest();
+    let companyManagerRequests = 0;
+    server.use(
+      http.get('*/v1/company-managers', () => {
+        companyManagerRequests += 1;
+        return HttpResponse.json(companyManagersResponse);
+      }),
+    );
+    const requestedEmploymentIds = mockTeamMembers({
+      [employmentId]: 'Jane Smith',
+      'employment-2': 'John Doe',
+    });
+    const { container } = renderFlow();
+
+    expect(await screen.findByText('John Doe')).toBeInTheDocument();
+    expect(
+      [
+        ...container.querySelectorAll(
+          '.RemoteFlows__ListStep__Value__team_member',
+        ),
+      ].map((value) => value.textContent),
+    ).toEqual(['Jane Smith', 'Jane Smith', 'John Doe']);
+
+    fireEvent.click(screen.getAllByRole('button', { name: /^View/ })[0]);
+    expect(await screen.findByText('Reviewed leave')).toBeInTheDocument();
+    expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+    expect(await screen.findByText('John Doe')).toBeInTheDocument();
+
+    expect(requestedEmploymentIds).toHaveLength(2);
+    expect(new Set(requestedEmploymentIds)).toEqual(
+      new Set([employmentId, 'employment-2']),
+    );
+    expect(companyManagerRequests).toBe(1);
+  });
+
+  it('still lists and decides on requests whose team member fails to load', async () => {
+    server.use(
+      http.get('*/v1/timeoff', () =>
+        HttpResponse.json({
+          data: {
+            ...timeOffRequestsResponse.data,
+            timeoffs: [
+              listedTimeOff('timeoff-1', 'Paid leave'),
+              {
+                ...listedTimeOff('timeoff-2', 'Sick leave'),
+                employment_id: 'employment-2',
+              },
+            ],
+          },
+        }),
+      ),
+    );
+    const requestedEmploymentIds = mockTeamMembers({
+      'employment-2': 'Anne White',
+    });
+    renderFlow();
+
+    expect(await screen.findByText('Anne White')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {
+        name: 'Approve Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      }),
+    ).toBeEnabled();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(requestedEmploymentIds).toHaveLength(2);
+    expect(new Set(requestedEmploymentIds)).toEqual(
+      new Set([employmentId, 'employment-2']),
+    );
+  });
+
   it('names each listed action after its request', async () => {
+    mockTeamMembers({ [employmentId]: 'Jane Smith' });
     server.use(
       http.get('*/v1/timeoff', () =>
         HttpResponse.json({
@@ -343,18 +498,19 @@ describe('TimeOffListFlow', () => {
     renderFlow();
 
     await screen.findByText('Sick leave');
+    await screen.findAllByText('Jane Smith');
 
     expect(
       within(screen.getByRole('list'))
         .getAllByRole('button')
         .map((button) => button.getAttribute('aria-label')),
     ).toEqual([
-      'View Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
-      'Decline Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
-      'Approve Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
-      'View Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
-      'Decline Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
-      'Approve Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'View Jane Smith, Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Decline Jane Smith, Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Approve Jane Smith, Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'View Jane Smith, Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Decline Jane Smith, Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Approve Jane Smith, Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
     ]);
   });
 
@@ -411,6 +567,7 @@ describe('TimeOffListFlow', () => {
 
   it('renders only the markup a partner gives each listed request', async () => {
     const approvedIds: string[] = [];
+    mockTeamMembers({ [employmentId]: 'Jane Smith' });
     server.use(
       http.get('*/v1/timeoff', () =>
         HttpResponse.json({
@@ -444,9 +601,10 @@ describe('TimeOffListFlow', () => {
           <table>
             <tbody>
               <ListStep
-                renderItem={({ listedDetails, canDecide }) => (
+                renderItem={({ timeOffRequest, teamMemberName, canDecide }) => (
                   <tr>
-                    <td>{listedDetails[0].value}</td>
+                    <td>{teamMemberName}</td>
+                    <td>{timeOffRequest.leave_policy.name}</td>
                     <td>
                       {canDecide && <ApproveButton approverId='manager-1' />}
                     </td>
@@ -466,6 +624,9 @@ describe('TimeOffListFlow', () => {
     expect(
       screen.getByRole('cell', { name: 'Paid leave' }),
     ).toBeInTheDocument();
+    expect(
+      await screen.findAllByRole('cell', { name: 'Jane Smith' }),
+    ).toHaveLength(2);
     expect(screen.queryByRole('list')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Approve' }));

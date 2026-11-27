@@ -59,6 +59,8 @@ function App() {
 }
 ```
 
+This is the shortest setup. For production, see [Securing authentication](./docs/AUTHENTICATION_SECURITY.md): we recommend a proxy so the access token never reaches the browser.
+
 ## Components API
 
 ### RemoteFlows
@@ -209,7 +211,9 @@ Your server should:
 2. Implement an endpoint that exchanges these credentials for an access token
 3. Return `access_token` and `expires_in` to the frontend application
 
-For a complete implementation, check our [example server implementation](https://github.com/remoteoss/remote-flows/blob/main/example/server.js).
+For a complete implementation, check our [example server implementation](https://github.com/remoteoss/remote-flows/tree/main/example/api).
+
+Before going live, read [Securing authentication](./docs/AUTHENTICATION_SECURITY.md): it covers the proxy and direct setups, minting the token for the logged-in user, and checking ids the browser sends.
 
 ### API Gateway Endpoints
 
@@ -308,6 +312,10 @@ Learn more about field definitions in the [json-schema-form documentation](https
 ## Example
 
 For a complete implementation example, see our [example application](https://github.com/remoteoss/remote-flows/blob/main/example/src/App.tsx).
+
+## Angular
+
+An early Angular alpha is available as `@remoteoss/remote-flows-angular`. See the [Angular preview](./docs/ANGULAR_PREVIEW.md) for status, the demo and how it works.
 
 ## Contributing
 

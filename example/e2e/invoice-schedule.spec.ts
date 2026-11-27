@@ -6,8 +6,8 @@ import {
 import { fillTextField, setupVercelBypass } from './helpers/general';
 import {
   CREATE_SCHEDULE_PATH,
-  customCycleFirstDay,
-  defaultCycleDays,
+  CUSTOM_CYCLE_FIRST_DAY,
+  DEFAULT_CYCLE_DAYS,
   EndType,
   fillInvoiceItems,
   InvoiceItem,
@@ -216,11 +216,11 @@ test.describe('Invoice schedule', () => {
       let startDays: number[] | undefined;
       let customDays: number[] | undefined;
       if (scheduleCase.cycle === 'default') {
-        startDays = defaultCycleDays();
+        startDays = DEFAULT_CYCLE_DAYS;
         customDays = [15, 31];
       }
       if (scheduleCase.cycle === 'custom') {
-        const firstDay = customCycleFirstDay();
+        const firstDay = CUSTOM_CYCLE_FIRST_DAY;
         await selectCustomCycle(page, firstDay);
         startDays = [firstDay, firstDay + 14];
         customDays = startDays;
@@ -229,11 +229,7 @@ test.describe('Invoice schedule', () => {
         await selectEndType(page, scheduleCase.endType);
       }
 
-      const picked = await pickStartDate(page, startDays);
-      test.skip(
-        !picked,
-        'The calendar shows one month, so a custom cycle has no selectable day on the 29th to 31st when the month ends on a Sunday',
-      );
+      await pickStartDate(page, startDays);
       await fillTextField(page, 'number', INVOICE_NUMBER);
 
       const created = await submitSchedule(page);
