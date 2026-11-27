@@ -111,7 +111,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Slovenia](./SVN.md)               | SVN  | v6  | v6              | Yes        | October 2026  |
 | [South Africa](./ZAF.md)           | ZAF  | v5  | v5              | Yes        | October 2026  |
 | [South Korea](./KOR.md)            | KOR  | v7  | v6              | Yes        | October 2026  |
-| [Spain](./ESP.md)                  | ESP  | v8  | v8              | Yes        | October 2026  |
+| [Spain](./ESP.md)                  | ESP  | v9  | v9              | Yes        | November 2026 |
 | [Sri Lanka](./LKA.md)              | LKA  | v8  | v8              | Yes        | November 2026 |
 | [Sweden](./SWE.md)                 | SWE  | v5  | v5              | Yes        | October 2026  |
 | [Switzerland](./CHE.md)            | CHE  | v8  | v9              | No         | November 2026 |
