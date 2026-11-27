@@ -18,7 +18,7 @@
     "@angular/common": ">=20.0.0 <21.0.0",
     "@angular/core": ">=20.0.0 <21.0.0",
     "@angular/forms": ">=20.0.0 <21.0.0",
-    "@tanstack/angular-query-experimental": "^5.0.0",
+    "@tanstack/angular-query-experimental": "^5.107.2",
     "rxjs": "^7.8.0"
   },
   "dependencies": {
@@ -31,7 +31,7 @@
     "@angular/compiler-cli": "20.3.9",
     "@angular/core": "20.3.9",
     "@angular/forms": "20.3.9",
-    "@tanstack/angular-query-experimental": "5.107.1",
+    "@tanstack/angular-query-experimental": "5.107.2",
     "ng-packagr": "20.3.2",
     "rxjs": "7.8.2",
     "typescript": "5.9.3"
