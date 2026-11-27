@@ -156,11 +156,12 @@ export function createFormStore({
     base: string,
   ): FieldView[] {
     return nodes.flatMap((node): FieldView[] => {
-      if (!node.isVisible()) {
+      const meta = node.meta();
+      // Hidden fields keep their control and value but never reach a partner's components, as in React.
+      if (!node.isVisible() || meta.inputType === 'hidden') {
         return [];
       }
       const key = base ? `${base}.${node.name}` : node.name;
-      const meta = node.meta();
       const control = group.controls[node.name] ?? null;
 
       if (node.kind === 'fieldset' && control instanceof FormGroup) {

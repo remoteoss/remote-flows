@@ -12,3 +12,10 @@ export {
   injectIdentity,
   injectMagicLink,
 } from './magic-link/inject-magic-link';
+export {
+  PayrollAdminOnboardingFlow,
+  PayrollAdminOnboardingFlowComponent,
+  PayrollAdminOnboardingFormComponent,
+  PayrollAdminOnboardingSubmitDirective,
+} from './flows/payroll-admin-onboarding';
+export type { PayrollAdminStep } from './flows/payroll-admin-onboarding';

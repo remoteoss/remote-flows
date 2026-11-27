@@ -1,6 +1,6 @@
 {
   "name": "@remoteoss/remote-flows-angular",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.1-alpha.1",
   "description": "Angular components for Remote embeddable HR flows (alpha)",
   "license": "MIT",
   "sideEffects": false,

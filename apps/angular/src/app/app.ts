@@ -1,22 +1,26 @@
 import { Component, signal } from '@angular/core';
 import { CreateInvoicePage } from './pages/create-invoice/create-invoice-page';
+import { GpAdminOnboardingPage } from './pages/gp-admin-onboarding/gp-admin-onboarding-page';
 import { MagicLinkPage } from './pages/magic-link/magic-link-page';
 
 const PAGES = [
   { id: 'create-invoice', label: 'Create invoice' },
   { id: 'magic-link', label: 'Magic link' },
+  { id: 'gp-admin', label: 'GP admin onboarding' },
 ] as const;
 
 type PageId = (typeof PAGES)[number]['id'];
 
 function pageFromHash(): PageId {
-  const id = window.location.hash.replace(/^#\/?/, '');
+  const id =
+    window.location.hash.replace(/^#\/?/, '') ||
+    new URLSearchParams(window.location.search).get('flow');
   return PAGES.find((page) => page.id === id)?.id ?? PAGES[0].id;
 }
 
 @Component({
   selector: 'app-root',
-  imports: [CreateInvoicePage, MagicLinkPage],
+  imports: [CreateInvoicePage, GpAdminOnboardingPage, MagicLinkPage],
   host: { '(window:hashchange)': 'page.set(pageFromHash())' },
   template: `
     <div class="rf-layout">
@@ -36,6 +40,9 @@ function pageFromHash(): PageId {
         @switch (page()) {
           @case ('magic-link') {
             <app-magic-link-page />
+          }
+          @case ('gp-admin') {
+            <app-gp-admin-onboarding-page />
           }
           @default {
             <app-create-invoice-page />
