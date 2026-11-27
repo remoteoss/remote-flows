@@ -4,11 +4,37 @@ Schema versions for employee onboarding in Spain.
 
 ## Current Version
 
-**Contract Details:** v8
+**Contract Details:** v9
 
 ## Contract Details
 
-### v8 - Current
+### v9 - Current
+
+**Type of change:** compliance
+
+**What changed:**
+
+- The required `has_social_security_number` yes/no question is replaced by `social_security_number_ack`, a required checkbox (`const: "acknowledged"`) confirming that the employee must have a Spanish Social Security number before their employment can begin.
+- `has_social_security_number` is now deprecated and read-only, is no longer required, and accepts `"yes"`, `"no"` or `null`.
+- Custom UIs must render the `social_security_number_ack` checkbox and send `"acknowledged"` when the schema requires it, and stop asking for `has_social_security_number`. Stored answers stay readable and are preserved when the field is omitted on save. Do not convert old answers into acknowledgments.
+- Existing employments that already have a saved `has_social_security_number` answer and no saved acknowledgment may omit `social_security_number_ack` or send `null`; once an acknowledgment is saved it stays required.
+- Pin to `contract_details: 8` to keep the previous shape.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      ESP: { contract_details: 9 },
+    },
+  }}
+/>
+```
+
+---
+
+### v8
 
 **What changed:**
 

@@ -81,7 +81,7 @@ test.describe('Onboard basic employee', () => {
       cba_area: '1',
       cba_group: 'A',
       cba_level: '1',
-      has_social_security_number: 'yes',
+      social_security_number_ack: true,
       work_equipment: '200',
       compensation_expenses_ack: true,
       // Only rendered when the job-title eligibility check applies; the helper skips them
