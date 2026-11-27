@@ -28,6 +28,7 @@ export type {
   HeadlessFormOptions,
   HeadlessFormStrategy,
 } from './form/headlessForm';
+export { createHeadlessFormController } from './form/headlessFormController';
 export type {
   $TSFixMe,
   Field,

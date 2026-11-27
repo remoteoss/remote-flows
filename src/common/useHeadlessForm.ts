@@ -1,17 +1,21 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { FieldValues } from 'react-hook-form';
+import {
+  createHeadlessFormController,
+  type HeadlessFormOptions,
+} from '@remoteoss/remote-flows-core';
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
   buildHeadlessForm,
-  HeadlessFormOptions,
   parseValuesForValidation,
   withFieldsetObjects,
 } from '@/src/common/headlessForm';
 import { useDeepStable } from '@/src/common/hooks';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
+import { convertFilesToBase64 } from '@/src/lib/files';
 
-export type { HeadlessFormStrategy } from '@/src/common/headlessForm';
+export type { HeadlessFormStrategy } from '@remoteoss/remote-flows-core';
 
 type Schema = Record<string, unknown>;
 
@@ -30,84 +34,78 @@ export type HeadlessForm = {
   parseFormValues: (values: FieldValues) => Promise<FieldValues>;
 };
 
+const noop = async () => {};
+
 export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
   const { schema, options, strategy } = args;
   const isBuildOnce = strategy === 'buildOnce';
-  const [, setRevision] = useState(0);
-  const stableOptions = useDeepStable(options);
-  const stableInitialValues = useDeepStable(
-    args.strategy === 'buildOnce' ? args.initialValues : undefined,
+
+  const [controller] = useState(() =>
+    createHeadlessFormController({
+      convertFiles: convertFilesToBase64,
+      logModifyWarnings: process.env.RF_INTERNAL_DEV === 'true',
+    }),
   );
-  const rebuildValues = args.strategy === 'rebuild' ? args.values : undefined;
-  const lastValidated = useRef<{ schema: Schema; values: FieldValues } | null>(
-    null,
+  useSyncExternalStore(
+    controller.subscribe,
+    controller.getRevision,
+    controller.getRevision,
   );
 
-  const form = useMemo(() => {
-    if (!schema) {
+  const rebuildOptions = useDeepStable(isBuildOnce ? undefined : options);
+  const rebuildValues = args.strategy === 'rebuild' ? args.values : undefined;
+
+  const rebuildForm = useMemo(() => {
+    if (isBuildOnce || !schema) {
       return null;
     }
-    if (!isBuildOnce) {
-      return buildHeadlessForm(schema, strategy, rebuildValues, stableOptions);
-    }
-    const buildValues =
-      lastValidated.current?.schema === schema
-        ? lastValidated.current.values
-        : stableInitialValues;
-    return buildHeadlessForm(schema, strategy, buildValues, stableOptions);
-  }, [
-    schema,
-    strategy,
-    rebuildValues,
-    stableOptions,
-    stableInitialValues,
-    isBuildOnce,
-  ]);
+    return buildHeadlessForm(schema, 'rebuild', rebuildValues, rebuildOptions);
+  }, [isBuildOnce, schema, rebuildValues, rebuildOptions]);
 
-  const handleValidation = useCallback(
+  const form = isBuildOnce
+    ? controller.sync({
+        schema,
+        options,
+        initialValues: args.initialValues,
+      })
+    : rebuildForm;
+
+  const rebuildHandleValidation = useCallback(
     async (nextValues: FieldValues) => {
-      if (!form || !schema) {
+      if (!rebuildForm || !schema) {
         return null;
       }
       const parsedValues = await parseValuesForValidation(
-        form,
-        strategy,
+        rebuildForm,
+        'rebuild',
         nextValues,
       );
-      if (isBuildOnce) {
-        lastValidated.current = {
-          schema,
-          values: JSON.parse(JSON.stringify(parsedValues)),
-        };
-      }
-      // An untouched fieldset has no value, so jsf v1 reports one error for the
-      // whole fieldset, which no input can display. An empty object makes it
-      // check the fields inside, so their own errors show up.
-      const result = form.handleValidation(
-        withFieldsetObjects(parsedValues, form.fields),
+      return rebuildForm.handleValidation(
+        withFieldsetObjects(parsedValues, rebuildForm.fields),
       );
-      if (isBuildOnce) {
-        setRevision((revision) => revision + 1);
-      }
-      return result;
     },
-    [form, schema, strategy, isBuildOnce],
+    [rebuildForm, schema],
   );
 
-  const onValuesChange = useCallback(
-    async (nextValues: FieldValues) => {
-      if (isBuildOnce) {
-        await handleValidation(nextValues);
-      }
-    },
-    [handleValidation, isBuildOnce],
-  );
-
-  const parseFormValues = useCallback(
+  const rebuildParseFormValues = useCallback(
     async (nextValues: FieldValues) =>
-      form ? parseJSFToValidate(nextValues, form.fields) : {},
-    [form],
+      rebuildForm ? parseJSFToValidate(nextValues, rebuildForm.fields) : {},
+    [rebuildForm],
   );
 
-  return { form, handleValidation, onValuesChange, parseFormValues };
+  if (isBuildOnce) {
+    return {
+      form,
+      handleValidation: controller.handleValidation,
+      onValuesChange: controller.onValuesChange,
+      parseFormValues: controller.parseFormValues,
+    };
+  }
+
+  return {
+    form: rebuildForm,
+    handleValidation: rebuildHandleValidation,
+    onValuesChange: noop,
+    parseFormValues: rebuildParseFormValues,
+  };
 }
